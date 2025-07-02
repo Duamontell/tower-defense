@@ -1,6 +1,3 @@
-let canvas = document.getElementById("baseCanvas");
-let ctx = canvas.getContext("2d");
-
 class Base {
 	constructor(health, x, y, width, heigth, color) {
 		this.health = health;

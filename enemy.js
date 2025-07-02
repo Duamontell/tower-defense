@@ -1,5 +1,4 @@
-class enemy {
-
+class Enemy {
     constructor(id, x, y, health, damage, name) {
         this.id = id;
         this.x = x;
@@ -18,8 +17,10 @@ class enemy {
         if (damage >= this.health) {
             console.log(this.name, "is dead now");
         } else {
-            this.health -= damage; 
+            this.health -= damage;
         }
     }
-
 }
+
+newEnemy = new Enemy(1, 500, 400, 20, 2, 2);
+newEnemy.draw(ctx); 

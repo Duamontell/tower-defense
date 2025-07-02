@@ -1,5 +1,5 @@
 class Tower {
-    constructor(name, damage, radius, price, position, attackType, color){
+    constructor(name, damage, radius, price, position, attackType, color) {
         this.name = name;
         this.damage = damage;
         this.radius = radius;
@@ -17,7 +17,7 @@ class Tower {
     }
 }
 
-class ArchersTower extends Tower { 
+class ArchersTower extends Tower {
     constructor(position) {
         super('Archers', 10, 100, 50, position, 'single', 'red');
         this.projectileSpeed = 5;
@@ -25,7 +25,7 @@ class ArchersTower extends Tower {
     }
 }
 
-class MagicianTower extends Tower { 
+class MagicianTower extends Tower {
     constructor(position) {
         super('Magician', 20, 100, 150, position, 'single', 'green');
         this.projectileSpeed = 5;
@@ -33,7 +33,7 @@ class MagicianTower extends Tower {
     }
 }
 
-class MortarTower extends Tower { 
+class MortarTower extends Tower {
     constructor(position) {
         super('Mortar', 60, 150, 300, position, 'area', 'black');
     }
@@ -52,9 +52,9 @@ let nextTowerIndex = 0;
 // }
 
 const towers = [
-    new ArchersTower({x: 150, y: 150}),
-    new MagicianTower({x: 150, y: 200}),
-    new MortarTower({x: 150, y: 250})
+    new ArchersTower({ x: 150, y: 150 }),
+    new MagicianTower({ x: 150, y: 200 }),
+    new MortarTower({ x: 150, y: 250 })
 ];
 
 function draw() {
