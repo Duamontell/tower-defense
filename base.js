@@ -1,19 +1,17 @@
 class Base {
-	constructor(health, x, y, width, heigth, color) {
+	constructor(health, position) {
 		this.health = health;
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.heigth = heigth;
-		this.color = color;
+		this.position = position;
+		this.width = 35;
+		this.height = 50;
 	}
 
 	draw() {
-		ctx.rect(this.x, this.y, this.width, this.heigth);
-		ctx.fillStye = this.color;
+		ctx.rect(this.position.x, this.position.y, this.width, this.height);
+		ctx.fillStye = "gray";
 		ctx.fill();
 	}
 }
 
-base = new Base(20, 50, 40, 20, 50, "black");
+base = new Base(20, { x: 50, y: 40 }, "black");
 base.draw();
