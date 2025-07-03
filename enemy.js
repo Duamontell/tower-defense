@@ -1,4 +1,4 @@
-class Enemy {
+export class Enemy {
     constructor(id, x, y, health, damage, name) {
         this.id = id;
         this.x = x;
@@ -6,21 +6,21 @@ class Enemy {
         this.health = health;
         this.damage = damage;
         this.name = name;
-        this.draw(ctx);
     }
 
     draw(ctx) {
-        ctx.fillRect(this.x, this.y, 50, 50)
+        ctx.save();
+        ctx.fillStyle = "black";
+        ctx.fillRect(this.x, this.y, 26, 26);
+        ctx.restore();
     }
 
-    recieveDamage(damage) {
-        if (damage >= this.health) {
-            console.log(this.name, "is dead now");
-        } else {
-            this.health -= damage;
-        }
+    receiveDamage(damage) {
+        this.health -= damage;
+        if (this.health < 0) this.health = 0;
+    }    
+
+    isAlive() {
+        return this.health > 0;
     }
 }
-
-newEnemy = new Enemy(1, 500, 400, 20, 2, 2);
-newEnemy.draw(ctx); 
