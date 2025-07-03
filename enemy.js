@@ -8,6 +8,15 @@ export class Enemy {
         this.name = name;
     }
 
+    doDamage() {
+        Base.recieveDamage(this.damage);
+        this.death();
+    }
+
+    death() {
+        console.log("enemy died");
+    }
+
     draw(ctx) {
         ctx.save();
         ctx.fillStyle = "black";

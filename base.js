@@ -8,6 +8,14 @@ export class Base {
 		this.color = color;
 	}
 
+	recieveDamage(damage) {
+		if (damage >= this.health) {
+			console.log("Base on coordinates", this.x, "" , this.y, " was destroyed");
+		} else {
+			this.health -= damage;
+		}
+	}
+
 	draw(ctx) {
 		ctx.save();
 		ctx.fillStyle = this.color;
