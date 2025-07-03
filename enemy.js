@@ -6,8 +6,9 @@ export class Enemy {
         this.health = health;
         this.damage = damage;
         this.name = name;
+        this.waypointIndex = 0;
     }
-
+	
     doDamage() {
         Base.recieveDamage(this.damage);
         this.death();
@@ -22,6 +23,26 @@ export class Enemy {
         ctx.fillStyle = "black";
         ctx.fillRect(this.x, this.y, 26, 26);
         ctx.restore();
+    }
+
+    update() {
+        if (this.waypointIndex == waypoints.length - 1) {
+            this.waypointIndex = 0
+        }
+        this.draw();
+
+        const waypoint = waypoints[this.waypointIndex];
+        const xDistance = waypoint.x - this.x;
+        const yDistance = waypoint.y - this.y;
+        const angle = Math.atan2(yDistance, xDistance);
+        this.x += Math.cos(angle);
+        this.y += Math.sin(angle);
+
+        if (
+            Math.round(this.x) == Math.round(waypoint.x) &&
+            Math.round(this.y) == Math.round(waypoint.y)) {
+            this.waypointIndex++;
+        }
     }
 
     receiveDamage(damage) {
