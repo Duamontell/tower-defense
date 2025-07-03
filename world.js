@@ -1,5 +1,5 @@
 export class World {
-    constructor () {
+    constructor() {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
@@ -17,9 +17,9 @@ export class World {
         this.bases.push(base);
     }
 
-    update(delta)
-    {
+    update(delta) {
         this.towers.forEach(tower => tower.update(delta, this.enemies))
+        this.enemies.forEach(enemy => enemy.update(delta))
     }
 
     draw(ctx) {

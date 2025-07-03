@@ -12,9 +12,9 @@ world.addTower(new ArchersTower({ x: 150, y: 130 }));
 world.addTower(new MagicianTower({ x: 250, y: 220 }));
 world.addTower(new MortarTower({ x: 450, y: 130 }));
 
-world.addEnemy(new Enemy(1, 200, 160, 50, 5, 'Orc'));
-world.addEnemy(new Enemy(2, 300, 160, 30, 3, 'Goblin'));
-world.addEnemy(new Enemy(3, 600, 160, 80, 7, 'Troll'));
+world.addEnemy(new Enemy(1, 200, 160, 50, 5, 40, 'Orc'));
+world.addEnemy(new Enemy(2, 300, 160, 30, 3, 250, 'Goblin'));
+world.addEnemy(new Enemy(3, 600, 160, 80, 7, 15, 'Troll'));
 
 world.addBase(new Base(20, 50, 150, 20, 50, "black"));
 
