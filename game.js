@@ -1,3 +1,4 @@
+import { World } from './world.js';
 import { Enemy } from './enemy.js';
 import { ArchersTower, MagicianTower, MortarTower } from './tower.js';
 import { Base } from './base.js';
@@ -5,49 +6,28 @@ import { Base } from './base.js';
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+const world = new World();
+
+world.addTower(new ArchersTower({ x: 150, y: 130 }));
+world.addTower(new MagicianTower({ x: 250, y: 220 }));
+world.addTower(new MortarTower({ x: 450, y: 130 }));
+
+world.addEnemy(new Enemy(1, 200, 160, 50, 5, 'Orc'));
+world.addEnemy(new Enemy(2, 300, 160, 30, 3, 'Goblin'));
+world.addEnemy(new Enemy(3, 600, 160, 80, 7, 'Troll'));
+
+world.addBase(new Base(20, 50, 150, 20, 50, "black"));
+
 let lastTimestamp = 0;
-
-const towers = [
-    new ArchersTower({ x: 150, y: 130 }),
-    new MagicianTower({ x: 250, y: 220 }),
-    new MortarTower({ x: 450, y: 130 }),
-    new MortarTower({ x: 11150, y: 130 })
-];
-
-const enemies = [
-    new Enemy(1, 200, 160, 50, 5, 'Orc'),
-    new Enemy(2, 300, 160, 30, 3, 'Goblin'),
-    new Enemy(3, 600, 160, 80, 7, 'Troll')
-];
-
-const bases = [
-    new Base(20, 50, 150, 20, 50, "black"),
-];
-
 
 function gameLoop(timestamp = 0) {
     const delta = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    enemies.forEach(enemy => {
-        enemy.draw(ctx);
-    });
-    ctx.restore();
-    bases.forEach(base => {
-        base.draw(ctx);
-    });
-    ctx.restore();
-    towers.forEach(tower => {
-        tower.update(delta, enemies);
-        tower.draw(ctx);
-    });
 
-    for (let i = enemies.length - 1; i >= 0; i--) {
-        if (!enemies[i].isAlive()) {
-            //enemies.splice(i, 1);  // удалять врагов из массива
-        }
-    }
+    world.update(delta);
+    world.draw(ctx);
 
     requestAnimationFrame(gameLoop);
 }
