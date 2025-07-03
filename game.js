@@ -5,6 +5,8 @@ import { Base } from './base.js';
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+let lastTimestamp = 0;
+
 const towers = [
     new ArchersTower({ x: 150, y: 130 }),
     new MagicianTower({ x: 250, y: 220 }),
@@ -23,7 +25,10 @@ const bases = [
 ];
 
 
-function gameLoop() {
+function gameLoop(timestamp = 0) {
+    const delta = (timestamp - lastTimestamp) / 1000;
+    lastTimestamp = timestamp;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     enemies.forEach(enemy => {
         enemy.draw(ctx);
@@ -34,8 +39,8 @@ function gameLoop() {
     });
     ctx.restore();
     towers.forEach(tower => {
+        tower.update(delta, enemies);
         tower.draw(ctx);
-        tower.attack(enemies);
     });
 
     for (let i = enemies.length - 1; i >= 0; i--) {

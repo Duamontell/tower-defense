@@ -1,12 +1,25 @@
 export class Tower {
-    constructor(name, damage, radius, price, position, attackType, color) {
+    constructor(name, damage, radius, price, position, attackType, cooldown, color) {
         this.name = name;
         this.damage = damage;
         this.radius = radius;
         this.price = price;
         this.position = position;
         this.attackType = attackType;
+        this.cooldown = cooldown;
+        this.timeUntilNextShot = 0; 
         this.colorForDraw = color || 'gray';
+    }
+
+    update(delta, enemies)
+    {
+        this.timeUntilNextShot -= delta;
+
+        if (this.timeUntilNextShot <= 0)
+        {
+            this.attack(enemies);
+            this.timeUntilNextShot = this.cooldown;
+        }
     }
 
     draw(ctx) {
@@ -25,8 +38,6 @@ export class Tower {
     
         ctx.restore();
     }
-    
-    
 
     attack(enemies) {
         const enemiesInRange = enemies.filter(enemy => {
@@ -56,27 +67,23 @@ export class Tower {
                 }
             });
         }
-        
-        
     }
-    
 }
 
 export class ArchersTower extends Tower {
     constructor(position) {
-        super('Archers', 10, 100, 50, position, 'single', 'red');
+        super('Archers', 10, 100, 50, position, 'single', 1, 'red');
     }
 }
 
 export class MagicianTower extends Tower {
     constructor(position) {
-        super('Magician', 20, 100, 150, position, 'single', 'green');
+        super('Magician', 20, 100, 150, position, 'single', 2, 'green');
     }
 }
 
 export class MortarTower extends Tower {
     constructor(position) {
-        super('Mortar', 60, 100, 300, position, 'area', 'blue');
+        super('Mortar', 60, 100, 300, position, 'area', 3, 'blue');
     }
 }
-
