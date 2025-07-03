@@ -1,25 +1,28 @@
-class Enemy {
-    constructor(id, position, health, damage, speed, name) {
+export class Enemy {
+    constructor(id, x, y, health, damage, name) {
         this.id = id;
-        this.position = position;
+        this.x = x;
+        this.y = y;
         this.health = health;
         this.damage = damage;
-        this.speed = speed;
         this.name = name;
         this.waypointIndex = 0;
-        this.draw(ctx);
+    }
+	
+    doDamage() {
+        Base.recieveDamage(this.damage);
+        this.death();
     }
 
-    draw() {
-        ctx.fillRect(this.position.x, this.position.y, 50, 50)
+    death() {
+        console.log("enemy died");
     }
 
-    recieveDamage(damage) {
-        if (damage >= this.health) {
-            console.log(this.name, "is dead now");
-        } else {
-            this.health -= damage;
-        }
+    draw(ctx) {
+        ctx.save();
+        ctx.fillStyle = "black";
+        ctx.fillRect(this.x, this.y, 26, 26);
+        ctx.restore();
     }
 
     update() {
@@ -29,34 +32,25 @@ class Enemy {
         this.draw();
 
         const waypoint = waypoints[this.waypointIndex];
-        const xDistance = waypoint.x - this.position.x;
-        const yDistance = waypoint.y - this.position.y;
+        const xDistance = waypoint.x - this.x;
+        const yDistance = waypoint.y - this.y;
         const angle = Math.atan2(yDistance, xDistance);
-        this.position.x += Math.cos(angle);
-        this.position.y += Math.sin(angle);
+        this.x += Math.cos(angle);
+        this.y += Math.sin(angle);
 
         if (
-            Math.round(this.position.x) == Math.round(waypoint.x) &&
-            Math.round(this.position.y) == Math.round(waypoint.y)) {
+            Math.round(this.x) == Math.round(waypoint.x) &&
+            Math.round(this.y) == Math.round(waypoint.y)) {
             this.waypointIndex++;
         }
     }
-    // updatePosition(newPosition) {
-    //     this.position.x = newPosition.x;
-    //     this.position.y = newPosition.y;
-    // }
+
+    receiveDamage(damage) {
+        this.health -= damage;
+        if (this.health < 0) this.health = 0;
+    }    
+
+    isAlive() {
+        return this.health > 0;
+    }
 }
-
-// let position = { x: 0, y: 0 };
-
-// newEnemy = new Enemy(1, position, 20, 2, "Orc");
-
-// function walk() {
-//     requestAnimationFrame(walk)
-
-//     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-//     newEnemy.update()
-// }
-
-// walk()
