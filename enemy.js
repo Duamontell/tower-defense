@@ -9,7 +9,10 @@ export class Enemy {
     }
 
     draw(ctx) {
-        ctx.fillRect(this.x, this.y, 26, 26)
+        ctx.save();
+        ctx.fillStyle = "black";
+        ctx.fillRect(this.x, this.y, 26, 26);
+        ctx.restore();
     }
 
     receiveDamage(damage) {

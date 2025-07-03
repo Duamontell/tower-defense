@@ -9,8 +9,11 @@ export class Base {
 	}
 
 	draw(ctx) {
+		ctx.save();
+		ctx.fillStyle = this.color;
+		ctx.beginPath();
 		ctx.rect(this.x, this.y, this.width, this.heigth);
-		ctx.fillStye = this.color;
 		ctx.fill();
+		ctx.restore();
 	}
 }
