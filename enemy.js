@@ -1,4 +1,4 @@
-import { Waypoints } from './waypoints.js'
+import { Waypoints, Controls } from './waypoints.js'
 
 export class Enemy {
     constructor(id, x, y, health, damage, speed, name) {
@@ -10,6 +10,7 @@ export class Enemy {
         this.speed = speed;
         this.name = name;
         this.waypointIndex = 0;
+        this.progressOnWaypoint = 0;
     }
 
     doDamage() {
@@ -31,29 +32,28 @@ export class Enemy {
     update(delta) {
         if (this.waypointIndex == Waypoints.length - 1) {
             // Враг дошёл до базы
-            this.waypointIndex = 0
-        }
-
-        const waypoint = Waypoints[this.waypointIndex];
-        const xDistance = waypoint.x - this.x;
-        const yDistance = waypoint.y - this.y;
-        const angle = Math.atan2(yDistance, xDistance);
-
-        const distance = Math.hypot(waypoint.x - this.x, waypoint.y - this.y);
-        if (distance < 1) {
-            this.waypointIndex++;
+            this.waypointIndex = 0;
             return;
         }
 
-        const moveDistance = this.speed * delta;
+        const waypoint = Waypoints[this.waypointIndex];
+        const nextWaypoint = Waypoints[this.waypointIndex + 1];
+        const distance = Math.hypot(nextWaypoint.x - waypoint.x, nextWaypoint.y - waypoint.y);
+        this.progressOnWaypoint += (this.speed * delta) / distance;
 
-        this.x += Math.cos(angle) * moveDistance;
-        this.y += Math.sin(angle) * moveDistance;
+        this.x = Math.pow(1 - this.progressOnWaypoint, 2) * waypoint.x +
+            2 * (1 - this.progressOnWaypoint) * this.progressOnWaypoint *
+            50 + Math.pow(this.progressOnWaypoint, 2) * nextWaypoint.x;
+        this.y = Math.pow(1 - this.progressOnWaypoint, 2) * waypoint.y +
+            2 * (1 - this.progressOnWaypoint) * this.progressOnWaypoint *
+            250 + Math.pow(this.progressOnWaypoint, 2) * nextWaypoint.y;
 
-        if (
-            Math.round(this.x) == Math.round(waypoint.x) &&
-            Math.round(this.y) == Math.round(waypoint.y)) {
+        if (this.progressOnWaypoint >= 1) {
             this.waypointIndex++;
+            this.progressOnWaypoint = 0;
+            this.x = nextWaypoint.x;
+            this.y = nextWaypoint.y;
+            return;
         }
     }
 
