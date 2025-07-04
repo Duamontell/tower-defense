@@ -1,8 +1,7 @@
 export class Base {
-	constructor(health, x, y, width, heigth, color) {
+	constructor(health, position, width, heigth, color) {
 		this.health = health;
-		this.x = x;
-		this.y = y;
+		this.position = position;
 		this.width = width;
 		this.heigth = heigth;
 		this.color = color;
@@ -10,7 +9,7 @@ export class Base {
 
 	recieveDamage(damage) {
 		if (damage >= this.health) {
-			console.log("Base on coordinates", this.x, "" , this.y, " was destroyed");
+			console.log("Base on coordinates", this.position.x, "" , this.position.y, " was destroyed");
 		} else {
 			this.health -= damage;
 		}
@@ -20,7 +19,7 @@ export class Base {
 		ctx.save();
 		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.rect(this.x, this.y, this.width, this.heigth);
+		ctx.rect(this.position.x, this.position.y, this.width, this.heigth);
 		ctx.fill();
 		ctx.restore();
 	}
