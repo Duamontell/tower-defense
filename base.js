@@ -1,19 +1,26 @@
-class Base {
-	constructor(health, x, y, width, heigth, color) {
+export class Base {
+	constructor(health, position, width, heigth, color) {
 		this.health = health;
-		this.x = x;
-		this.y = y;
+		this.position = position;
 		this.width = width;
 		this.heigth = heigth;
 		this.color = color;
 	}
 
-	draw() {
-		ctx.rect(this.x, this.y, this.width, this.heigth);
-		ctx.fillStye = this.color;
+	recieveDamage(damage) {
+		if (damage >= this.health) {
+			console.log("Base on coordinates", this.position.x, "" , this.position.y, " was destroyed");
+		} else {
+			this.health -= damage;
+		}
+	}
+
+	draw(ctx) {
+		ctx.save();
+		ctx.fillStyle = this.color;
+		ctx.beginPath();
+		ctx.rect(this.position.x, this.position.y, this.width, this.heigth);
 		ctx.fill();
+		ctx.restore();
 	}
 }
-
-base = new Base(20, 50, 40, 20, 50, "black");
-base.draw();
