@@ -1,10 +1,9 @@
 import { Waypoints } from './waypoints.js'
 
 export class Enemy {
-    constructor(id, x, y, health, damage, speed, name) {
+    constructor(id, position, health, damage, speed, name) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.position = position;
         this.health = health;
         this.damage = damage;
         this.speed = speed;
@@ -24,7 +23,7 @@ export class Enemy {
     draw(ctx) {
         ctx.save();
         ctx.fillStyle = "black";
-        ctx.fillRect(this.x, this.y, 26, 26);
+        ctx.fillRect(this.position.x, this.position.y, 26, 26);
         ctx.restore();
     }
 
@@ -35,8 +34,8 @@ export class Enemy {
         }
 
         const waypoint = Waypoints[this.waypointIndex];
-        const xDistance = waypoint.x - this.x;
-        const yDistance = waypoint.y - this.y;
+        const xDistance = waypoint.x - this.position.x;
+        const yDistance = waypoint.y - this.position.y;
         const angle = Math.atan2(yDistance, xDistance);
 
         const distance = Math.hypot(waypoint.x - this.x, waypoint.y - this.y);
@@ -47,12 +46,12 @@ export class Enemy {
 
         const moveDistance = this.speed * delta;
 
-        this.x += Math.cos(angle) * moveDistance;
-        this.y += Math.sin(angle) * moveDistance;
+        this.position.x += Math.cos(angle) * moveDistance;
+        this.position.y += Math.sin(angle) * moveDistance;
 
         if (
-            Math.round(this.x) == Math.round(waypoint.x) &&
-            Math.round(this.y) == Math.round(waypoint.y)) {
+            Math.round(this.position.x) == Math.round(waypoint.x) &&
+            Math.round(this.position.y) == Math.round(waypoint.y)) {
             this.waypointIndex++;
         }
     }

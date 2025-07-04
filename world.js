@@ -18,8 +18,10 @@ export class World {
     }
 
     update(delta) {
-        this.towers.forEach(tower => tower.update(delta, this.enemies))
-        this.enemies.forEach(enemy => enemy.update(delta))
+        this.towers.forEach(tower => tower.update(delta, this.enemies));
+        this.enemies.forEach(enemy => enemy.update(delta));
+
+        this.enemies = this.enemies.filter(enemy => enemy.isAlive());
     }
 
     draw(ctx) {

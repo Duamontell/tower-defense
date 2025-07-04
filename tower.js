@@ -43,8 +43,8 @@ export class Tower {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
 
-            const dx = enemy.x + 13 - this.position.x;
-            const dy = enemy.y + 13 - this.position.y;
+            const dx = enemy.position.x + 13 - this.position.x;
+            const dy = enemy.position.y + 13 - this.position.y;
             const distance = Math.hypot(dx, dy);
             
             return distance <= this.radius;
@@ -72,18 +72,18 @@ export class Tower {
 
 export class ArchersTower extends Tower {
     constructor(position) {
-        super('Archers', 10, 100, 50, position, 'single', 1, 'red');
+        super('Archers', 10, 100, 50, position, 'single', 3, 'red');
     }
 }
 
 export class MagicianTower extends Tower {
     constructor(position) {
-        super('Magician', 20, 100, 150, position, 'single', 2, 'green');
+        super('Magician', 20, 100, 150, position, 'single', 5, 'green');
     }
 }
 
 export class MortarTower extends Tower {
     constructor(position) {
-        super('Mortar', 60, 100, 300, position, 'area', 3, 'blue');
+        super('Mortar', 60, 100, 300, position, 'area', 7, 'blue');
     }
 }
