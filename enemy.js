@@ -1,4 +1,4 @@
-import { Waypoints, Controls } from './waypoints.js'
+import { Waypoints } from './waypoints.js'
 
 export class Enemy {
     constructor(id, x, y, health, damage, speed, name) {
@@ -30,29 +30,61 @@ export class Enemy {
     }
 
     update(delta) {
-        if (this.waypointIndex == Waypoints.length - 1) {
+        if (this.waypointIndex == Waypoints.length) {
             // Враг дошёл до базы
             this.waypointIndex = 0;
-            return;
         }
 
         const waypoint = Waypoints[this.waypointIndex];
-        const nextWaypoint = Waypoints[this.waypointIndex + 1];
-        const distance = Math.hypot(nextWaypoint.x - waypoint.x, nextWaypoint.y - waypoint.y);
-        this.progressOnWaypoint += (this.speed * delta) / distance;
 
-        this.x = Math.pow(1 - this.progressOnWaypoint, 2) * waypoint.x +
-            2 * (1 - this.progressOnWaypoint) * this.progressOnWaypoint *
-            50 + Math.pow(this.progressOnWaypoint, 2) * nextWaypoint.x;
-        this.y = Math.pow(1 - this.progressOnWaypoint, 2) * waypoint.y +
-            2 * (1 - this.progressOnWaypoint) * this.progressOnWaypoint *
-            250 + Math.pow(this.progressOnWaypoint, 2) * nextWaypoint.y;
+        const from = waypoint.from;
+        const to = waypoint.to;
+        const control = waypoint.control;
+        const step = this.speed * delta;
+        const startX = this.x;
+        const startY = this.y;
+        const getPoint = (t) => {
+            if (waypoint.type === 'linear') {
+                return {
+                    x: (1 - t) * from.x + t * to.x,
+                    y: (1 - t) * from.y + t * to.y
+                };
+            } else {
+                return {
+                    x: Math.pow(1 - t, 2) * from.x
+                        + 2 * (1 - t) * t * control.x
+                        + Math.pow(t, 2) * to.x,
+                    y: Math.pow(1 - t, 2) * from.y
+                        + 2 * (1 - t) * t * control.y
+                        + Math.pow(t, 2) * to.y
+                };
+            };
+        };
+
+        let low = this.progressOnWaypoint;
+        let high = 1;
+        let mid = low;
+        for (let i = 0; i < 15; i++) {
+            mid = (low + high) / 2;
+            const newPoint = getPoint(mid);
+            const d = Math.hypot(newPoint.x - startX, newPoint.y - startY);
+            if (d < step) {
+                low = mid;
+            } else {
+                high = mid;
+            }
+        }
+
+        this.progressOnWaypoint = low;
+        const newPt = getPoint(this.progressOnWaypoint);
+        this.x = newPt.x;
+        this.y = newPt.y;
 
         if (this.progressOnWaypoint >= 1) {
             this.waypointIndex++;
             this.progressOnWaypoint = 0;
-            this.x = nextWaypoint.x;
-            this.y = nextWaypoint.y;
+            this.x = waypoint.to.x;
+            this.y = waypoint.to.y;
             return;
         }
     }
