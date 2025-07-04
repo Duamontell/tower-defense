@@ -1,4 +1,4 @@
-import { Waypoints, Controls } from './waypoints.js'
+import { Waypoints } from './waypoints.js'
 
 export class Enemy {
     constructor(id, x, y, health, damage, speed, name) {
@@ -38,6 +38,8 @@ export class Enemy {
 
         const waypoint = Waypoints[this.waypointIndex];
         const nextWaypoint = Waypoints[this.waypointIndex + 1];
+
+        // Гарант константной скорости на прямых участках(без дуг)
         const distance = Math.hypot(nextWaypoint.x - waypoint.x, nextWaypoint.y - waypoint.y);
         this.progressOnWaypoint += (this.speed * delta) / distance;
 
