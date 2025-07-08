@@ -1,5 +1,5 @@
 import { World } from './world.js';
-import { Enemy } from './enemy.js';
+import { OrkEnemy } from './enemy.js';
 import { ArchersTower, MagicianTower, MortarTower } from './tower.js';
 import { Base } from './base.js';
 
@@ -60,7 +60,7 @@ fetch(`/config/level${currentLevel}.json`)
             world.addTower(tower);
         });
 
-        const enemy = new Enemy(1, { x: config.waypoints[0].x, y: config.waypoints[0].y }, 1000, 5, 40, 'Orc', config.waypoints, '/images/Ork.png');
+        const enemy = new OrkEnemy({ x: config.waypoints[0].x, y: config.waypoints[0].y }, config.waypoints);
         world.addEnemy(enemy);
 
         background.onload = () => {

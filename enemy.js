@@ -1,13 +1,11 @@
-import { Waypoints } from './waypoints.js'
-
 export class Enemy {
-    constructor(id, position, health, damage, speed, name, waypoints, imageSrc) {
+    constructor(id, name, position, health, damage, speed, waypoints, imageSrc) {
         this.id = id;
+        this.name = name;
         this.position = position;
         this.health = health;
         this.damage = damage;
         this.speed = speed;
-        this.name = name;
         this.waypoints = waypoints;
         this.waypointIndex = 0;
         this.image = new Image;
@@ -71,5 +69,23 @@ export class Enemy {
 
     isAlive() {
         return this.health > 0;
+    }
+}
+
+export class OrkEnemy extends Enemy {
+    constructor(position, waypoints) {
+        super(1, 'Orc', position, 1000, 100, 40, waypoints, '/images/Ork.png');
+    }
+}
+
+export class ZombieEnemy extends Enemy {
+    constructor(position, waypoints) {
+        super(1, 'Zombie', position, 1000, 100, 40, waypoints, '/images/Zombie.png');
+    }
+}
+
+export class GoblinEnemy extends Enemy {
+    constructor(position, waypoints) {
+        super(1, 'Goblin', position, 1000, 100, 40, waypoints, '/images/Goblin.png');
     }
 }

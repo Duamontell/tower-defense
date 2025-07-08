@@ -23,6 +23,7 @@
       }
     }
   ],
+
   "waypoints": [
     {
       "x": 1561,
@@ -33,6 +34,7 @@
       "y": 502
     }
   ],
+
   "base": {
     "health": 20,
     "position": {
@@ -41,6 +43,7 @@
     },
     "imageSrc": "/images/Base.png"
   },
+  
   "towerZones": [
     {
       "topLeft": {
