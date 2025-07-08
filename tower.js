@@ -1,10 +1,12 @@
 export class Tower {
-    constructor(name, damage, radius, price, position, attackType, cooldown, imageSrc) {
+    constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc) {
         this.name = name;
         this.damage = damage;
         this.radius = radius;
         this.price = price;
         this.position = position;
+        this.width = width;
+        this.height = height;
         this.attackType = attackType;
         this.cooldown = cooldown;
         this.timeUntilNextShot = 0;
@@ -33,10 +35,8 @@ export class Tower {
         // ctx.lineWidth = 2;
         // ctx.stroke();
 
-        const imgWidth = 300;
-        const imgHeight = 300;
         if (!this.isLoaded) return;
-        ctx.drawImage(this.image, this.position.x - imgWidth / 2, this.position.y - imgHeight / 2, imgWidth, imgHeight);
+        ctx.drawImage(this.image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
 
         ctx.restore();
     }
@@ -45,8 +45,8 @@ export class Tower {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
 
-            const dx = enemy.position.x + 13 - this.position.x;
-            const dy = enemy.position.y + 13 - this.position.y;
+            const dx = enemy.position.x + (enemy.width / 2) - this.position.x;
+            const dy = enemy.position.y + (enemy.height / 2) - this.position.y;
             const distance = Math.hypot(dx, dy);
 
             return distance <= this.radius;
@@ -74,18 +74,18 @@ export class Tower {
 
 export class ArchersTower extends Tower {
     constructor(position) {
-        super('Archers', 10, 350, 50, position, 'single', 3, '/images/TowerArchers.png');
+        super('Archers', 10, 350, 50, position, 300, 300, 'single', 3, '/images/TowerArchers.png');
     }
 }
 
 export class MagicianTower extends Tower {
     constructor(position) {
-        super('Magician', 20, 300, 150, position, 'single', 5, '/images/TowerMagicians.png');
+        super('Magician', 20, 300, 150, position, 300, 300, 'single', 5, '/images/TowerMagicians.png');
     }
 }
 
 export class MortarTower extends Tower {
     constructor(position) {
-        super('Mortar', 60, 500, 300, position, 'area', 7, '/images/MortarTower.png');
+        super('Mortar', 60, 500, 300, position, 300, 300, 'area', 7, '/images/MortarTower.png');
     }
 }

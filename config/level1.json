@@ -26,7 +26,7 @@
 
   "waypoints": [
     {
-      "x": 1561,
+      "x": 1461,
       "y": 502
     },
     {
@@ -41,9 +41,11 @@
       "x": 100,
       "y": 450
     },
+    "width": 300,
+    "height": 300,
     "imageSrc": "/images/Base.png"
   },
-  
+
   "towerZones": [
     {
       "topLeft": {

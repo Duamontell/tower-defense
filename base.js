@@ -1,7 +1,9 @@
 export class Base {
-	constructor(health, position, imageSrc) {
+	constructor(health, position, width, height, imageSrc) {
 		this.health = health;
 		this.position = position;
+		this.width = width;
+        this.height = height;
 		this.image = new Image;
         this.image.onload = () => {
             this.isLoaded = true;
@@ -19,10 +21,8 @@ export class Base {
 
 	draw(ctx) {
 		ctx.save();
-		const imgWidth = 300;
-        const imgHeight = 300;
         if (!this.isLoaded) return;
-        ctx.drawImage(this.image, this.position.x - imgWidth / 2, this.position.y - imgHeight / 2, imgWidth, imgHeight);
+        ctx.drawImage(this.image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
 		ctx.restore();
 	}
 }

@@ -1,8 +1,10 @@
 export class Enemy {
-    constructor(id, name, position, health, damage, speed, waypoints, imageSrc) {
+    constructor(id, name, position, width, height, health, damage, speed, waypoints, imageSrc) {
         this.id = id;
         this.name = name;
         this.position = position;
+        this.width = width;
+        this.height = height;
         this.health = health;
         this.damage = damage;
         this.speed = speed;
@@ -26,10 +28,8 @@ export class Enemy {
 
     draw(ctx) {
         ctx.save();
-        const imgWidth = 150;
-        const imgHeight = 150;
         if (!this.isLoaded) return;
-        ctx.drawImage(this.image, this.position.x - imgWidth / 2, this.position.y - imgHeight / 2, imgWidth, imgHeight);
+        ctx.drawImage(this.image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
         ctx.restore();
     }
 
@@ -74,18 +74,18 @@ export class Enemy {
 
 export class OrkEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Orc', position, 1000, 100, 40, waypoints, '/images/Ork.png');
+        super(1, 'Orc', position, 150, 150, 1000, 100, 40, waypoints, '/images/Ork.png');
     }
 }
 
 export class ZombieEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Zombie', position, 1000, 100, 40, waypoints, '/images/Zombie.png');
+        super(1, 'Zombie', position, 150, 150, 1000, 100, 40, waypoints, '/images/Zombie.png');
     }
 }
 
 export class GoblinEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Goblin', position, 1000, 100, 40, waypoints, '/images/Goblin.png');
+        super(1, 'Goblin', position, 150, 150, 1000, 100, 40, waypoints, '/images/Goblin.png');
     }
 }

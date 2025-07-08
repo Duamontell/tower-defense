@@ -39,7 +39,7 @@ fetch(`/config/level${currentLevel}.json`)
         world = new World();
 
         const baseData = config.base;
-        world.addBase(new Base(baseData.health, baseData.position, baseData.imageSrc));
+        world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
 
         config.towers.forEach(towerData => {
             let tower;
