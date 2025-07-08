@@ -1,14 +1,20 @@
 import { Waypoints } from './waypoints.js'
 
 export class Enemy {
-    constructor(id, position, health, damage, speed, name) {
+    constructor(id, position, health, damage, speed, name, waypoints, imageSrc) {
         this.id = id;
         this.position = position;
         this.health = health;
         this.damage = damage;
         this.speed = speed;
         this.name = name;
+        this.waypoints = waypoints;
         this.waypointIndex = 0;
+        this.image = new Image;
+        this.image.onload = () => {
+            this.isLoaded = true;
+        };
+        this.image.src = imageSrc;
     }
 
     doDamage() {
@@ -22,23 +28,25 @@ export class Enemy {
 
     draw(ctx) {
         ctx.save();
-        ctx.fillStyle = "black";
-        ctx.fillRect(this.position.x, this.position.y, 26, 26);
+        const imgWidth = 150;
+        const imgHeight = 150;
+        if (!this.isLoaded) return;
+        ctx.drawImage(this.image, this.position.x - imgWidth / 2, this.position.y - imgHeight / 2, imgWidth, imgHeight);
         ctx.restore();
     }
 
     update(delta) {
-        if (this.waypointIndex == Waypoints.length - 1) {
+        if (this.waypointIndex == this.waypoints.length - 1) {
             // Враг дошёл до базы
             this.waypointIndex = 0
         }
 
-        const waypoint = Waypoints[this.waypointIndex];
+        const waypoint = this.waypoints[this.waypointIndex];
         const xDistance = waypoint.x - this.position.x;
         const yDistance = waypoint.y - this.position.y;
         const angle = Math.atan2(yDistance, xDistance);
 
-        const distance = Math.hypot(waypoint.x - this.x, waypoint.y - this.y);
+        const distance = Math.hypot(waypoint.x - this.position.x, waypoint.y - this.position.y);
         if (distance < 1) {
             this.waypointIndex++;
             return;

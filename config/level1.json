@@ -1,0 +1,66 @@
+{
+  "backgroundImage": "/images/first_level.png",
+  "towers": [
+    {
+      "type": "ArchersTower",
+      "position": {
+        "x": 661,
+        "y": 270
+      }
+    },
+    {
+      "type": "MagicianTower",
+      "position": {
+        "x": 919,
+        "y": 613
+      }
+    },
+    {
+      "type": "MortarTower",
+      "position": {
+        "x": 1197,
+        "y": 270
+      }
+    }
+  ],
+  "waypoints": [
+    {
+      "x": 1561,
+      "y": 502
+    },
+    {
+      "x": 178,
+      "y": 502
+    }
+  ],
+  "base": {
+    "health": 20,
+    "position": {
+      "x": 100,
+      "y": 450
+    },
+    "imageSrc": "/images/Base.png"
+  },
+  "towerZones": [
+    {
+      "topLeft": {
+        "x": 100,
+        "y": 100
+      },
+      "bottomRight": {
+        "x": 200,
+        "y": 200
+      }
+    },
+    {
+      "topLeft": {
+        "x": 300,
+        "y": 300
+      },
+      "bottomRight": {
+        "x": 400,
+        "y": 400
+      }
+    }
+  ]
+}
