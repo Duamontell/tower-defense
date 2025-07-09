@@ -76,7 +76,7 @@ export class OrkEnemy extends Enemy {
 
 export class ZombieEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Zombie', position, 150, 150, 200, 100, 40, waypoints, '/images/Zombie.gif');
+        super(1, 'Zombie', position, 150, 150, 200, 100, 40, waypoints, '/images/Zombie.png');
     }
 }
 

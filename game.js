@@ -1,6 +1,7 @@
 import { World } from './world.js';
 import { ArchersTower, MagicianTower, MortarTower } from './tower.js';
 import { Base } from './base.js';
+import { TowerPanel } from './towerPanel.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -14,6 +15,8 @@ let currentWave = 0;
 let config = {};
 let waves = {};
 let maxWave;
+let towerPanel;
+let selectedTowerType = null;
 
 function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -43,10 +46,32 @@ function gameLoop(timestamp = 0) {
 
     world.update(delta);
     world.draw(ctx);
+    towerPanel.draw();
 
     requestAnimationFrame(gameLoop);
 
 }
+
+// для отрисовки выбранной башни с панели на карте по клику
+canvas.addEventListener('click', (event) => {
+
+    const coords = getClickCoordinates(canvas, event);
+    const clickedTower = towerPanel.handleClick(coords.x, coords.y);
+
+    if (clickedTower) {
+        selectedTowerType = clickedTower.constructor;
+        console.log('Выбрана башня:', clickedTower.name);
+    } else if (selectedTowerType) {
+        const newTower = new selectedTowerType({ x: coords.x, y: coords.y });
+        world.addTower(newTower);
+
+        console.log(`Поставлена башня ${newTower.name} на позицию`, coords);
+        selectedTowerType = null;
+
+    } else {
+        console.log('Клик по карте', coords);
+    }
+});
 
 let response = await fetch(`/config/level${currentLevel}.json`)
 if (response.ok) {
@@ -65,13 +90,13 @@ function initializeLevel(config) {
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
 
     //Временная инициализация стартовых башен на уровне, в дальнейшем - все башни будут созданы только игроком
-    let tower = new ArchersTower({x: 661, y: 270});
-    world.addTower(tower);
-    tower = new MagicianTower({x: 919, y: 613});
-    world.addTower(tower);
-    tower = new MortarTower({x: 1197, y: 270});
-    world.addTower(tower);
-    //
+    // let tower = new ArchersTower({ x: 661, y: 270 });
+    // world.addTower(tower);
+    // tower = new MagicianTower({ x: 919, y: 613 });
+    // world.addTower(tower);
+    // tower = new MortarTower({ x: 1197, y: 270 });
+    // world.addTower(tower);
+
 
     canvas.addEventListener('click', (event) => {
         const coords = getClickCoordinates(canvas, event);
@@ -82,4 +107,23 @@ function initializeLevel(config) {
     world.waypoints = config.waypoints;
     maxWave = config.waves[0];
 
+    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height);
+
+    const archerTower = new ArchersTower({ x: 0, y: 0 });
+    const magicianTower = new MagicianTower({ x: 0, y: 0 });
+    const mortarTower = new MortarTower({ x: 0, y: 0 });
+
+    // для теста
+    // const mortarTower2 = new MortarTower({ x: 0, y: 0 });
+    // const mortarTower3 = new MortarTower({ x: 0, y: 0 });
+    // const mortarTower4 = new MortarTower({ x: 0, y: 0 });
+    // const mortarTower5 = new MortarTower({ x: 0, y: 0 });
+
+    towerPanel.addTower(archerTower);
+    towerPanel.addTower(magicianTower);
+    towerPanel.addTower(mortarTower);
+    // towerPanel.addTower(mortarTower2);
+    // towerPanel.addTower(mortarTower3);
+    // towerPanel.addTower(mortarTower4);
+    // towerPanel.addTower(mortarTower5);
 }
