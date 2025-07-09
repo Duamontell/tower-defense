@@ -19,6 +19,9 @@ function getClickCoordinates(canvas, event) {
 }
 
 function gameLoop(timestamp = 0) {
+    if (world.gameOver) {
+        return;   
+    }
     const delta = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
 
@@ -61,6 +64,7 @@ fetch(`/config/level${currentLevel}.json`)
         });
 
         const enemy = new OrkEnemy({ x: config.waypoints[0].x, y: config.waypoints[0].y }, config.waypoints);
+        world.addEnemy(enemy);
         world.addEnemy(enemy);
 
         background.onload = () => {

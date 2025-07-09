@@ -3,6 +3,7 @@ export class World {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
+        this.gameOver = false;
     }
 
     addTower(tower) {
@@ -29,6 +30,11 @@ export class World {
             return enemy.isAlive();
         });
         console.log(this.bases[0].health);
+        if (this.bases.some(base => base.isDestroyed)) {
+            this.gameOver = true;
+            alert('Игра окончена! Ваша база уничтожена.');
+            return;
+        }
     }
 
     draw(ctx) {
