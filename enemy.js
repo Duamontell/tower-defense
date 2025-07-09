@@ -36,7 +36,7 @@ export class Enemy {
     update(delta) {
         if (this.waypointIndex == this.waypoints.length - 1) {
             // Враг дошёл до базы
-            this.waypointIndex = 0
+            // this.waypointIndex = 0 // СТОИТ НА МЕСТЕ ПРИ ДВУХ ТОЧКАХ
         }
 
         const waypoint = this.waypoints[this.waypointIndex];
@@ -59,6 +59,8 @@ export class Enemy {
             Math.round(this.position.x) == Math.round(waypoint.x) &&
             Math.round(this.position.y) == Math.round(waypoint.y)) {
             this.waypointIndex++;
+            this.position.x = waypoint.x;
+            this.position.y = waypoint.y;
         }
     }
 

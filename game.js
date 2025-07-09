@@ -67,9 +67,25 @@ fetch(`/config/level${currentLevel}.json`)
             gameLoop();
         };
 
+        function isInTowerZone(x, y) {
+            return config.towerZones.some(zone =>
+                x >= zone.topLeft.x && x <= zone.bottomRight.x &&
+                y >= zone.topLeft.y && y <= zone.bottomRight.y
+            );
+        }
+
         canvas.addEventListener('click', (event) => {
             const coords = getClickCoordinates(canvas, event);
             console.log('Клик по координатам:', coords.x, coords.y);
+
+            if (isInTowerZone(coords.x, coords.y)) {
+                const tower = new ArchersTower({ x: coords.x, y: coords.y });
+                world.addTower(tower);
+                console.log(`Башня добавлена по клику в зоне: (${coords.x}, ${coords.y})`);
+            } else {
+                console.log('Нельзя поставить башню вне разрешённых зон');
+            }
+
         });
     })
     .catch(err => {
