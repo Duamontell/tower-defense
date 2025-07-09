@@ -29,17 +29,20 @@ export class TowerPanel {
         for (const tower of this.towers) {
             const tx = tower.panelPosition.x;
             const ty = tower.panelPosition.y;
+            const halfWidth = this.iconWidth / 2;
+            const halfHeight = this.iconHeight / 2;
+    
             if (
-                x >= tx - tower.width / 2 &&
-                x <= tx + tower.width / 2 &&
-                y >= ty - tower.height / 2 &&
-                y <= ty + tower.height / 2
+                x >= tx - halfWidth &&
+                x <= tx + halfWidth &&
+                y >= ty - halfHeight &&
+                y <= ty + halfHeight
             ) {
                 return tower;
             }
         }
         return null;
-    }
+    }    
 
     #updatePositions() {
         const maxWidth = this.width;

@@ -49,7 +49,6 @@ function gameLoop(timestamp = 0) {
     towerPanel.draw();
 
     requestAnimationFrame(gameLoop);
-
 }
 
 // для отрисовки выбранной башни с панели на карте по клику
