@@ -1,10 +1,14 @@
 export class Base {
-	constructor(health, position, width, heigth, color) {
+	constructor(health, position, width, height, imageSrc) {
 		this.health = health;
 		this.position = position;
 		this.width = width;
-		this.heigth = heigth;
-		this.color = color;
+        this.height = height;
+		this.image = new Image;
+        this.image.onload = () => {
+            this.isLoaded = true;
+        };
+        this.image.src = imageSrc;
 	}
 
 	recieveDamage(damage) {
@@ -17,10 +21,8 @@ export class Base {
 
 	draw(ctx) {
 		ctx.save();
-		ctx.fillStyle = this.color;
-		ctx.beginPath();
-		ctx.rect(this.position.x, this.position.y, this.width, this.heigth);
-		ctx.fill();
+        if (!this.isLoaded) return;
+        ctx.drawImage(this.image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
 		ctx.restore();
 	}
 }
