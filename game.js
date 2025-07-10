@@ -25,9 +25,17 @@ function getClickCoordinates(canvas, event) {
     return { x, y };
 }
 
+// Можно оставить эту функция для выноса логики из world
+// function isInTowerZone(x, y) {
+//     return config.towerZones.some(zone =>
+//         x >= zone.topLeft.x && x <= zone.bottomRight.x &&
+//         y >= zone.topLeft.y && y <= zone.bottomRight.y
+//     );
+// }
+
 function gameLoop(timestamp = 0) {
     if (world.gameOver) {
-        return;   
+        return;
     }
     const delta = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
@@ -56,22 +64,28 @@ function gameLoop(timestamp = 0) {
 
 // для отрисовки выбранной башни с панели на карте по клику
 canvas.addEventListener('click', (event) => {
-
-    const coords = getClickCoordinates(canvas, event);
-    const clickedTower = towerPanel.handleClick(coords.x, coords.y);
+    const { x, y } = getClickCoordinates(canvas, event);
+    const clickedTower = towerPanel.handleClick(x, y);
 
     if (clickedTower) {
         selectedTowerType = clickedTower.constructor;
         console.log('Выбрана башня:', clickedTower.name);
     } else if (selectedTowerType) {
-        const newTower = new selectedTowerType({ x: coords.x, y: coords.y });
-        world.addTower(newTower);
 
-        console.log(`Поставлена башня ${newTower.name} на позицию`, coords);
+        // if (isInTowerZone(x, y)) {
+        // const newTower = new selectedTowerType({ x: x, y: y });
+        const placed = world.tryPlaceTower(x, y, selectedTowerType);
+
+        if (placed) {
+            console.log(`Поставлена башня ${selectedTowerType.name} на позицию`, { x, y });
+        }
+        // } else {
+        // console.log('Нельзя поставить башню вне разрешённых зон');
+        // }
         selectedTowerType = null;
 
     } else {
-        console.log('Клик по карте', coords);
+        console.log('Клик по карте', { x, y });
     }
 });
 
@@ -86,7 +100,7 @@ gameLoop();
 function initializeLevel(config) {
     background.src = config.backgroundImage;
 
-    world = new World();
+    world = new World(config.towerZones);
 
     const baseData = config.base;
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
@@ -99,11 +113,11 @@ function initializeLevel(config) {
     // tower = new MortarTower({ x: 1197, y: 270 });
     // world.addTower(tower);
 
-
-    canvas.addEventListener('click', (event) => {
-        const coords = getClickCoordinates(canvas, event);
-        console.log('Клик по координатам:', coords.x, coords.y);
-    });
+    // Дублирование ивента клика по канвасу?
+    // canvas.addEventListener('click', (event) => {
+    //     const coords = getClickCoordinates(canvas, event);
+    //     console.log('Клик по координатам:', coords.x, coords.y);
+    // });
 
     waves = config.waves;
     world.waypoints = config.waypoints;
