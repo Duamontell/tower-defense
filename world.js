@@ -5,6 +5,7 @@ export class World {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
+        this.gameOver = false;
         this.waypoints = [];
     }
 
@@ -45,7 +46,20 @@ export class World {
     update(delta) {
         this.towers.forEach(tower => tower.update(delta, this.enemies));
         this.enemies.forEach(enemy => enemy.update(delta));
-        this.enemies = this.enemies.filter(enemy => enemy.isAlive());
+
+        this.enemies = this.enemies.filter(enemy => {
+            if (enemy.reachedEnd) {
+                this.bases.forEach(base => base.recieveDamage(enemy.damage));
+                return false;
+            }
+            return enemy.isAlive();
+        });
+        console.log(this.bases[0].health);
+        if (this.bases.some(base => base.isDestroyed)) {
+            this.gameOver = true;
+            alert('Игра окончена! Ваша база уничтожена.');
+            return;
+        }
     }
 
     draw(ctx) {

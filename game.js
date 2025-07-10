@@ -26,6 +26,9 @@ function getClickCoordinates(canvas, event) {
 }
 
 function gameLoop(timestamp = 0) {
+    if (world.gameOver) {
+        return;   
+    }
     const delta = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
 

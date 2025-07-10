@@ -10,6 +10,7 @@ export class Enemy {
         this.speed = speed;
         this.waypoints = waypoints;
         this.waypointIndex = 0;
+        this.reachedEnd = false;
         this.image = new Image;
         this.image.onload = () => {
             this.isLoaded = true;
@@ -30,9 +31,10 @@ export class Enemy {
     }
 
     update(delta) {
-        if (this.waypointIndex == this.waypoints.length - 1) {
+        if (this.waypointIndex >= this.waypoints.length) {
+            this.reachedEnd = true;
             // Враг дошёл до базы
-            // this.waypointIndex = 0 // СТОИТ НА МЕСТЕ ПРИ ДВУХ ТОЧКАХ
+            this.waypointIndex = 0 // СТОИТ НА МЕСТЕ ПРИ ДВУХ ТОЧКАХ
         }
 
         const waypoint = this.waypoints[this.waypointIndex];
@@ -41,7 +43,7 @@ export class Enemy {
         const angle = Math.atan2(yDistance, xDistance);
 
         const distance = Math.hypot(waypoint.x - this.position.x, waypoint.y - this.position.y);
-        if (distance < 1) {
+        if (distance < 2) {
             this.waypointIndex++;
             return;
         }
@@ -72,7 +74,8 @@ export class Enemy {
 
 export class OrkEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Orc', position, 150, 150, 100, 100, 40, waypoints, '/images/Ork.png');
+        super(1, 'Orc', position, 150, 150, 1000, 10, 500, waypoints, '/images/Ork.png');
+
     }
 }
 
