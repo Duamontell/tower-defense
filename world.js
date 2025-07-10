@@ -1,12 +1,13 @@
 import { GoblinEnemy, OrkEnemy, ZombieEnemy } from './enemy.js';
 
 export class World {
-    constructor() {
+    constructor(changeBalance) {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
         this.gameOver = false;
         this.waypoints = [];
+        this.changeBalance = changeBalance
     }
 
     addTower(tower) {
@@ -52,8 +53,16 @@ export class World {
                 this.bases.forEach(base => base.recieveDamage(enemy.damage));
                 return false;
             }
-            return enemy.isAlive();
+            if (!enemy.isAlive()) {
+                if (this.changeBalance) {
+                    this.changeBalance(enemy.reward);
+                    console.log(enemy.reward)
+                }
+                return false;
+            }
+            return true
         });
+
         console.log(this.bases[0].health);
         if (this.bases.some(base => base.isDestroyed)) {
             this.gameOver = true;
@@ -67,5 +76,5 @@ export class World {
         this.bases.forEach(base => base.draw(ctx));
         this.enemies.forEach(enemy => enemy.draw(ctx));
     }
-    
+
 }

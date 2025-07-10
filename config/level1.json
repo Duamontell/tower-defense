@@ -1,5 +1,8 @@
 {
   "backgroundImage": "/images/first_level.png",
+
+  "startingBalance": 100,
+
   "waypoints": [
     {
       "x": 1461,
@@ -12,7 +15,7 @@
   ],
 
   "base": {
-    "health": 20,
+    "health": 200,
     "position": {
       "x": 100,
       "y": 450
