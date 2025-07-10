@@ -22,10 +22,6 @@ export class Enemy {
         this.death();
     }
 
-    death() {
-        console.log("enemy died");
-    }
-
     draw(ctx) {
         ctx.save();
         if (!this.isLoaded) return;
@@ -76,18 +72,18 @@ export class Enemy {
 
 export class OrkEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Orc', position, 150, 150, 1000, 100, 40, waypoints, '/images/Ork.png');
+        super(1, 'Orc', position, 150, 150, 100, 100, 40, waypoints, '/images/Ork.png');
     }
 }
 
 export class ZombieEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Zombie', position, 150, 150, 1000, 100, 40, waypoints, '/images/Zombie.png');
+        super(1, 'Zombie', position, 150, 150, 200, 100, 40, waypoints, '/images/Zombie.png');
     }
 }
 
 export class GoblinEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Goblin', position, 150, 150, 1000, 100, 40, waypoints, '/images/Goblin.png');
+        super(1, 'Goblin', position, 150, 150, 700, 100, 40, waypoints, '/images/Goblin.png');
     }
 }
