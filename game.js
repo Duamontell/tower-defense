@@ -74,28 +74,27 @@ function gameLoop(timestamp = 0) {
 
 // для отрисовки выбранной башни с панели на карте по клику
 canvas.addEventListener('click', (event) => {
-
-    const coords = getClickCoordinates(canvas, event);
-    const clickedTower = towerPanel.handleClick(coords.x, coords.y);
+    const { x, y } = getClickCoordinates(canvas, event);
+    const clickedTower = towerPanel.handleClick(x, y);
 
     if (clickedTower) {
         selectedTowerType = clickedTower.constructor;
         console.log('Выбрана башня:', clickedTower.name, clickedTower.price);
     } else if (selectedTowerType) {
         const towerCost = selectedTowerType.price;
-        if (balance >= towerCost) {
-            changeBalance(-towerCost);
-            const newTower = new selectedTowerType({ x: coords.x, y: coords.y });
-            world.addTower(newTower);
-            console.log(`Поставлена башня ${newTower.name} на позицию`, coords);
+        if (balance >= towerCost) { 
+            const placed = world.tryPlaceTower(x, y, selectedTowerType);
+            if (placed) {
+              changeBalance(-towerCost);
+              console.log(`Поставлена башня ${selectedTowerType.name} на позицию`, { x, y });
+            }
         }
         else {
             console.log('Недостаточно средств для покупки башни!');
         }
         selectedTowerType = null;
-
     } else {
-        console.log('Клик по карте', coords);
+        console.log('Клик по карте', { x, y });
     }
 });
 
@@ -110,15 +109,11 @@ gameLoop();
 function initializeLevel(config) {
     background.src = config.backgroundImage;
 
-    world = new World(changeBalance);
+    world = new World(changeBalance, config.towerZones);
+
 
     const baseData = config.base;
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
-
-    canvas.addEventListener('click', (event) => {
-        const coords = getClickCoordinates(canvas, event);
-        console.log('Клик по координатам:', coords.x, coords.y);
-    });
 
     waves = config.waves;
     world.waypoints = config.waypoints;
