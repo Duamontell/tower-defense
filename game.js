@@ -17,6 +17,13 @@ let waves = {};
 let maxWave;
 let towerPanel;
 let selectedTowerType = null;
+let balance = 0;
+
+function changeBalance(amount) {
+    balance += amount;
+    if (balance < 0) balance = 0;
+}
+
 
 function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -24,6 +31,16 @@ function getClickCoordinates(canvas, event) {
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
     return { x, y };
 }
+
+function drawBalancePanel(ctx, balance) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(10, 10, 150, 40);
+
+    ctx.fillStyle = 'white';
+    ctx.font = '20px Arial';
+    ctx.fillText(`Баланс: ${balance}`, 20, 38);
+}
+
 
 function gameLoop(timestamp = 0) {
     if (world.gameOver) {
@@ -50,6 +67,7 @@ function gameLoop(timestamp = 0) {
     world.update(delta);
     world.draw(ctx);
     towerPanel.draw();
+    drawBalancePanel(ctx, balance);
 
     requestAnimationFrame(gameLoop);
 }
@@ -61,13 +79,19 @@ canvas.addEventListener('click', (event) => {
 
     if (clickedTower) {
         selectedTowerType = clickedTower.constructor;
-        console.log('Выбрана башня:', clickedTower.name);
+        console.log('Выбрана башня:', clickedTower.name, clickedTower.price);
     } else if (selectedTowerType) {
-        const placed = world.tryPlaceTower(x, y, selectedTowerType);
-        if (placed) {
-            console.log(`Поставлена башня ${selectedTowerType.name} на позицию`, { x, y });
+        const towerCost = selectedTowerType.price;
+        if (balance >= towerCost) { 
+            const placed = world.tryPlaceTower(x, y, selectedTowerType);
+            if (placed) {
+              changeBalance(-towerCost);
+              console.log(`Поставлена башня ${selectedTowerType.name} на позицию`, { x, y });
+            }
         }
-
+        else {
+            console.log('Недостаточно средств для покупки башни!');
+        }
         selectedTowerType = null;
     } else {
         console.log('Клик по карте', { x, y });
@@ -85,40 +109,24 @@ gameLoop();
 function initializeLevel(config) {
     background.src = config.backgroundImage;
 
-    world = new World(config.towerZones);
+    world = new World(changeBalance, config.towerZones);
+
 
     const baseData = config.base;
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
 
-    //Временная инициализация стартовых башен на уровне, в дальнейшем - все башни будут созданы только игроком
-    // let tower = new ArchersTower({ x: 661, y: 270 });
-    // world.addTower(tower);
-    // tower = new MagicianTower({ x: 919, y: 613 });
-    // world.addTower(tower);
-    // tower = new MortarTower({ x: 1197, y: 270 });
-    // world.addTower(tower);
-
     waves = config.waves;
     world.waypoints = config.waypoints;
     maxWave = config.waves[0];
+    balance = config.startingBalance || 0;
 
-    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height);
+    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, () => balance);
 
     const archerTower = new ArchersTower({ x: 0, y: 0 });
     const magicianTower = new MagicianTower({ x: 0, y: 0 });
     const mortarTower = new MortarTower({ x: 0, y: 0 });
 
-    // для теста
-    // const mortarTower2 = new MortarTower({ x: 0, y: 0 });
-    // const mortarTower3 = new MortarTower({ x: 0, y: 0 });
-    // const mortarTower4 = new MortarTower({ x: 0, y: 0 });
-    // const mortarTower5 = new MortarTower({ x: 0, y: 0 });
-
     towerPanel.addTower(archerTower);
     towerPanel.addTower(magicianTower);
     towerPanel.addTower(mortarTower);
-    // towerPanel.addTower(mortarTower2);
-    // towerPanel.addTower(mortarTower3);
-    // towerPanel.addTower(mortarTower4);
-    // towerPanel.addTower(mortarTower5);
 }

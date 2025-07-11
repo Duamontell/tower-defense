@@ -1,11 +1,12 @@
 import { GoblinEnemy, OrkEnemy, ZombieEnemy } from './enemy.js';
 
 export class World {
-    constructor(towerZonesConfig) {
+    constructor(changeBalance, towerZonesConfig) {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
         this.waypoints = [];
+        this.changeBalance = changeBalance
         this.gameOver = false;
         this.towerZones = towerZonesConfig.map(zone => ({
             topLeft: zone.topLeft,
@@ -57,8 +58,16 @@ export class World {
                 this.bases.forEach(base => base.recieveDamage(enemy.damage));
                 return false;
             }
-            return enemy.isAlive();
+            if (!enemy.isAlive()) {
+                if (this.changeBalance) {
+                    this.changeBalance(enemy.reward);
+                    console.log(enemy.reward)
+                }
+                return false;
+            }
+            return true
         });
+
         console.log(this.bases[0].health);
         if (this.bases.some(base => base.isDestroyed)) {
             this.gameOver = true;
