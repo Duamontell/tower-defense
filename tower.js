@@ -26,24 +26,20 @@ export class Tower {
         }
     }
 
-    draw(ctx, x = null, y = null, width = null, height = null) {
+    draw(ctx) {
         ctx.save();
 
-        if (!this.isLoaded) {
-            ctx.restore();
-            return;
-        }
+        // ctx.beginPath();
+        // ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        // ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+        // ctx.lineWidth = 2;
+        // ctx.stroke();
 
-        const drawX = x !== null ? x - (width ?? this.width) / 2 : this.position.x - this.width / 2;
-        const drawY = y !== null ? y - (height ?? this.height) / 2 : this.position.y - this.height / 2;
-        const drawWidth = width ?? this.width;
-        const drawHeight = height ?? this.height;
-
-        ctx.drawImage(this.image, drawX, drawY, drawWidth, drawHeight);
+        if (!this.isLoaded) return;
+        ctx.drawImage(this.image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
 
         ctx.restore();
     }
-
 
     attack(enemies) {
         const enemiesInRange = enemies.filter(enemy => {
