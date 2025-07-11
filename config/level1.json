@@ -9,14 +9,11 @@
       "y": 502
     },
     {
-      "x": 750,
-      "y": 200
-    },
-    {
       "x": 178,
       "y": 502
     }
   ],
+
   "base": {
     "health": 200,
     "position": {
@@ -27,28 +24,60 @@
     "height": 300,
     "imageSrc": "/images/Base.png"
   },
+
   "towerZones": [
     {
       "topLeft": {
-        "x": 34,
-        "y": 61
+        "x": 530,
+        "y": 200
       },
       "bottomRight": {
-        "x": 181,
-        "y": 141
+        "x": 660,
+        "y": 330
+      }
+    },
+    {
+      "topLeft": {
+        "x": 1087,
+        "y": 200
+      },
+      "bottomRight": {
+        "x": 1217,
+        "y": 330
+      }
+    },
+    {
+      "topLeft": {
+        "x": 720,
+        "y": 650
+      },
+      "bottomRight": {
+        "x": 850,
+        "y": 780
       }
     },
     {
       "topLeft": {
         "x": 300,
-        "y": 300
+        "y": 650
       },
       "bottomRight": {
-        "x": 400,
-        "y": 400
+        "x": 430,
+        "y": 780
+      }
+    },
+    {
+      "topLeft": {
+        "x": 1350,
+        "y": 650
+      },
+      "bottomRight": {
+        "x": 1480,
+        "y": 780
       }
     }
   ],
+
   "waves": [
     2,
     {
