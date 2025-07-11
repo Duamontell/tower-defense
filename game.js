@@ -2,6 +2,7 @@ import { World } from './world.js';
 import { ArchersTower, MagicianTower, MortarTower } from './tower.js';
 import { Base } from './base.js';
 import { TowerPanel } from './towerPanel.js';
+import { currentLevel } from './menu.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -10,7 +11,6 @@ const background = new Image();
 let waveDuration = 0;
 let lastTimestamp = 0;
 let world;
-let currentLevel = 1;
 let currentWave = 0;
 let lvlCfg = {};
 let enemiesCfg = {};
