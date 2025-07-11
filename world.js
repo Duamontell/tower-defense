@@ -1,7 +1,7 @@
-import { GoblinEnemy, OrkEnemy, ZombieEnemy } from './enemy.js';
+import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
 
 export class World {
-    constructor(changeBalance, towerZonesConfig) {
+    constructor(changeBalance, towerZonesConfig, enemiesCfg) {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
@@ -13,6 +13,7 @@ export class World {
             bottomRight: zone.bottomRight,
             occupied: false,
         }));
+        this.enemiesCfg = enemiesCfg;
     }
 
     addTower(tower) {
@@ -30,20 +31,20 @@ export class World {
     summonWave(wave) {
         let delay = 0;
 
-        for (let i = 0; i < wave.enemies.orks; i++) {
-            let ork = new OrkEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints);
-            setTimeout(() => this.addEnemy(ork), delay * 1000);
+        for (let i = 0; i < wave.enemies.orcs; i++) {
+            let orc = new OrcEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.orc);
+            setTimeout(() => this.addEnemy(orc), delay * 1000);
             delay++;
         }
 
         for (let i = 0; i < wave.enemies.zombies; i++) {
-            let zombie = new ZombieEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints);
+            let zombie = new ZombieEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.zombie);
             setTimeout(() => this.addEnemy(zombie), delay * 1000);
             delay++;
         }
 
         for (let i = 0; i < wave.enemies.goblins; i++) {
-            let goblin = new GoblinEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints);
+            let goblin = new GoblinEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.goblin);
             setTimeout(() => this.addEnemy(goblin), delay * 1000);
             delay;
         }
@@ -68,7 +69,6 @@ export class World {
             return true
         });
 
-        console.log(this.bases[0].health);
         if (this.bases.some(base => base.isDestroyed)) {
             this.gameOver = true;
             alert('Игра окончена! Ваша база уничтожена.');

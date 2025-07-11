@@ -53,8 +53,8 @@
     2,
     {
       "enemies": {
-        "orks": 3,
-        "zombies": 1,
+        "orcs": 3,
+        "zombies": 3,
         "goblins": 0
       },
       "duration": 25,
@@ -62,8 +62,8 @@
     },
     {
       "enemies": {
-        "orks": 5,
-        "zombies": 2,
+        "orcs": 5,
+        "zombies": 0,
         "goblins": 0
       },
       "duration": 20,

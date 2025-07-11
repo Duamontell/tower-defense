@@ -1,6 +1,6 @@
 export class Enemy {
-    constructor(id, name, position, width, height, health, damage, reward, speed, waypoints, imageSrc) {
-        this.id = id;
+    
+    constructor(name, position, width, height, health, damage, reward, speed, animationSpeed, waypoints) {
         this.name = name;
         this.position = position;
         this.width = width;
@@ -12,11 +12,9 @@ export class Enemy {
         this.waypoints = waypoints;
         this.waypointIndex = 0;
         this.reachedEnd = false;
-        this.image = new Image;
-        this.image.onload = () => {
-            this.isLoaded = true;
-        };
-        this.image.src = imageSrc;
+        this.images = [];
+        this.frame = 0;
+        this.animationSpeed = animationSpeed;
     }
 
     doDamage() {
@@ -26,12 +24,19 @@ export class Enemy {
 
     draw(ctx) {
         ctx.save();
-        if (!this.isLoaded) return;
-        ctx.drawImage(this.image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
+        // if (!this.isLoaded) return;
+        
+        ctx.drawImage(this.images[Math.round(this.frame)], this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
         ctx.restore();
     }
 
     update(delta) {
+
+        this.frame = this.frame + delta * this.animationSpeed;
+        if (this.frame > this.images.length - 1) {
+            this.frame = 0;
+        }
+
         if (this.waypointIndex >= this.waypoints.length) {
             this.reachedEnd = true;
             return;
@@ -72,21 +77,36 @@ export class Enemy {
     }
 }
 
-export class OrkEnemy extends Enemy {
-    constructor(position, waypoints) {
-        super(1, 'Orc', position, 150, 150, 200, 10, 20, 40, waypoints, '/images/Ork.png');
-
+export class OrcEnemy extends Enemy {
+    constructor(position, waypoints, cfg) {
+        super(cfg.name, position, cfg.width, cfg.height, cfg.health, cfg.damage, cfg.reward, cfg.speed, cfg.animationSpeed, waypoints, cfg.imageSrcs);
+        cfg.imageSrcs.forEach(imageSrc => {
+            let frame = new Image();
+            frame.src = imageSrc;
+            this.images.push(frame);
+        });
     }
 }
 
 export class ZombieEnemy extends Enemy {
-    constructor(position, waypoints) {
-        super(1, 'Zombie', position, 150, 150, 200, 100, 40, 40, waypoints, '/images/Zombie.png');
+    constructor(position, waypoints, cfg) {
+        super(cfg.name, position, cfg.width, cfg.height, cfg.health, cfg.damage, cfg.reward, cfg.speed, cfg.animationSpeed, waypoints, cfg.imageSrcs);
+        cfg.imageSrcs.forEach(imageSrc => {
+            let frame = new Image();
+            frame.src = imageSrc;
+            this.images.push(frame);
+        });
     }
 }
 
 export class GoblinEnemy extends Enemy {
-    constructor(position, waypoints) {
-        super(1, 'Goblin', position, 150, 150, 200, 100, 10, 40, waypoints, '/images/Goblin.png');
+    constructor(position, waypoints, cfg) {
+        super(cfg.name, position, cfg.width, cfg.height, cfg.health, cfg.damage, cfg.reward, cfg.speed, cfg.animationSpeed, waypoints, cfg.imageSrcs);
+        cfg.imageSrcs.forEach(imageSrc => {
+            let frame = new Image();
+            frame.src = imageSrc;
+            this.images.push(frame);
+        });
     }
 }
+

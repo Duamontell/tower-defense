@@ -12,7 +12,8 @@ let lastTimestamp = 0;
 let world;
 let currentLevel = 1;
 let currentWave = 0;
-let config = {};
+let lvlCfg = {};
+let enemiesCfg = {};
 let waves = {};
 let maxWave;
 let towerPanel;
@@ -98,27 +99,31 @@ canvas.addEventListener('click', (event) => {
     }
 });
 
-let response = await fetch(`/config/level${currentLevel}.json`)
-if (response.ok) {
-    config = await response.json();
+let lvlResponse = await fetch(`/config/level${currentLevel}.json`);
+if (lvlResponse.ok) {
+    lvlCfg = await lvlResponse.json();
 }
 
-initializeLevel(config);
+let enemiesResponse = await fetch('config/enemies.json');
+if (enemiesResponse.ok) {
+    enemiesCfg = await enemiesResponse.json();
+}
+
+initializeLevel(lvlCfg, enemiesCfg);
 gameLoop();
 
-function initializeLevel(config) {
-    background.src = config.backgroundImage;
+function initializeLevel(lvlCfg, enemiesCfg) {
+    background.src = lvlCfg.backgroundImage;
 
-    world = new World(changeBalance, config.towerZones);
+    world = new World(changeBalance, lvlCfg.towerZones, enemiesCfg);
 
-
-    const baseData = config.base;
+    const baseData = lvlCfg.base;
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
 
-    waves = config.waves;
-    world.waypoints = config.waypoints;
-    maxWave = config.waves[0];
-    balance = config.startingBalance || 0;
+    waves = lvlCfg.waves;
+    world.waypoints = lvlCfg.waypoints;
+    maxWave = lvlCfg.waves[0];
+    balance = lvlCfg.startingBalance || 0;
 
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, () => balance);
 
