@@ -33,8 +33,7 @@ export class Enemy {
     update(delta) {
         if (this.waypointIndex >= this.waypoints.length) {
             this.reachedEnd = true;
-            // Враг дошёл до базы
-            this.waypointIndex = 0 // СТОИТ НА МЕСТЕ ПРИ ДВУХ ТОЧКАХ
+            return;
         }
 
         const waypoint = this.waypoints[this.waypointIndex];
@@ -74,7 +73,7 @@ export class Enemy {
 
 export class OrkEnemy extends Enemy {
     constructor(position, waypoints) {
-        super(1, 'Orc', position, 150, 150, 1000, 10, 500, waypoints, '/images/Ork.png');
+        super(1, 'Orc', position, 150, 150, 1000, 10, 20, waypoints, '/images/Ork.png');
 
     }
 }
