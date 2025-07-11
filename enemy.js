@@ -33,8 +33,7 @@ export class Enemy {
     update(delta) {
         if (this.waypointIndex >= this.waypoints.length) {
             this.reachedEnd = true;
-            // Враг дошёл до базы
-            this.waypointIndex = 0 // СТОИТ НА МЕСТЕ ПРИ ДВУХ ТОЧКАХ
+            return;
         }
 
         const waypoint = this.waypoints[this.waypointIndex];

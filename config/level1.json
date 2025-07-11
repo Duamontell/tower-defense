@@ -6,11 +6,14 @@
       "y": 502
     },
     {
+      "x": 750,
+      "y": 200
+    },
+    {
       "x": 178,
       "y": 502
     }
   ],
-
   "base": {
     "health": 20,
     "position": {
@@ -21,7 +24,6 @@
     "height": 300,
     "imageSrc": "/images/Base.png"
   },
-
   "towerZones": [
     {
       "topLeft": {
@@ -44,7 +46,6 @@
       }
     }
   ],
-  
   "waves": [
     2,
     {
@@ -53,7 +54,7 @@
         "zombies": 1,
         "goblins": 0
       },
-      "duration" : 25,
+      "duration": 25,
       "reward": 100
     },
     {
@@ -62,7 +63,7 @@
         "zombies": 2,
         "goblins": 0
       },
-      "duration" : 20,
+      "duration": 20,
       "reward": 300
     }
   ]
