@@ -1,19 +1,20 @@
 import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
 
 export class World {
-    constructor(changeBalance, towerZonesConfig, enemiesCfg) {
+    constructor(changeBalance, lvlCfg, enemiesCfg) {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
         this.waypoints = [];
         this.changeBalance = changeBalance
         this.gameOver = false;
-        this.towerZones = towerZonesConfig.map(zone => ({
+        this.towerZones = lvlCfg.towerZones.map(zone => ({
             topLeft: zone.topLeft,
             bottomRight: zone.bottomRight,
             occupied: false,
         }));
         this.enemiesCfg = enemiesCfg;
+        this.spawnrate = lvlCfg.spawnrate;
     }
 
     addTower(tower) {
@@ -34,19 +35,20 @@ export class World {
         for (let i = 0; i < wave.enemies.orcs; i++) {
             let orc = new OrcEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.orc);
             setTimeout(() => this.addEnemy(orc), delay * 1000);
-            delay++;
+            delay = delay + this.spawnrate;
+
         }
 
         for (let i = 0; i < wave.enemies.zombies; i++) {
             let zombie = new ZombieEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.zombie);
             setTimeout(() => this.addEnemy(zombie), delay * 1000);
-            delay++;
+            delay = delay + this.spawnrate;
         }
 
         for (let i = 0; i < wave.enemies.goblins; i++) {
             let goblin = new GoblinEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.goblin);
             setTimeout(() => this.addEnemy(goblin), delay * 1000);
-            delay;
+            delay = delay + this.spawnrate;
         }
     }
 

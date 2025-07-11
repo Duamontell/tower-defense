@@ -115,7 +115,7 @@ gameLoop();
 function initializeLevel(lvlCfg, enemiesCfg) {
     background.src = lvlCfg.backgroundImage;
 
-    world = new World(changeBalance, lvlCfg.towerZones, enemiesCfg);
+    world = new World(changeBalance, lvlCfg, enemiesCfg);
 
     const baseData = lvlCfg.base;
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
