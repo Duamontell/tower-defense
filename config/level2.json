@@ -1,9 +1,9 @@
 {
   "backgroundImage": "/images/first_level.png",
 
-  "startingBalance": 100,
+  "startingBalance": 50,
 
-  "spawnrate": 0.2,
+  "spawnrate": 2,
 
   "waypoints": [
     {
@@ -17,7 +17,7 @@
   ],
 
   "base": {
-    "health": 20,
+    "health": 150,
     "position": {
       "x": 100,
       "y": 450
@@ -53,16 +53,16 @@
     3,
     {
       "enemies": {
-        "orks": 0,
+        "orcs": 0,
         "zombies": 2,
         "goblins": 0
       },
-      "duration" : 15,
+      "duration" : 10,
       "reward": 100
     },
     {
       "enemies": {
-        "orks": 2,
+        "orcs": 2,
         "zombies": 1,
         "goblins": 0
       },
@@ -72,7 +72,7 @@
 
     {
         "enemies": {
-        "orks": 5,
+        "orcs": 5,
         "zombies": 5,
         "goblins": 0
       },
