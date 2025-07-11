@@ -68,7 +68,6 @@ export class World {
             return true
         });
 
-        console.log(this.bases[0].health);
         if (this.bases.some(base => base.isDestroyed)) {
             this.gameOver = true;
             alert('Игра окончена! Ваша база уничтожена.');

@@ -18,13 +18,16 @@ function startLvl() {
     let canvas = document.createElement('canvas');
     let script = document.createElement('script');
     canvas.id = 'gameCanvas';
-    canvas.height = 1080;
-    canvas.width = 1920;
+    canvas.height = 1024;
+    canvas.width = 1536;
     script.src = 'game.js';
     script.type = 'module'
 
     document.body.innerHTML = '';
-    document.body.appendChild(canvas);
+    let gameContainer = document.createElement('div');
+    gameContainer.className = "gameContainer";
+    document.body.appendChild(gameContainer);
+    gameContainer.appendChild(canvas);
     document.body.appendChild(script);
 }
 

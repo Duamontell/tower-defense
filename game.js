@@ -7,6 +7,25 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const background = new Image();
 
+(() => {
+    const NATIVE_WIDTH = canvas.width;
+    const NATIVE_HEIGHT = canvas.height;
+
+    function resizeCanvas() {
+        const scale = Math.min(
+            window.innerWidth / NATIVE_WIDTH,
+            window.innerHeight / NATIVE_HEIGHT
+        );
+        console.log(window.innerWidth / NATIVE_WIDTH)
+
+        canvas.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+})();
+
 let waveDuration = 0;
 let lastTimestamp = 0;
 let world;
@@ -46,6 +65,7 @@ function gameLoop(timestamp = 0) {
     if (world.gameOver) {
         return;
     }
+
     const delta = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
 
@@ -77,16 +97,18 @@ canvas.addEventListener('click', (event) => {
     const { x, y } = getClickCoordinates(canvas, event);
     const clickedTower = towerPanel.handleClick(x, y);
 
+    console.log(window.innerWidth, window.innerHeight);
+
     if (clickedTower) {
         selectedTowerType = clickedTower.constructor;
         console.log('Выбрана башня:', clickedTower.name, clickedTower.price);
     } else if (selectedTowerType) {
         const towerCost = selectedTowerType.price;
-        if (balance >= towerCost) { 
+        if (balance >= towerCost) {
             const placed = world.tryPlaceTower(x, y, selectedTowerType);
             if (placed) {
-              changeBalance(-towerCost);
-              console.log(`Поставлена башня ${selectedTowerType.name} на позицию`, { x, y });
+                changeBalance(-towerCost);
+                console.log(`Поставлена башня ${selectedTowerType.name} на позицию`, { x, y });
             }
         }
         else {
