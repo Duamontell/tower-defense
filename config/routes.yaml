@@ -1,0 +1,13 @@
+index:
+    path: /
+    controller: App\Controller\GameController::menu
+
+menu:
+    path: /menu
+    controller: App\Controller\GameController::menu
+
+game:
+    path: /game/{level}
+    controller: App\Controller\GameController::menu
+    methods: 
+
