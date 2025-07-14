@@ -18,8 +18,8 @@ function startLvl() {
     let canvas = document.createElement('canvas');
     let script = document.createElement('script');
     canvas.id = 'gameCanvas';
-    canvas.height = 1024;
-    canvas.width = 1536;
+    canvas.height = 1080;
+    canvas.width = 1920;
     script.src = 'game.js';
     script.type = 'module'
 
