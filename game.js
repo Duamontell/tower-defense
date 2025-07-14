@@ -2,6 +2,7 @@ import { World } from './world.js';
 import { ArchersTower, MagicianTower, MortarTower } from './tower.js';
 import { Base } from './base.js';
 import { TowerPanel } from './towerPanel.js';
+import { currentLevel } from './menu.js'
 import { drawTowerZones } from './towerZones.js';
 import { UpgradePanel } from './upgradePanel.js';
 import { handleClick } from './towerLogic.js';
@@ -14,9 +15,9 @@ const background = new Image();
 let waveDuration = 0;
 let lastTimestamp = 0;
 let world;
-let currentLevel = 1;
 let currentWave = 0;
-let config = {};
+let lvlCfg = {};
+let enemiesCfg = {};
 let waves = {};
 let maxWave;
 let towerPanel;
@@ -36,9 +37,14 @@ canvas.addEventListener('click', (event) => {
     console.log(x, y);
 });
 
-let response = await fetch(`/config/level${currentLevel}.json`)
-if (response.ok) {
-    config = await response.json();
+let lvlResponse = await fetch(`/config/level${currentLevel}.json`);
+if (lvlResponse.ok) {
+    lvlCfg = await lvlResponse.json();
+}
+
+let enemiesResponse = await fetch('config/enemies.json');
+if (enemiesResponse.ok) {
+    enemiesCfg = await enemiesResponse.json();
 }
 
 function gameLoop(timestamp = 0) {
@@ -73,19 +79,18 @@ function gameLoop(timestamp = 0) {
     requestAnimationFrame(gameLoop);
 }
 
-function initializeLevel(config) {
-    background.src = config.backgroundImage;
+function initializeLevel(lvlCfg, enemiesCfg) {
+    background.src = lvlCfg.backgroundImage;
 
-    world = new World(changeBalance, config.towerZones);
+    world = new World(changeBalance, lvlCfg, enemiesCfg);
 
-
-    const baseData = config.base;
+    const baseData = lvlCfg.base;
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
 
-    waves = config.waves;
-    world.waypoints = config.waypoints;
-    maxWave = config.waves[0];
-    initBalance(config.startingBalance || 0);
+    waves = lvlCfg.waves;
+    world.waypoints = lvlCfg.waypoints;
+    maxWave = lvlCfg.waves[0];
+    initBalance(lvlCfg.startingBalance || 0);
     towerZones = world.towerZones;
 
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, (TowerClass) => { });
@@ -100,5 +105,5 @@ function initializeLevel(config) {
     towerPanel.addTower(mortarTower);
 }
 
-initializeLevel(config);
+initializeLevel(lvlCfg, enemiesCfg);
 gameLoop();
