@@ -7,7 +7,6 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const background = new Image();
 
-(() => {
     const NATIVE_WIDTH = canvas.width;
     const NATIVE_HEIGHT = canvas.height;
 
@@ -24,7 +23,6 @@ const background = new Image();
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-})();
 
 let waveDuration = 0;
 let lastTimestamp = 0;
@@ -129,7 +127,9 @@ initializeLevel(config);
 gameLoop();
 
 function initializeLevel(config) {
-    background.src = config.backgroundImage;
+    background.src = config.map.backgroundImage;
+    canvas.width = config.map.width;
+    canvas.height = config.map.height;
 
     world = new World(changeBalance, config.towerZones);
 
