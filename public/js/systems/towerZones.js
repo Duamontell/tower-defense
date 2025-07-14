@@ -1,5 +1,5 @@
 const towerZoneMarker = new Image();
-towerZoneMarker.src = '/images/TowerZoneMarker.svg';
+towerZoneMarker.src = '../../images/tower/TowerZoneMarker.svg';
 
 function drawTowerZones(ctx, towerZones) {
     towerZones.forEach(zone => {

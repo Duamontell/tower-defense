@@ -7,7 +7,7 @@ menu:
     controller: App\Controller\GameController::menu
 
 game:
-    path: /game/{level}
-    controller: App\Controller\GameController::menu
-    methods: 
+    path: /game
+    controller: App\Controller\GameController::game
+    methods:
 

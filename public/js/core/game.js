@@ -1,18 +1,19 @@
-import { World } from './world.js';
-import { ArchersTower, MagicianTower, MortarTower } from './tower.js';
-import { Base } from './base.js';
-import { TowerPanel } from './towerPanel.js';
-import { currentLevel } from './menu.js'
-import { drawTowerZones } from './towerZones.js';
-import { UpgradePanel } from './upgradePanel.js';
-import { handleClick } from './towerLogic.js';
-import { changeBalance, drawBalancePanel, getBalance, initBalance } from './balanceManager.js';
-import { initCanvasResizer } from "./gameView.js";
+import { World } from '../entity/world.js';
+import { ArchersTower, MagicianTower, MortarTower } from '../entity/tower.js';
+import { Base } from '../entity/base.js';
+import { TowerPanel } from '../entity/towerPanel.js';
+// import { currentLevel } from './menu.js'
+import { drawTowerZones } from '../systems/towerZones.js';
+import { UpgradePanel } from '../entity/upgradePanel.js';
+import { handleClick } from '../systems/towerLogic.js';
+import { changeBalance, drawBalancePanel, getBalance, initBalance } from '../systems/balanceManager.js';
+import { initCanvasResizer } from "../ui/gameView.js";
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const background = new Image();
 
+const currentLevel = window.currentLevel
 let waveDuration = 0;
 let lastTimestamp = 0;
 let world;
@@ -40,12 +41,12 @@ canvas.addEventListener('click', (event) => {
     console.log(x, y);
 });
 
-let lvlResponse = await fetch(`/config/level${currentLevel}.json`);
+let lvlResponse = await fetch(`../../config/game/level${currentLevel}.json`);
 if (lvlResponse.ok) {
     lvlCfg = await lvlResponse.json();
 }
 
-let enemiesResponse = await fetch('config/enemies.json');
+let enemiesResponse = await fetch('../../config/game/enemies.json');
 if (enemiesResponse.ok) {
     enemiesCfg = await enemiesResponse.json();
 }

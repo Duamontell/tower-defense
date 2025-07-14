@@ -1,7 +1,21 @@
 {% extends "base.html.twig" %}
 
+{% block title %}Tower Defense{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/game.css">
+{% endblock %}
+
+{% block javascripts %}
+    <script defer type="module" src="/js/core/game.js"></script>
+{% endblock %}
+
 {% block body %}
 <body>
+    <div class="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+    </div>
 
+    <script>window.currentLevel = {{ level }};</script>
 </body>
 {% endblock %}
