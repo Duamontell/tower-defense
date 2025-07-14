@@ -1,18 +1,21 @@
-import { GoblinEnemy, OrkEnemy, ZombieEnemy } from './enemy.js';
+import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
 
 export class World {
-    constructor(changeBalance, towerZonesConfig) {
+    constructor(changeBalance, lvlCfg, enemiesCfg) {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
         this.waypoints = [];
         this.changeBalance = changeBalance
         this.gameOver = false;
-        this.towerZones = towerZonesConfig.map(zone => ({
+        this.towerZones = lvlCfg.towerZones.map(zone => ({
             topLeft: zone.topLeft,
             bottomRight: zone.bottomRight,
             occupied: false,
+            tower: null,
         }));
+        this.enemiesCfg = enemiesCfg;
+        this.spawnrate = lvlCfg.spawnrate;
     }
 
     addTower(tower) {
@@ -30,27 +33,32 @@ export class World {
     summonWave(wave) {
         let delay = 0;
 
-        for (let i = 0; i < wave.enemies.orks; i++) {
-            let ork = new OrkEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints);
-            setTimeout(() => this.addEnemy(ork), delay * 1000);
-            delay++;
+        for (let i = 0; i < wave.enemies.orcs; i++) {
+            let orc = new OrcEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.orc);
+            setTimeout(() => this.addEnemy(orc), delay * 1000);
+            delay = delay + this.spawnrate;
+
         }
 
         for (let i = 0; i < wave.enemies.zombies; i++) {
-            let zombie = new ZombieEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints);
+            let zombie = new ZombieEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.zombie);
             setTimeout(() => this.addEnemy(zombie), delay * 1000);
-            delay++;
+            delay = delay + this.spawnrate;
         }
 
         for (let i = 0; i < wave.enemies.goblins; i++) {
-            let goblin = new GoblinEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints);
+            let goblin = new GoblinEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.goblin);
             setTimeout(() => this.addEnemy(goblin), delay * 1000);
-            delay;
+            delay = delay + this.spawnrate;
         }
     }
 
     update(delta) {
-        this.towers.forEach(tower => tower.update(delta, this.enemies));
+        this.towerZones.forEach(zone => {
+            if (zone.occupied && zone.tower) {
+                zone.tower.update(delta, this.enemies);
+            }
+        });
         this.enemies.forEach(enemy => enemy.update(delta));
 
         this.enemies = this.enemies.filter(enemy => {
@@ -61,7 +69,6 @@ export class World {
             if (!enemy.isAlive()) {
                 if (this.changeBalance) {
                     this.changeBalance(enemy.reward);
-                    console.log(enemy.reward)
                 }
                 return false;
             }
@@ -76,26 +83,35 @@ export class World {
     }
 
     draw(ctx) {
-        this.towers.forEach(tower => tower.draw(ctx));
+        this.towerZones.forEach(zone => {
+            if (zone.occupied && zone.tower) {
+                zone.tower.draw(ctx);
+            }
+        });
         this.bases.forEach(base => base.draw(ctx));
         this.enemies.forEach(enemy => enemy.draw(ctx));
     }
 
-    tryPlaceTower(x, y, TowerClass) {
-        const index = this.towerZones.findIndex(z =>
-            x >= z.topLeft.x && x <= z.bottomRight.x &&
-            y >= z.topLeft.y && y <= z.bottomRight.y
+    getZoneByCoordinates(x, y) {
+        return this.towerZones.find(zone =>
+            x >= zone.topLeft.x && x <= zone.bottomRight.x &&
+            y >= zone.topLeft.y && y <= zone.bottomRight.y
         );
-        if (index < 0 || this.towerZones[index].occupied) {
-            return false;
-        }
+    }
 
-        const zone = this.towerZones[index];
-        const centerZoneX = (zone.topLeft.x + zone.bottomRight.x) / 2;
-        const centerZoneY = (zone.topLeft.y + zone.bottomRight.y) / 2;
-        this.addTower(new TowerClass({ x: centerZoneX, y: centerZoneY }));
+    tryPlaceTower(x, y, TowerClass) {
+        const zone = this.getZoneByCoordinates(x, y);
+        if (!zone || zone.occupied) return false;
+    
+        const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
+        const centerY = (zone.topLeft.y + zone.bottomRight.y) / 2;
+        const tower = new TowerClass({ x: centerX, y: centerY });
+        this.towers.push(tower);
+    
         zone.occupied = true;
-
+        zone.tower = tower;
+    
         return true;
     }
+    
 }
