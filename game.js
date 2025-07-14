@@ -6,7 +6,8 @@ import { currentLevel } from './menu.js'
 import { drawTowerZones } from './towerZones.js';
 import { UpgradePanel } from './upgradePanel.js';
 import { handleClick } from './towerLogic.js';
-import { initBalance, getBalance, changeBalance, drawBalancePanel } from './balanceManager.js';
+import { changeBalance, drawBalancePanel, getBalance, initBalance } from './balanceManager.js';
+import { initCanvasResizer } from "./gameView.js";
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -23,6 +24,8 @@ let maxWave;
 let towerPanel;
 let upgradePanel;
 let towerZones = {};
+let nativeWidth = canvas.width;
+let nativeHeight = canvas.height;
 
 function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -80,7 +83,11 @@ function gameLoop(timestamp = 0) {
 }
 
 function initializeLevel(lvlCfg, enemiesCfg) {
-    background.src = lvlCfg.backgroundImage;
+    background.src = lvlCfg.map.backgroundImage;
+    nativeWidth = lvlCfg.map.width;
+    nativeHeight = lvlCfg.map.height;
+    canvas.width = lvlCfg.map.width;
+    canvas.height = lvlCfg.map.height;
 
     world = new World(changeBalance, lvlCfg, enemiesCfg);
 
@@ -106,4 +113,5 @@ function initializeLevel(lvlCfg, enemiesCfg) {
 }
 
 initializeLevel(lvlCfg, enemiesCfg);
+initCanvasResizer(canvas, nativeWidth, nativeHeight);
 gameLoop();

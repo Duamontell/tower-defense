@@ -24,7 +24,10 @@ function startLvl() {
     script.type = 'module'
 
     document.body.innerHTML = '';
-    document.body.appendChild(canvas);
+    let gameContainer = document.createElement('div');
+    gameContainer.className = "gameContainer";
+    document.body.appendChild(gameContainer);
+    gameContainer.appendChild(canvas);
     document.body.appendChild(script);
 }
 

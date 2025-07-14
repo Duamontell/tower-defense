@@ -1,5 +1,9 @@
 {
-  "backgroundImage": "/images/first_level.png",
+  "map": {
+    "backgroundImage": "/images/first_level.png",
+    "width": 1536,
+    "height": 1024
+  },
 
   "startingBalance": 50,
 
