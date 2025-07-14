@@ -1,24 +1,19 @@
 {
   "backgroundImage": "/images/first_level.png",
 
-  "startingBalance": 100,
-
   "waypoints": [
     {
       "x": 1461,
       "y": 502
     },
     {
-      "x": 750,
-      "y": 200
-    },
-    {
       "x": 178,
       "y": 502
     }
   ],
+
   "base": {
-    "health": 200,
+    "health": 20,
     "position": {
       "x": 100,
       "y": 450
@@ -27,15 +22,16 @@
     "height": 300,
     "imageSrc": "/images/Base.png"
   },
+
   "towerZones": [
     {
       "topLeft": {
-        "x": 34,
-        "y": 61
+        "x": 100,
+        "y": 100
       },
       "bottomRight": {
-        "x": 181,
-        "y": 141
+        "x": 200,
+        "y": 200
       }
     },
     {
@@ -50,24 +46,34 @@
     }
   ],
   "waves": [
-    2,
+    3,
     {
       "enemies": {
-        "orks": 3,
-        "zombies": 1,
+        "orks": 0,
+        "zombies": 2,
         "goblins": 0
       },
-      "duration": 25,
+      "duration" : 15,
       "reward": 100
     },
     {
       "enemies": {
-        "orks": 5,
-        "zombies": 2,
+        "orks": 2,
+        "zombies": 1,
         "goblins": 0
       },
-      "duration": 20,
+      "duration" : 20,
       "reward": 300
+    },
+
+    {
+        "enemies": {
+        "orks": 5,
+        "zombies": 5,
+        "goblins": 0
+      },
+      "duration" : 15,
+      "reward": 500
     }
   ]
 }

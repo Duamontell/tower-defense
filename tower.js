@@ -77,19 +77,22 @@ export class Tower {
 }
 
 export class ArchersTower extends Tower {
+    static price = 10; 
     constructor(position) {
-        super('Archers', 10, 350, 50, position, 300, 300, 'single', 3, '/images/TowerArchers.png');
+        super('Archers', 10, 350, ArchersTower.price, position, 300, 300, 'single', 3, '/images/TowerArchers.png');
     }
 }
 
 export class MagicianTower extends Tower {
+    static price = 30; 
     constructor(position) {
-        super('Magician', 20, 300, 150, position, 300, 300, 'single', 5, '/images/TowerMagicians.png');
+        super('Magician', 20, 300, MagicianTower.price, position, 300, 300, 'single', 5, '/images/TowerMagicians.png');
     }
 }
 
 export class MortarTower extends Tower {
+    static price = 50; 
     constructor(position) {
-        super('Mortar', 60, 500, 300, position, 300, 300, 'area', 7, '/images/MortarTower.png');
+        super('Mortar', 60, 500, MortarTower.price, position, 300, 300, 'area', 7, '/images/MortarTower.png');
     }
 }
