@@ -2,7 +2,11 @@ import { World } from './world.js';
 import { ArchersTower, MagicianTower, MortarTower } from './tower.js';
 import { Base } from './base.js';
 import { TowerPanel } from './towerPanel.js';
-import { currentLevel } from './menu.js';
+import { currentLevel } from './menu.js'
+import { drawTowerZones } from './towerZones.js';
+import { UpgradePanel } from './upgradePanel.js';
+import { handleClick } from './towerLogic.js';
+import { initBalance, getBalance, changeBalance, drawBalancePanel } from './balanceManager.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -17,14 +21,8 @@ let enemiesCfg = {};
 let waves = {};
 let maxWave;
 let towerPanel;
-let selectedTowerType = null;
-let balance = 0;
-
-function changeBalance(amount) {
-    balance += amount;
-    if (balance < 0) balance = 0;
-}
-
+let upgradePanel;
+let towerZones = {};
 
 function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -33,15 +31,21 @@ function getClickCoordinates(canvas, event) {
     return { x, y };
 }
 
-function drawBalancePanel(ctx, balance) {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    ctx.fillRect(10, 10, 150, 40);
+canvas.addEventListener('click', (event) => {
+    const { x, y } = getClickCoordinates(canvas, event);
+    handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, getBalance());
+    console.log(x, y);
+});
 
-    ctx.fillStyle = 'white';
-    ctx.font = '20px Arial';
-    ctx.fillText(`Баланс: ${balance}`, 20, 38);
+let lvlResponse = await fetch(`/config/level${currentLevel}.json`);
+if (lvlResponse.ok) {
+    lvlCfg = await lvlResponse.json();
 }
 
+let enemiesResponse = await fetch('config/enemies.json');
+if (enemiesResponse.ok) {
+    enemiesCfg = await enemiesResponse.json();
+}
 
 function gameLoop(timestamp = 0) {
     if (world.gameOver) {
@@ -65,52 +69,15 @@ function gameLoop(timestamp = 0) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
+    drawTowerZones(ctx, towerZones);
     world.update(delta);
     world.draw(ctx);
     towerPanel.draw();
-    drawBalancePanel(ctx, balance);
+    upgradePanel.draw();
+    drawBalancePanel(ctx, getBalance());
 
     requestAnimationFrame(gameLoop);
 }
-
-// для отрисовки выбранной башни с панели на карте по клику
-canvas.addEventListener('click', (event) => {
-    const { x, y } = getClickCoordinates(canvas, event);
-    const clickedTower = towerPanel.handleClick(x, y);
-
-    if (clickedTower) {
-        selectedTowerType = clickedTower.constructor;
-        console.log('Выбрана башня:', clickedTower.name, clickedTower.price);
-    } else if (selectedTowerType) {
-        const towerCost = selectedTowerType.price;
-        if (balance >= towerCost) { 
-            const placed = world.tryPlaceTower(x, y, selectedTowerType);
-            if (placed) {
-              changeBalance(-towerCost);
-              console.log(`Поставлена башня ${selectedTowerType.name} на позицию`, { x, y });
-            }
-        }
-        else {
-            console.log('Недостаточно средств для покупки башни!');
-        }
-        selectedTowerType = null;
-    } else {
-        console.log('Клик по карте', { x, y });
-    }
-});
-
-let lvlResponse = await fetch(`/config/level${currentLevel}.json`);
-if (lvlResponse.ok) {
-    lvlCfg = await lvlResponse.json();
-}
-
-let enemiesResponse = await fetch('config/enemies.json');
-if (enemiesResponse.ok) {
-    enemiesCfg = await enemiesResponse.json();
-}
-
-initializeLevel(lvlCfg, enemiesCfg);
-gameLoop();
 
 function initializeLevel(lvlCfg, enemiesCfg) {
     background.src = lvlCfg.backgroundImage;
@@ -123,9 +90,11 @@ function initializeLevel(lvlCfg, enemiesCfg) {
     waves = lvlCfg.waves;
     world.waypoints = lvlCfg.waypoints;
     maxWave = lvlCfg.waves[0];
-    balance = lvlCfg.startingBalance || 0;
+    initBalance(lvlCfg.startingBalance || 0);
+    towerZones = world.towerZones;
 
-    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, () => balance);
+    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, (TowerClass) => { });
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height)
 
     const archerTower = new ArchersTower({ x: 0, y: 0 });
     const magicianTower = new MagicianTower({ x: 0, y: 0 });
@@ -135,3 +104,6 @@ function initializeLevel(lvlCfg, enemiesCfg) {
     towerPanel.addTower(magicianTower);
     towerPanel.addTower(mortarTower);
 }
+
+initializeLevel(lvlCfg, enemiesCfg);
+gameLoop();
