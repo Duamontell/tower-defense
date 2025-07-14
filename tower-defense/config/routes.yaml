@@ -1,0 +1,13 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+menu:
+    path: /menu
+    controller: App\Controller\GameController::menu
+
+level1:
+    path: /level1
+    controller: App\Controller\GameController::level1
