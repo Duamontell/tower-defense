@@ -13,8 +13,13 @@ function resetSelections(towerPanel, upgradePanel) {
 }
 
 function handleTowerPanelClick(x, y, towerPanel, world, changeBalance, balance) {
-    const clickedTower = towerPanel.handleClick(x, y);
-    if (clickedTower) {
+    const result = towerPanel.handleClick(x, y);
+    if (result === 'close') {
+        showTowerPanel = false;
+        return;
+    }
+    if (result) {
+        const clickedTower = result;
         const TowerClass = clickedTower.constructor;
         const towerCost = TowerClass.price;
         if (balance >= towerCost && selectedZone) {
@@ -34,6 +39,15 @@ function handleTowerPanelClick(x, y, towerPanel, world, changeBalance, balance) 
             console.log('Недостаточно средств для покупки башни или зона не выбрана');
         }
     }
+}
+
+function handleUpgradePanelClick(x, y, upgradePanel, world, changeBalance, balance) {
+    const result = upgradePanel.handleClick(x, y);
+    if (result === 'close') {
+        showUpgradePanel = false;
+        return;
+    }
+    
 }
 
 function handleMapClick(x, y, world, towerPanel, upgradePanel) {
@@ -67,6 +81,11 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel) {
 function handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, balance) {
     if (showTowerPanel) {
         handleTowerPanelClick(x, y, towerPanel, world, changeBalance, balance);
+        return true;
+    }
+    else if (showUpgradePanel)
+    {
+        handleUpgradePanelClick(x, y, upgradePanel, world, changeBalance, balance);
         return true;
     }
     handleMapClick(x, y, world, towerPanel, upgradePanel);

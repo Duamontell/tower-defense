@@ -12,6 +12,10 @@ export class TowerPanel {
         this.balance = balance;
         this.onTowerSelect = onTowerSelect;
         this.visible = false;
+        this.closeSize = 30;
+        this.closePadding = 10;
+        this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
+        this.closeY = this.y + this.closePadding + this.closeSize / 2;
     }
 
     addTower(tower) {
@@ -32,6 +36,8 @@ export class TowerPanel {
 
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         this.ctx.fillRect(this.x, this.y, this.width, this.height);
+
+        this.#drawCloseButton();
 
         for (const tower of this.towers) {
             const canBuild = this.balance() >= tower.price;
@@ -60,6 +66,16 @@ export class TowerPanel {
 
     handleClick(x, y) {
         if (!this.visible) return null;
+
+        if (
+            x >= this.closeX - this.closeSize / 2 &&
+            x <= this.closeX + this.closeSize / 2 &&
+            y >= this.closeY - this.closeSize / 2 &&
+            y <= this.closeY + this.closeSize / 2
+        ) {
+            this.hide();
+            return 'close';
+        }
 
         for (const tower of this.towers) {
             const canBuild = this.balance() >= tower.price;
@@ -104,5 +120,32 @@ export class TowerPanel {
             tower.panelPosition = { x: x, y: y };
             x += iconW + padding;
         }
+
+        this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
+        this.closeY = this.y + this.closePadding + this.closeSize / 2;
+    }
+
+    #drawCloseButton() {
+        const ctx = this.ctx;
+        const size = this.closeSize;
+        const x = this.closeX;
+        const y = this.closeY;
+        const half = size / 2;
+
+        ctx.save();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 3;
+
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+        ctx.fillRect(x - half, y - half, size, size);
+
+        ctx.beginPath();
+        ctx.moveTo(x - half + 6, y - half + 6);
+        ctx.lineTo(x + half - 6, y + half - 6);
+        ctx.moveTo(x + half - 6, y - half + 6);
+        ctx.lineTo(x - half + 6, y + half - 6);
+        ctx.stroke();
+
+        ctx.restore();
     }
 }
