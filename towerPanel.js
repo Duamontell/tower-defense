@@ -1,5 +1,5 @@
 export class TowerPanel {
-    constructor(ctx, canvasWidth, canvasHeight, getBalance) {
+    constructor(ctx, canvasWidth, canvasHeight, balance, onTowerSelect) {
         this.ctx = ctx;
         this.width = 1000;
         this.height = 350;
@@ -9,7 +9,9 @@ export class TowerPanel {
         this.padding = 10;
         this.iconWidth = 150;
         this.iconHeight = 150;
-        this.getBalance = getBalance;
+        this.balance = balance;
+        this.onTowerSelect = onTowerSelect;
+        this.visible = false;
     }
 
     addTower(tower) {
@@ -17,14 +19,22 @@ export class TowerPanel {
         this.#updatePositions();
     }
 
+    show() {
+        this.visible = true;
+    }
+
+    hide() {
+        this.visible = false;
+    }
+
     draw() {
+        if (!this.visible) return;
+
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    
-        const balance = this.getBalance();
-    
+
         for (const tower of this.towers) {
-            const canBuild = balance >= tower.price;
+            const canBuild = this.balance() >= tower.price;
             this.ctx.save();
             this.ctx.globalAlpha = canBuild ? 1 : 0.4;
             tower.draw(
@@ -34,8 +44,7 @@ export class TowerPanel {
                 this.iconWidth,
                 this.iconHeight
             );
-    
-            // Отрисовка цены под иконкой
+
             this.ctx.fillStyle = 'white';
             this.ctx.font = '20px Arial';
             this.ctx.textAlign = 'center';
@@ -44,17 +53,16 @@ export class TowerPanel {
                 tower.panelPosition.x,
                 tower.panelPosition.y + this.iconHeight / 2 + 20
             );
-    
+
             this.ctx.restore();
         }
     }
-    
 
     handleClick(x, y) {
-        const balance = this.getBalance();
+        if (!this.visible) return null;
 
         for (const tower of this.towers) {
-            const canBuild = balance >= tower.price;
+            const canBuild = this.balance() >= tower.price;
             if (!canBuild) continue;
 
             const tx = tower.panelPosition.x;
@@ -68,6 +76,9 @@ export class TowerPanel {
                 y >= ty - halfHeight &&
                 y <= ty + halfHeight
             ) {
+                if (this.onTowerSelect) {
+                    this.onTowerSelect(tower.constructor);
+                }
                 return tower;
             }
         }
