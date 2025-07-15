@@ -63,7 +63,6 @@ export class Projectile {
 
 export class ArrowProjectile extends Projectile {
     constructor(position, waypoints, enemy, damage, cfg) {
-        console.log(enemy);
         super(cfg.name, position, cfg.width, cfg.height, damage, cfg.speed, cfg.animationSpeed, waypoints, enemy);
         cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();
