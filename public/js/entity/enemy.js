@@ -23,7 +23,7 @@ export class Enemy {
 
     draw(ctx) {
         ctx.save();
-        ctx.drawImage(this.images[Math.round(this.frame)], this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
+        ctx.drawImage(this.images[Math.round(this.frame)], this.position.x - this.width / 2, this.position.y - this.height, this.width, this.height);
         ctx.restore();
     }
 
@@ -54,6 +54,8 @@ export class Enemy {
 
         this.position.x += Math.cos(angle) * moveDistance;
         this.position.y += Math.sin(angle) * moveDistance;
+        // this.position.x += Math.cos(angle) * moveDistance - this.width / 2;
+        // this.position.y += Math.sin(angle) * moveDistance - this.height / 2;
 
         if (
             Math.round(this.position.x) == Math.round(waypoint.x) &&

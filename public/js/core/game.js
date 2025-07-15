@@ -79,8 +79,19 @@ function gameLoop(timestamp = 0) {
     towerPanel.draw();
     upgradePanel.draw();
     drawBalancePanel(ctx, getBalance());
+    drawWay(ctx, lvlCfg);
 
     requestAnimationFrame(gameLoop);
+}
+
+function drawWay(ctx, lvlCfg) {
+    let waypoints = lvlCfg.waypoints;
+    waypoints.forEach((waypoint) => {
+        ctx.beginPath();
+        ctx.arc(waypoint.x, waypoint.y, 5, 0, Math.PI * 2, true);
+        ctx.fillStyle = "black";
+        ctx.fill();
+    });
 }
 
 function initializeLevel(lvlCfg, enemiesCfg) {
