@@ -69,7 +69,6 @@ export class ArrowProjectile extends Projectile {
             frame.src = imageSrc;
             this.images.push(frame);
         });
-
     }
 }
 
