@@ -12,7 +12,7 @@ export class TowerPanel {
         this.balance = balance;
         this.onTowerSelect = onTowerSelect;
         this.visible = false;
-        this.closeSize = 30;
+        this.closeSize = 50;
         this.closePadding = 10;
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
@@ -34,38 +34,50 @@ export class TowerPanel {
     draw() {
         if (!this.visible) return;
 
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-        this.ctx.fillRect(this.x, this.y, this.width, this.height);
-
+        this.drawBackground();
         this.#drawCloseButton();
+        this.drawTowers();
+    }
+
+    drawBackground() {
+        const ctx = this.ctx;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+
+    drawTowers() {
+        const ctx = this.ctx;
 
         for (const tower of this.towers) {
             const canBuild = this.balance() >= tower.price;
-            this.ctx.save();
-            this.ctx.globalAlpha = canBuild ? 1 : 0.4;
+            ctx.save();
+            ctx.globalAlpha = canBuild ? 1 : 0.4;
+
             tower.draw(
-                this.ctx,
+                ctx,
                 tower.panelPosition.x,
                 tower.panelPosition.y,
                 this.iconWidth,
                 this.iconHeight
             );
 
-            this.ctx.fillStyle = 'white';
-            this.ctx.font = '20px Arial';
-            this.ctx.textAlign = 'center';
-            this.ctx.fillText(
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(
                 tower.price,
                 tower.panelPosition.x,
                 tower.panelPosition.y + this.iconHeight / 2 + 20
             );
 
-            this.ctx.restore();
+            ctx.restore();
         }
     }
 
     handleClick(x, y) {
         if (!this.visible) return null;
+
+        this.#updatePositions();
 
         if (
             x >= this.closeX - this.closeSize / 2 &&

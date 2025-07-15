@@ -1,7 +1,7 @@
 {
   "backgroundImage": "/images/first_level.png",
 
-  "startingBalance": 100,
+  "startingBalance": 1000,
 
   "spawnrate": 3,
 

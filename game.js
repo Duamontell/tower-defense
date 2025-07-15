@@ -94,7 +94,7 @@ function initializeLevel(lvlCfg, enemiesCfg) {
     towerZones = world.towerZones;
 
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, (TowerClass) => { });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height)
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => {});
 
     const archerTower = new ArchersTower({ x: 0, y: 0 });
     const magicianTower = new MagicianTower({ x: 0, y: 0 });

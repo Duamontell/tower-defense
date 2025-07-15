@@ -15,6 +15,36 @@ export class Tower {
             this.isLoaded = true;
         };
         this.image.src = imageSrc;
+        this.upgrades = [
+            {
+                name: 'Урон',
+                description: '+10 урона',
+                cost: 20,
+                iconSrc: '/images/damage.png',
+                apply: () => { this.damage += 10; }
+            },
+            {
+                name: 'Радиус',
+                description: '+50 к радиусу',
+                cost: 15,
+                iconSrc: '/images/radius.png',
+                apply: () => { this.radius += 50; }
+            },
+            {
+                name: 'Скорострельность',
+                description: '-1 сек к перезарядке',
+                cost: 25,
+                iconSrc: '/images/cooldown.png',
+                apply: () => { this.cooldown = Math.max(1, this.cooldown - 1); }
+            }
+        ];
+        
+    }
+
+    applyUpgrade(index) {
+        if (index < 0 || index >= this.upgrades.length) return false;
+        this.upgrades[index].apply();
+        return true;
     }
 
     update(delta, enemies) {
@@ -77,21 +107,21 @@ export class Tower {
 }
 
 export class ArchersTower extends Tower {
-    static price = 10; 
+    static price = 10;
     constructor(position) {
         super('Archers', 10, 350, ArchersTower.price, position, 300, 300, 'single', 3, '/images/TowerArchers.png');
     }
 }
 
 export class MagicianTower extends Tower {
-    static price = 30; 
+    static price = 30;
     constructor(position) {
         super('Magician', 20, 300, MagicianTower.price, position, 300, 300, 'single', 5, '/images/TowerMagicians.png');
     }
 }
 
 export class MortarTower extends Tower {
-    static price = 50; 
+    static price = 50;
     constructor(position) {
         super('Mortar', 60, 500, MortarTower.price, position, 300, 300, 'area', 7, '/images/MortarTower.png');
     }

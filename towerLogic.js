@@ -41,13 +41,26 @@ function handleTowerPanelClick(x, y, towerPanel, world, changeBalance, balance) 
     }
 }
 
-function handleUpgradePanelClick(x, y, upgradePanel, world, changeBalance, balance) {
+function handleUpgradePanelClick(x, y, upgradePanel, changeBalance, balance) {
     const result = upgradePanel.handleClick(x, y);
+
     if (result === 'close') {
         showUpgradePanel = false;
         return;
     }
-    
+
+    if (typeof result === 'number' && selectedTowerInstance) {
+        const upgradeIndex = result;
+        const upgrade = selectedTowerInstance.upgrades[upgradeIndex];
+
+        if (balance >= upgrade.cost) {
+            selectedTowerInstance.applyUpgrade(upgradeIndex);
+            changeBalance(-upgrade.cost);
+            console.log(`Улучшение "${upgrade.name}" применено к башне ${selectedTowerInstance.name}`);
+        } else {
+            console.log('Недостаточно средств для улучшения');
+        }
+    }
 }
 
 function handleMapClick(x, y, world, towerPanel, upgradePanel) {
@@ -67,7 +80,7 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel) {
     if (zone && zone.occupied && zone.tower) {
         selectedTowerInstance = zone.tower;
         showUpgradePanel = true;
-        upgradePanel.show();
+        upgradePanel.show(selectedTowerInstance);
         selectedZone = null;
         showTowerPanel = false;
         towerPanel.hide();
@@ -78,23 +91,15 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel) {
     resetSelections(towerPanel, upgradePanel);
 }
 
-function handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, balance) {
+export function handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, balance) {
     if (showTowerPanel) {
         handleTowerPanelClick(x, y, towerPanel, world, changeBalance, balance);
         return true;
     }
-    else if (showUpgradePanel)
-    {
-        handleUpgradePanelClick(x, y, upgradePanel, world, changeBalance, balance);
+    else if (showUpgradePanel) {
+        handleUpgradePanelClick(x, y, upgradePanel, changeBalance, balance);
         return true;
     }
     handleMapClick(x, y, world, towerPanel, upgradePanel);
     return false;
 }
-
-export {
-    handleClick,
-    resetSelections,
-    handleTowerPanelClick,
-    handleMapClick,
-};
