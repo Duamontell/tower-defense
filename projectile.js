@@ -51,9 +51,6 @@ export class Projectile {
         this.position.x += Math.cos(angle) * moveDistance;
         this.position.y += Math.sin(angle) * moveDistance;
 
-        console.log(waypoint);
-
-
         if (
             Math.round(this.position.x) == Math.round(waypoint.x) &&
             Math.round(this.position.y) == Math.round(waypoint.y)) {
