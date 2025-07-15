@@ -1,0 +1,27 @@
+{
+    "archer": {
+        "name": "Archers",
+        "damage": 50,
+        "radius": 350,
+        "price": 10,
+        "width": 300,
+        "height": 300, 
+        "attackType": "single",
+        "cooldown": 3,
+        "imageSrc": "/images/TowerArchers.png",
+        "projectile": {
+            "name": "Arrow",
+            "width": 100,
+            "height": 100,
+            "imageSrcs": ["/images/arrow.png"],
+            "speed": 400,
+            "animationSpeed": 3
+        }
+    },
+    "magician" : {
+
+    }, 
+    "mortar" : {
+        
+    }
+}

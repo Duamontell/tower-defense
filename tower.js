@@ -1,7 +1,8 @@
 import { towerUpgrades } from './upgrades.js';
+import { ArrowProjectile } from './projectile.js';
 
 export class Tower {
-    constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc) {
+    constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc, projectileCfg) {
         this.name = name;
         this.damage = damage;
         this.radius = radius;
@@ -23,6 +24,7 @@ export class Tower {
         }));
 
         this.upgradeLevels = new Array(this.upgrades.length).fill(0);
+        this.projectileCfg = projectileCfg;
     }
 
     applyUpgrade(index) {
@@ -40,8 +42,8 @@ export class Tower {
         this.timeUntilNextShot -= delta;
 
         if (this.timeUntilNextShot <= 0) {
-            this.attack(enemies);
             this.timeUntilNextShot = this.cooldown;
+            return this.attack(enemies);
         }
     }
 
@@ -78,6 +80,12 @@ export class Tower {
         if (enemiesInRange.length === 0) return;
 
         if (this.attackType === 'single') {
+
+            let projectile = new ArrowProjectile({x: this.position.x, y: this.position.y}, [enemiesInRange[0].position], enemiesInRange[0], this.damage, 
+                this.projectileCfg);
+
+            return projectile;
+
             enemiesInRange[0].receiveDamage(this.damage);
             console.log(`[${this.name} Tower] attacked [${enemiesInRange[0].name}] for ${this.damage} damage. Enemy health left: ${enemiesInRange[0].health}`);
             if (!enemiesInRange[0].isAlive()) {
@@ -96,9 +104,11 @@ export class Tower {
 }
 
 export class ArchersTower extends Tower {
-    static price = 10;
-    constructor(position) {
-        super('Archers', 10, 350, ArchersTower.price, position, 300, 300, 'single', 3, '/images/TowerArchers.png');
+    static price = 10; 
+    constructor(position, cfg) {
+        super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius, 
+            cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.attackType, cfg.archer.cooldown, 
+            cfg.archer.imageSrc, cfg.archer.projectile);
     }
 }
 
