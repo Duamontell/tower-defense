@@ -1,3 +1,9 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
 index:
     path: /
     controller: App\Controller\GameController::menu
@@ -11,3 +17,7 @@ game:
     controller: App\Controller\GameController::game
     methods:
 
+# Тестовый рут
+publsih:
+    path: /publish
+    controller: App\Controller\PublishController:publish
