@@ -1,3 +1,5 @@
+import { towerUpgrades } from './upgrades.js';
+
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc) {
         this.name = name;
@@ -15,6 +17,23 @@ export class Tower {
             this.isLoaded = true;
         };
         this.image.src = imageSrc;
+        this.upgrades = towerUpgrades.map(upgrade => ({
+            ...upgrade,
+            applyLevels: upgrade.applyLevels.map(fn => () => fn(this)),
+        }));
+
+        this.upgradeLevels = new Array(this.upgrades.length).fill(0);
+    }
+
+    applyUpgrade(index) {
+        if (index < 0 || index >= this.upgrades.length) return false;
+        const level = this.upgradeLevels[index];
+        if (level >= this.upgrades[index].applyLevels.length) return false;
+
+        this.upgrades[index].applyLevels[level]();
+        this.upgradeLevels[index]++;
+
+        return true;
     }
 
     update(delta, enemies) {

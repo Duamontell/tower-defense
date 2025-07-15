@@ -38,7 +38,6 @@ function getClickCoordinates(canvas, event) {
 canvas.addEventListener('click', (event) => {
     const { x, y } = getClickCoordinates(canvas, event);
     handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, getBalance());
-    console.log(x, y);
 });
 
 let lvlResponse = await fetch(`../../config/game/level${currentLevel}.json`);
@@ -102,7 +101,7 @@ function initializeLevel(lvlCfg, enemiesCfg) {
     towerZones = world.towerZones;
 
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, (TowerClass) => { });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height)
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => {});
 
     const archerTower = new ArchersTower({ x: 0, y: 0 });
     const magicianTower = new MagicianTower({ x: 0, y: 0 });
