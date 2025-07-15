@@ -12,7 +12,7 @@ export class TowerPanel {
         this.balance = balance;
         this.onTowerSelect = onTowerSelect;
         this.visible = false;
-        this.closeSize = 50;
+        this.closeSize = 40;
         this.closePadding = 10;
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
@@ -41,7 +41,7 @@ export class TowerPanel {
 
     drawBackground() {
         const ctx = this.ctx;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillStyle = '#000000B3';
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
@@ -61,7 +61,7 @@ export class TowerPanel {
                 this.iconHeight
             );
 
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = '#FFFFFF';
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText(
@@ -145,10 +145,10 @@ export class TowerPanel {
         const half = size / 2;
 
         ctx.save();
-        ctx.strokeStyle = 'white';
+        ctx.strokeStyle = '#FFFFFF';
         ctx.lineWidth = 3;
 
-        ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+        ctx.fillStyle = '#FF0000B3';
         ctx.fillRect(x - half, y - half, size, size);
 
         ctx.beginPath();

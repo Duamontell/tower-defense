@@ -1,3 +1,5 @@
+import { towerUpgrades } from './upgrades.js';
+
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc) {
         this.name = name;
@@ -15,35 +17,22 @@ export class Tower {
             this.isLoaded = true;
         };
         this.image.src = imageSrc;
-        this.upgrades = [
-            {
-                name: 'Урон',
-                description: '+10 урона',
-                cost: 20,
-                iconSrc: '/images/damage.png',
-                apply: () => { this.damage += 10; }
-            },
-            {
-                name: 'Радиус',
-                description: '+50 к радиусу',
-                cost: 15,
-                iconSrc: '/images/radius.png',
-                apply: () => { this.radius += 50; }
-            },
-            {
-                name: 'Скорострельность',
-                description: '-1 сек к перезарядке',
-                cost: 25,
-                iconSrc: '/images/cooldown.png',
-                apply: () => { this.cooldown = Math.max(1, this.cooldown - 1); }
-            }
-        ];
-        
+        this.upgrades = towerUpgrades.map(upgrade => ({
+            ...upgrade,
+            applyLevels: upgrade.applyLevels.map(fn => () => fn(this)),
+        }));
+
+        this.upgradeLevels = new Array(this.upgrades.length).fill(0);
     }
 
     applyUpgrade(index) {
         if (index < 0 || index >= this.upgrades.length) return false;
-        this.upgrades[index].apply();
+        const level = this.upgradeLevels[index];
+        if (level >= this.upgrades[index].applyLevels.length) return false;
+
+        this.upgrades[index].applyLevels[level]();
+        this.upgradeLevels[index]++;
+
         return true;
     }
 

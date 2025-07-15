@@ -52,11 +52,15 @@ function handleUpgradePanelClick(x, y, upgradePanel, changeBalance, balance) {
     if (typeof result === 'number' && selectedTowerInstance) {
         const upgradeIndex = result;
         const upgrade = selectedTowerInstance.upgrades[upgradeIndex];
-
-        if (balance >= upgrade.cost) {
+        const level = selectedTowerInstance.upgradeLevels[upgradeIndex] || 0;
+        const currentCost = upgrade.costs[level];
+        
+        console.log(currentCost);
+        if (balance >= currentCost) {
             selectedTowerInstance.applyUpgrade(upgradeIndex);
-            changeBalance(-upgrade.cost);
+            changeBalance(-currentCost);
             console.log(`Улучшение "${upgrade.name}" применено к башне ${selectedTowerInstance.name}`);
+            console.log(selectedTowerInstance);
         } else {
             console.log('Недостаточно средств для улучшения');
         }

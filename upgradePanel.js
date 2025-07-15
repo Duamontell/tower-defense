@@ -2,11 +2,11 @@ export class UpgradePanel {
     constructor(ctx, canvasWidth, canvasHeight, getBalance, onBuyUpgrade) {
         this.ctx = ctx;
         this.width = 1000;
-        this.height = 350;
+        this.height = 300;
         this.x = (canvasWidth - this.width) / 2;
         this.y = canvasHeight - this.height;
         this.visible = false;
-        this.closeSize = 50;
+        this.closeSize = 40;
         this.closePadding = 10;
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
@@ -14,6 +14,7 @@ export class UpgradePanel {
         this.onBuyUpgrade = onBuyUpgrade;
         this.upgradePositions = [];
         this.selectedTower = null;
+        this.iconSize = 40;
     }
 
     show(tower) {
@@ -43,62 +44,89 @@ export class UpgradePanel {
 
     drawBackground() {
         const ctx = this.ctx;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillStyle = '#000000B3';
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
     drawTitle() {
         const ctx = this.ctx;
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = '#FFFFFF';
         ctx.font = '24px Arial';
         ctx.textAlign = 'center';
 
         const titleX = this.x + this.width / 2;
-        const titleY = this.y + 30;
+        const titleY = this.y + 40;
 
         const towerName = this.selectedTower.name || 'Башня';
 
-        ctx.fillText(`Улучшения для: ${towerName}`, titleX, titleY);
+        ctx.fillText(`Улучшения для ${towerName}`, titleX, titleY);
     }
 
     drawUpgradeButtons() {
         const ctx = this.ctx;
+        ctx.textBaseline = 'middle';
 
-        ctx.textAlign = 'left';
-        ctx.font = '20px Arial';
+        const iconSize = this.iconSize;
 
         this.upgradePositions.forEach((pos, i) => {
             const upgrade = this.selectedTower.upgrades[i];
-            const canBuy = this.getBalance() >= upgrade.cost;
+            const level = this.selectedTower.upgradeLevels[i] || 0;
+            const maxLevel = upgrade.applyLevels.length;
 
-            ctx.globalAlpha = canBuy ? 1 : 0.4;
-            ctx.fillStyle = canBuy ? '#F5F5DC' : '#AAA';
-            ctx.fillRect(pos.x, pos.y, pos.width, pos.height);
+            const isMaxedOut = level >= maxLevel;
+            const hasMoney = !isMaxedOut && this.getBalance() >= upgrade.costs[level];
 
-            const iconSize = 40;
-            if (!upgrade.icon) {
-                upgrade.icon = new Image();
-                upgrade.icon.src = upgrade.iconSrc;
-            }
-            if (upgrade.icon.complete) {
-                ctx.drawImage(upgrade.icon, pos.x + 5, pos.y + (pos.height - iconSize) / 2, iconSize, iconSize);
-            } else {
-                ctx.fillStyle = '#888';
-                ctx.fillRect(pos.x + 5, pos.y + (pos.height - iconSize) / 2, iconSize, iconSize);
-            }
-
-            ctx.fillStyle = 'black';
-            const textX = pos.x + iconSize + 15;
-            const textY = pos.y + pos.height / 2 - 5;
-            ctx.font = '18px Arial';
-            ctx.fillText(upgrade.description || upgrade.name, textX, textY);
-
-            ctx.font = '16px Arial';
-            ctx.fillStyle = 'black';
-            ctx.fillText(`Стоимость: ${upgrade.cost}`, textX, textY + 20);
-
-            ctx.globalAlpha = 1;
+            this.drawUpgradeButtonBackgroundAndFrame(ctx, pos, hasMoney, isMaxedOut);
+            this.drawUpgradeIcon(ctx, pos, upgrade, iconSize);
+            this.drawUpgradeTexts(ctx, pos, upgrade, level, maxLevel, hasMoney, iconSize);
         });
+    }
+
+    drawUpgradeButtonBackgroundAndFrame(ctx, pos, canBuy, isMaxedOut) {
+        ctx.globalAlpha = canBuy ? 1 : 0.4;
+        if (isMaxedOut) ctx.globalAlpha = 1;
+
+        ctx.fillStyle = canBuy || isMaxedOut ? '#F5F5DC' : '#AAAAAA';
+        ctx.fillRect(pos.x, pos.y, pos.width, pos.height);
+
+        ctx.strokeStyle = '#444444';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(pos.x, pos.y, pos.width, pos.height);
+
+        ctx.globalAlpha = 1;
+    }
+
+    drawUpgradeIcon(ctx, pos, upgrade, iconSize) {
+        const paddingLeft = 15;
+
+        if (!upgrade.icon) {
+            upgrade.icon = new Image();
+            upgrade.icon.src = upgrade.iconSrc;
+        }
+        ctx.drawImage(upgrade.icon, pos.x + paddingLeft, pos.y + (pos.height - iconSize) / 2, iconSize, iconSize);
+    }
+
+    drawUpgradeTexts(ctx, pos, upgrade, level, maxLevel, canBuy, iconSize) {
+        const paddingLeft = 15;
+        const paddingRight = 15;
+        const textCenterY = pos.y + pos.height / 2;
+        const nameX = pos.x + paddingLeft + iconSize + 15;
+        const descriptionX = pos.x + pos.width / 2 - 80;
+        const costX = pos.x + pos.width - paddingRight;
+
+        ctx.fillStyle = '#000000';
+        ctx.font = '18px Arial';
+        ctx.textAlign = 'left';
+
+        ctx.fillText(upgrade.name, nameX, textCenterY);
+
+        let description = level < maxLevel ? upgrade.descriptions[level] : 'Максимальный уровень улучшения';
+        ctx.fillText(description, descriptionX, textCenterY);
+
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'right';
+        let costText = level < maxLevel ? `Стоимость: ${upgrade.costs[level]}` : '';
+        ctx.fillText(costText, costX, textCenterY);
     }
 
     handleClick(x, y) {
@@ -125,7 +153,8 @@ export class UpgradePanel {
                 y <= pos.y + pos.height
             ) {
                 const upgrade = this.selectedTower.upgrades[i];
-                if (this.getBalance() >= upgrade.cost) {
+                const level = this.selectedTower.upgradeLevels[i] || 0;
+                if (level < upgrade.applyLevels.length && this.getBalance() >= upgrade.costs[level]) {
                     return i;
                 }
             }
@@ -135,13 +164,17 @@ export class UpgradePanel {
 
     #updatePositions() {
         this.upgradePositions = [];
-        const startX = this.x + 20;
-        let startY = this.y + 50;
-        const buttonWidth = 300;
-        const buttonHeight = 40;
+
+        const paddingSide = 20;
         const gap = 15;
+        const buttonHeight = 40;
+        const headerHeight = 80;
 
         if (!this.selectedTower) return;
+
+        const buttonWidth = this.width - paddingSide * 2;
+        const startX = this.x + paddingSide;
+        let startY = this.y + headerHeight;
 
         for (let i = 0; i < this.selectedTower.upgrades.length; i++) {
             this.upgradePositions.push({
@@ -150,6 +183,7 @@ export class UpgradePanel {
                 width: buttonWidth,
                 height: buttonHeight
             });
+
             startY += buttonHeight + gap;
         }
 
@@ -165,10 +199,10 @@ export class UpgradePanel {
         const half = size / 2;
 
         ctx.save();
-        ctx.strokeStyle = 'white';
+        ctx.strokeStyle = '#FFFFFF';
         ctx.lineWidth = 3;
 
-        ctx.fillStyle = 'rgba(255, 0, 0, 0.7)';
+        ctx.fillStyle = '#FF0000B3';
         ctx.fillRect(x - half, y - half, size, size);
 
         ctx.beginPath();

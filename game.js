@@ -34,7 +34,6 @@ function getClickCoordinates(canvas, event) {
 canvas.addEventListener('click', (event) => {
     const { x, y } = getClickCoordinates(canvas, event);
     handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, getBalance());
-    console.log(x, y);
 });
 
 let lvlResponse = await fetch(`/config/level${currentLevel}.json`);
