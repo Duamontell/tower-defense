@@ -80,9 +80,10 @@ export class Tower {
 
         if (enemiesInRange.length === 0) return;
 
+        const position = {x: this.position.x, y: this.position.y};
+
         if (this.attackType === 'single') {
 
-            const position = {x: this.position.x, y: this.position.y};
             const nearestEnemy = enemiesInRange[0];
             let projectile;
 
@@ -96,8 +97,6 @@ export class Tower {
                     projectiles.push(projectile);
                     break;
             }
-
-            projectiles.push(projectile);
 
         } else if (this.attackType === 'area') {
 
