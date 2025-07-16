@@ -39,22 +39,21 @@ export class Projectile {
         }
 
         const waypoint = this.waypoints[this.waypointIndex];
-        const angle = this.calcAngle()
 
         const distance = Math.hypot(waypoint.x - this.position.x, waypoint.y - this.position.y);
-        if (distance < this.speed / 50) {
+        if (distance < this.speed / 40) {
             this.waypointIndex++;
             return;
         }
 
         const moveDistance = this.speed * delta;
 
-        this.position.x += Math.cos(angle) * moveDistance;
-        this.position.y += Math.sin(angle) * moveDistance;
+        this.position.x += Math.cos(this.angle) * moveDistance;
+        this.position.y += Math.sin(this.angle) * moveDistance;
 
         if (
-            Math.round(this.position.x) == Math.round(waypoint.x) &&
-            Math.round(this.position.y) == Math.round(waypoint.y)) {
+            Math.round(this.position.x) === Math.round(waypoint.x) &&
+            Math.round(this.position.y) === Math.round(waypoint.y)) {
             this.waypointIndex++;
             this.position.x = waypoint.x;
             this.position.y = waypoint.y;

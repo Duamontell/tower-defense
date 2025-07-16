@@ -87,13 +87,14 @@ export class Tower {
             const nearestEnemy = enemiesInRange[0];
             let projectile;
 
+            let enemyPosition = {x: nearestEnemy.position.x, y: nearestEnemy.position.y - 100};
             switch (this.name) {
-                case 'Archers': 
-                    projectile = new ArrowProjectile(position, [nearestEnemy.position], nearestEnemy, this.damage, this.attackCfg);
+                case 'Archers':
+                    projectile = new ArrowProjectile(position, [enemyPosition], nearestEnemy, this.damage, this.attackCfg);
                     projectiles.push(projectile);
                     break;
                 case 'Magicians':
-                    projectile = new FireballProjectile(position, [nearestEnemy.position], nearestEnemy, this.damage, this.attackCfg);
+                    projectile = new FireballProjectile(position, [enemyPosition], nearestEnemy, this.damage, this.attackCfg);
                     projectiles.push(projectile);
                     break;
             }
@@ -112,10 +113,10 @@ export class Tower {
 }
 
 export class ArchersTower extends Tower {
-    static price = 10; 
+    static price = 10;
     constructor(position, cfg) {
-        super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius, 
-            cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.attackType, cfg.archer.cooldown, 
+        super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
+            cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.attackType, cfg.archer.cooldown,
             cfg.archer.imageSrc, cfg.archer.attack);
     }
 }
@@ -123,8 +124,8 @@ export class ArchersTower extends Tower {
 export class MagicianTower extends Tower {
     static price = 30;
     constructor(position, cfg) {
-        super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius, 
-            cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.attackType, cfg.magician.cooldown, 
+        super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
+            cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.attackType, cfg.magician.cooldown,
             cfg.magician.imageSrc, cfg.magician.attack);
     }
 }
@@ -132,8 +133,8 @@ export class MagicianTower extends Tower {
 export class MortarTower extends Tower {
     static price = 50;
     constructor(position, cfg) {
-        super(cfg.mortar.name, cfg.mortar.damage, cfg.mortar.radius, 
-            cfg.mortar.price, position, cfg.mortar.width, cfg.mortar.height, cfg.mortar.attackType, cfg.mortar.cooldown, 
+        super(cfg.mortar.name, cfg.mortar.damage, cfg.mortar.radius,
+            cfg.mortar.price, position, cfg.mortar.width, cfg.mortar.height, cfg.mortar.attackType, cfg.mortar.cooldown,
             cfg.mortar.imageSrc, cfg.mortar.attack);
     }
 }

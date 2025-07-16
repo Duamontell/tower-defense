@@ -5,7 +5,7 @@
         "radius": 350,
         "price": 10,
         "width": 300,
-        "height": 300, 
+        "height": 300,
         "attackType": "single",
         "cooldown": 2,
         "imageSrc": "../../images/tower/TowerArchers.png",
@@ -14,7 +14,7 @@
             "width": 120,
             "height": 120,
             "imageSrcs": ["../../images/projectiles/arrow/arrow.png"],
-            "speed": 250,
+            "speed": 750,
             "animationSpeed": 3
         }
     },
@@ -39,11 +39,11 @@
                 "../../images/projectiles/fireball/FB4.png",
                 "../../images/projectiles/fireball/FB5.png"
             ],
-            "speed": 200,
+            "speed": 350,
             "animationSpeed": 15
         }
 
-    }, 
+    },
     "mortar" : {
         "name": "Mortar",
         "damage": 60,
@@ -59,6 +59,6 @@
             "imageSrc": [
                 "/images/fireball/FB1.png"
             ]
-        }        
+        }
     }
 }
