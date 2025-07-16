@@ -1,5 +1,9 @@
 {
-  "backgroundImage": "/images/first_level.png",
+  "map": {
+    "backgroundImage": "images/map/first_level.png",
+    "width": 1536,
+    "height": 1024
+  },
 
   "startingBalance": 250,
 
@@ -24,7 +28,7 @@
     },
     "width": 300,
     "height": 300,
-    "imageSrc": "/images/Base.png"
+    "imageSrc": "images/base/Base.png"
   },
 
   "towerZones": [

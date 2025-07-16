@@ -1,17 +1,19 @@
-import { World } from './world.js';
-import { ArchersTower, MagicianTower, MortarTower } from './tower.js';
-import { Base } from './base.js';
-import { TowerPanel } from './towerPanel.js';
-import { currentLevel } from './menu.js'
-import { drawTowerZones } from './towerZones.js';
-import { UpgradePanel } from './upgradePanel.js';
-import { handleClick } from './towerLogic.js';
-import { initBalance, getBalance, changeBalance, drawBalancePanel } from './balanceManager.js';
+import { World } from '../entity/world.js';
+import { ArchersTower, MagicianTower, MortarTower } from '../entity/tower.js';
+import { Base } from '../entity/base.js';
+import { TowerPanel } from '../entity/towerPanel.js';
+// import { currentLevel } from './menu.js'
+import { drawTowerZones } from '../systems/towerZones.js';
+import { UpgradePanel } from '../entity/upgradePanel.js';
+import { handleClick } from '../systems/towerLogic.js';
+import { changeBalance, drawBalancePanel, getBalance, initBalance } from '../systems/balanceManager.js';
+import { initCanvasResizer } from "../ui/gameView.js";
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const background = new Image();
 
+const currentLevel = window.currentLevel
 let waveDuration = 0;
 let lastTimestamp = 0;
 let world;
@@ -24,6 +26,8 @@ let maxWave;
 let towerPanel;
 let upgradePanel;
 let towerZones = {};
+let nativeWidth = canvas.width;
+let nativeHeight = canvas.height;
 
 function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -37,12 +41,12 @@ canvas.addEventListener('click', (event) => {
     handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, getBalance());
 });
 
-let lvlResponse = await fetch(`/config/level${currentLevel}.json`);
+let lvlResponse = await fetch(`../../config/game/level${currentLevel}.json`);
 if (lvlResponse.ok) {
     lvlCfg = await lvlResponse.json();
 }
 
-let enemiesResponse = await fetch('config/enemies.json');
+let enemiesResponse = await fetch('../../config/game/enemies.json');
 if (enemiesResponse.ok) {
     enemiesCfg = await enemiesResponse.json();
 }
@@ -85,7 +89,11 @@ function gameLoop(timestamp = 0) {
 }
 
 function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
-    background.src = lvlCfg.backgroundImage;
+    background.src = lvlCfg.map.backgroundImage;
+    nativeWidth = lvlCfg.map.width;
+    nativeHeight = lvlCfg.map.height;
+    canvas.width = lvlCfg.map.width;
+    canvas.height = lvlCfg.map.height;
 
     world = new World(changeBalance, lvlCfg, enemiesCfg, towersCfg);
 
@@ -111,4 +119,5 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
 }
 
 initializeLevel(lvlCfg, enemiesCfg, towersCfg);
+initCanvasResizer(canvas, nativeWidth, nativeHeight);
 gameLoop();

@@ -1,5 +1,4 @@
 export class Enemy {
-    
     constructor(name, position, width, height, health, damage, reward, speed, animationSpeed, waypoints) {
         this.name = name;
         this.position = position;
