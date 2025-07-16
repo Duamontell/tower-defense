@@ -57,7 +57,7 @@ export class Tower {
         }
 
         const drawX = x !== null ? x - (width ?? this.width) / 2 : this.position.x - this.width / 2;
-        const drawY = y !== null ? y - (height ?? this.height) / 2 : this.position.y - this.height / 2;
+        const drawY = y !== null ? y - (height ?? this.height) / 2 : this.position.y - this.height + this.height / 4;
         const drawWidth = width ?? this.width;
         const drawHeight = height ?? this.height;
 

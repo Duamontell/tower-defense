@@ -8,6 +8,7 @@ export class Enemy {
         this.damage = damage;
         this.reward = reward;
         this.speed = speed;
+        this.direction = "left"
         this.waypoints = waypoints;
         this.waypointIndex = 0;
         this.reachedEnd = false;
@@ -23,12 +24,15 @@ export class Enemy {
 
     draw(ctx) {
         ctx.save();
-        ctx.drawImage(this.images[Math.round(this.frame)], this.position.x - this.width / 2, this.position.y - this.height, this.width, this.height);
+        ctx.translate(this.position.x, this.position.y);
+        if (this.direction === "right") {
+            ctx.scale(-1, 1);
+        }
+        ctx.drawImage(this.images[Math.round(this.frame)], -this.width / 2, -this.height, this.width, this.height);
         ctx.restore();
     }
 
     update(delta) {
-
         this.frame = this.frame + delta * this.animationSpeed;
         if (this.frame > this.images.length - 1) {
             this.frame = 0;
@@ -55,9 +59,15 @@ export class Enemy {
         this.position.x += Math.cos(angle) * moveDistance;
         this.position.y += Math.sin(angle) * moveDistance;
 
+        if (xDistance >= 0) {
+            this.direction = "right";
+        } else {
+            this.direction = "left";
+        }
+
         if (
-            Math.round(this.position.x) == Math.round(waypoint.x) &&
-            Math.round(this.position.y) == Math.round(waypoint.y)) {
+            Math.round(this.position.x) === Math.round(waypoint.x) &&
+            Math.round(this.position.y) === Math.round(waypoint.y)) {
             this.waypointIndex++;
             this.position.x = waypoint.x;
             this.position.y = waypoint.y;
