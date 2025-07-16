@@ -51,7 +51,7 @@ if (enemiesResponse.ok) {
     enemiesCfg = await enemiesResponse.json();
 }
 
-let towersResponse = await fetch('config/towers.json');
+let towersResponse = await fetch('./../config/game/towers.json');
 if (towersResponse.ok) {
     towersCfg = await towersResponse.json();
 }
