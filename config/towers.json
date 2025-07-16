@@ -7,21 +7,58 @@
         "width": 300,
         "height": 300, 
         "attackType": "single",
-        "cooldown": 3,
+        "cooldown": 2,
         "imageSrc": "/images/TowerArchers.png",
-        "projectile": {
+        "attack": {
             "name": "Arrow",
-            "width": 100,
-            "height": 100,
+            "width": 120,
+            "height": 120,
             "imageSrcs": ["/images/arrow.png"],
-            "speed": 400,
+            "speed": 250,
             "animationSpeed": 3
         }
     },
     "magician" : {
+        "name": "Magicians",
+        "damage": 100,
+        "radius": 300,
+        "price": 30,
+        "width": 300,
+        "height": 300,
+        "attackType": "single",
+        "cooldown": 2,
+        "imageSrc": "/images/TowerMagicians.png",
+        "attack": {
+            "name": "Fireball",
+            "width": 256,
+            "height": 128,
+            "imageSrcs": [
+                "/images/fireball/FB1.png",
+                "/images/fireball/FB2.png",
+                "/images/fireball/FB3.png",
+                "/images/fireball/FB4.png",
+                "/images/fireball/FB5.png"
+            ],
+            "speed": 200,
+            "animationSpeed": 15
+        }
 
     }, 
     "mortar" : {
-        
+        "name": "Mortar",
+        "damage": 60,
+        "radius": 500,
+        "price": 50,
+        "width": 300,
+        "height": 300,
+        "attackType": "area",
+        "cooldown": 7,
+        "imageSrc": "/images/MortarTower.png",
+        "attack": {
+            "duration": 3,
+            "imageSrc": [
+                "/images/fireball/FB1.png"
+            ]
+        }        
     }
 }

@@ -102,12 +102,12 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => {});
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
-    // const magicianTower = new MagicianTower({ x: 0, y: 0 });
-    // const mortarTower = new MortarTower({ x: 0, y: 0 });
+    const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
+    const mortarTower = new MortarTower({ x: 0, y: 0 }, towersCfg);
 
     towerPanel.addTower(archerTower);
-    // towerPanel.addTower(magicianTower);
-    // towerPanel.addTower(mortarTower);
+    towerPanel.addTower(magicianTower);
+    towerPanel.addTower(mortarTower);
 }
 
 initializeLevel(lvlCfg, enemiesCfg, towersCfg);

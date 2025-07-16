@@ -14,12 +14,15 @@ export class Projectile {
         this.images = [];
         this.frame = 0;
         this.reachedEnd = false;
-        this.enemy = enemy
+        this.enemy = enemy;
+        this.angle = this.calcAngle();
     }
 
     draw(ctx) {
         ctx.save();
-        ctx.drawImage(this.images[Math.round(this.frame)], this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
+        ctx.translate(this.position.x, this.position.y);
+        ctx.rotate(this.angle);
+        ctx.drawImage(this.images[Math.round(this.frame)], -this.width / 2, -this.height / 2, this.width, this.height);
         ctx.restore();
     }
 
@@ -36,12 +39,10 @@ export class Projectile {
         }
 
         const waypoint = this.waypoints[this.waypointIndex];
-        const xDistance = waypoint.x - this.position.x;
-        const yDistance = waypoint.y - this.position.y;
-        const angle = Math.atan2(yDistance, xDistance);
+        const angle = this.calcAngle()
 
         const distance = Math.hypot(waypoint.x - this.position.x, waypoint.y - this.position.y);
-        if (distance < 5) {
+        if (distance < this.speed / 50) {
             this.waypointIndex++;
             return;
         }
@@ -58,6 +59,13 @@ export class Projectile {
             this.position.x = waypoint.x;
             this.position.y = waypoint.y;
         }
+    }
+
+    calcAngle() {
+        const waypoint = this.waypoints[this.waypointIndex];
+        const xDistance = waypoint.x - this.position.x;
+        const yDistance = waypoint.y - this.position.y;
+        return Math.atan2(yDistance, xDistance);
     }
 }
 

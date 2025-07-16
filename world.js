@@ -56,17 +56,14 @@ export class World {
     }
 
     update(delta) {
+
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
-                let projectile = zone.tower.update(delta, this.enemies);
-                if (projectile !== undefined) {
-                    this.projectiles.push(projectile);
-                }
+                zone.tower.update(delta, this.enemies, this.projectiles);
             }
         });
 
         this.enemies.forEach(enemy => enemy.update(delta));
-
         this.enemies = this.enemies.filter(enemy => {
             if (enemy.reachedEnd) {
                 this.bases.forEach(base => base.recieveDamage(enemy.damage));
@@ -82,7 +79,6 @@ export class World {
         });
 
         this.projectiles.forEach(projectile => projectile.update(delta));
-
         this.projectiles = this.projectiles.filter(projectile => {
             if (projectile.reachedEnd) {
                 projectile.enemy.receiveDamage(projectile.damage);

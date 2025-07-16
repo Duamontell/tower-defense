@@ -3,10 +3,10 @@
         "name": "Orc",
         "width": 200,
         "height": 200,
-        "health": 200,
+        "health": 2000,
         "damage": 10,
         "reward": 20,
-        "speed": 60,
+        "speed": 20,
         "animationSpeed": 7,
         "imageSrcs": [
             "images/orc/orc1.png",
