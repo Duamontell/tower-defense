@@ -287,11 +287,11 @@
     "base": {
         "health": 150,
         "position": {
-            "x": 100,
-            "y": 450
+            "x": 1197,
+            "y": 750
         },
-        "width": 100,
-        "height": 100,
+        "width": 0,
+        "height": 0,
         "imageSrc": "images/base/Base.png"
     },
     "towerZones": [
@@ -303,6 +303,36 @@
             "bottomRight": {
                 "x": 473,
                 "y": 663
+            }
+        },
+        {
+            "topLeft": {
+                "x": 754,
+                "y": 498
+            },
+            "bottomRight": {
+                "x": 854,
+                "y": 598
+            }
+        },
+        {
+            "topLeft": {
+                "x": 817,
+                "y": 133
+            },
+            "bottomRight": {
+                "x": 917,
+                "y": 233
+            }
+        },
+        {
+            "topLeft": {
+                "x": 98,
+                "y": 326
+            },
+            "bottomRight": {
+                "x": 198,
+                "y": 426
             }
         }
     ],

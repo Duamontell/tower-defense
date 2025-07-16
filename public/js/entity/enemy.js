@@ -54,8 +54,6 @@ export class Enemy {
 
         this.position.x += Math.cos(angle) * moveDistance;
         this.position.y += Math.sin(angle) * moveDistance;
-        // this.position.x += Math.cos(angle) * moveDistance - this.width / 2;
-        // this.position.y += Math.sin(angle) * moveDistance - this.height / 2;
 
         if (
             Math.round(this.position.x) == Math.round(waypoint.x) &&
