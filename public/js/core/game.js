@@ -2,7 +2,6 @@ import { World } from '../entity/world.js';
 import { ArchersTower, MagicianTower, MortarTower } from '../entity/tower.js';
 import { Base } from '../entity/base.js';
 import { TowerPanel } from '../entity/towerPanel.js';
-// import { currentLevel } from './menu.js'
 import { drawTowerZones } from '../systems/towerZones.js';
 import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
@@ -70,7 +69,7 @@ function gameLoop(timestamp = 0) {
         let wave = waves[currentWave];
         world.summonWave(wave);
         waveDuration = wave.duration;
-    } else if (currentWave == maxWave && world.enemies.length == 0) {
+    } else if (currentWave === maxWave && world.enemies.length === 0) {
         alert("Вы победили");
         return;
     }

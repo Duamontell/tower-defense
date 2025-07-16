@@ -23,7 +23,7 @@ export class Enemy {
 
     draw(ctx) {
         ctx.save();
-        ctx.drawImage(this.images[Math.round(this.frame)], this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
+        ctx.drawImage(this.images[Math.round(this.frame)], this.position.x - this.width / 2, this.position.y - this.height, this.width, this.height);
         ctx.restore();
     }
 
