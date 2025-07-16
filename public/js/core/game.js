@@ -7,6 +7,8 @@ import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
 import { changeBalance, drawBalancePanel, getBalance, initBalance } from '../systems/balanceManager.js';
 import { initCanvasResizer } from "../ui/gameView.js";
+import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
+import { GameEventHandler } from '../mercure/gameEventHandler.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -57,6 +59,9 @@ if (towersResponse.ok) {
 
 function gameLoop(timestamp = 0) {
     if (world.gameOver) {
+        if (window.mercureEventSource) {
+            unsubscribe(window.mercureEventSource);
+        }
         return;
     }
     const delta = (timestamp - lastTimestamp) / 1000;
@@ -106,7 +111,7 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     towerZones = world.towerZones;
 
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, (TowerClass) => { });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => {});
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => { });
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
     const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
@@ -115,6 +120,21 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     towerPanel.addTower(archerTower);
     towerPanel.addTower(magicianTower);
     towerPanel.addTower(mortarTower);
+
+    const gameEventHandler = new GameEventHandler(world);
+
+    const topic = 'game?level=1';
+    const mercureCallback = (data) => {
+        try {
+            const parsedData = JSON.parse(data);
+            gameEventHandler.handleEvent(parsedData);
+        } catch (error) {
+            console.error('Ошибка парсинга события:', error);
+        }
+    };
+
+    const eventSource = subscribeToMercure(topic, mercureCallback);
+    window.mercureEventSource = eventSource;
 }
 
 initializeLevel(lvlCfg, enemiesCfg, towersCfg);

@@ -3,6 +3,7 @@ import { ArrowProjectile, FireballProjectile } from './projectile.js';
 
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc, attackCfg) {
+        this.id = crypto.randomUUID();
         this.name = name;
         this.damage = damage;
         this.radius = radius;
