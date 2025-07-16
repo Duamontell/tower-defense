@@ -1,2 +1,0 @@
-# tower-defense
-Pre-main
