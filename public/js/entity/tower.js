@@ -2,6 +2,7 @@ import { towerUpgrades } from './upgrades.js';
 
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc) {
+        this.id = crypto.randomUUID();
         this.name = name;
         this.damage = damage;
         this.radius = radius;
