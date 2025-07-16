@@ -19,6 +19,7 @@ let world;
 let currentWave = 0;
 let lvlCfg = {};
 let enemiesCfg = {};
+let towersCfg = {};
 let waves = {};
 let maxWave;
 let towerPanel;
@@ -37,7 +38,6 @@ function getClickCoordinates(canvas, event) {
 canvas.addEventListener('click', (event) => {
     const { x, y } = getClickCoordinates(canvas, event);
     handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, getBalance());
-    console.log(x, y);
 });
 
 let lvlResponse = await fetch(`../../config/game/level${currentLevel}.json`);
@@ -48,6 +48,11 @@ if (lvlResponse.ok) {
 let enemiesResponse = await fetch('../../config/game/enemies.json');
 if (enemiesResponse.ok) {
     enemiesCfg = await enemiesResponse.json();
+}
+
+let towersResponse = await fetch('./../config/game/towers.json');
+if (towersResponse.ok) {
+    towersCfg = await towersResponse.json();
 }
 
 function gameLoop(timestamp = 0) {
@@ -82,14 +87,14 @@ function gameLoop(timestamp = 0) {
     requestAnimationFrame(gameLoop);
 }
 
-function initializeLevel(lvlCfg, enemiesCfg) {
+function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     background.src = lvlCfg.map.backgroundImage;
     nativeWidth = lvlCfg.map.width;
     nativeHeight = lvlCfg.map.height;
     canvas.width = lvlCfg.map.width;
     canvas.height = lvlCfg.map.height;
 
-    world = new World(changeBalance, lvlCfg, enemiesCfg);
+    world = new World(changeBalance, lvlCfg, enemiesCfg, towersCfg);
 
     const baseData = lvlCfg.base;
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
@@ -101,17 +106,17 @@ function initializeLevel(lvlCfg, enemiesCfg) {
     towerZones = world.towerZones;
 
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, (TowerClass) => { });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height)
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => {});
 
-    const archerTower = new ArchersTower({ x: 0, y: 0 });
-    const magicianTower = new MagicianTower({ x: 0, y: 0 });
-    const mortarTower = new MortarTower({ x: 0, y: 0 });
+    const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
+    const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
+    const mortarTower = new MortarTower({ x: 0, y: 0 }, towersCfg);
 
     towerPanel.addTower(archerTower);
     towerPanel.addTower(magicianTower);
     towerPanel.addTower(mortarTower);
 }
 
-initializeLevel(lvlCfg, enemiesCfg);
+initializeLevel(lvlCfg, enemiesCfg, towersCfg);
 initCanvasResizer(canvas, nativeWidth, nativeHeight);
 gameLoop();

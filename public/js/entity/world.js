@@ -1,10 +1,11 @@
 import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
 
 export class World {
-    constructor(changeBalance, lvlCfg, enemiesCfg) {
+    constructor(changeBalance, lvlCfg, enemiesCfg, towersCfg) {
         this.towers = [];
         this.bases = [];
         this.enemies = [];
+        this.projectiles = [];
         this.waypoints = [];
         this.changeBalance = changeBalance
         this.gameOver = false;
@@ -15,6 +16,7 @@ export class World {
             tower: null,
         }));
         this.enemiesCfg = enemiesCfg;
+        this.towersCfg = towersCfg
         this.spawnrate = lvlCfg.spawnrate;
     }
 
@@ -54,13 +56,14 @@ export class World {
     }
 
     update(delta) {
+
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
-                zone.tower.update(delta, this.enemies);
+                zone.tower.update(delta, this.enemies, this.projectiles);
             }
         });
-        this.enemies.forEach(enemy => enemy.update(delta));
 
+        this.enemies.forEach(enemy => enemy.update(delta));
         this.enemies = this.enemies.filter(enemy => {
             if (enemy.reachedEnd) {
                 this.bases.forEach(base => base.recieveDamage(enemy.damage));
@@ -70,6 +73,15 @@ export class World {
                 if (this.changeBalance) {
                     this.changeBalance(enemy.reward);
                 }
+                return false;
+            }
+            return true
+        });
+
+        this.projectiles.forEach(projectile => projectile.update(delta));
+        this.projectiles = this.projectiles.filter(projectile => {
+            if (projectile.reachedEnd) {
+                projectile.enemy.receiveDamage(projectile.damage);
                 return false;
             }
             return true
@@ -90,6 +102,7 @@ export class World {
         });
         this.bases.forEach(base => base.draw(ctx));
         this.enemies.forEach(enemy => enemy.draw(ctx));
+        this.projectiles.forEach(projectile => projectile.draw(ctx));
     }
 
     getZoneByCoordinates(x, y) {
@@ -105,7 +118,7 @@ export class World {
     
         const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
         const centerY = (zone.topLeft.y + zone.bottomRight.y) / 2;
-        const tower = new TowerClass({ x: centerX, y: centerY });
+        const tower = new TowerClass({ x: centerX, y: centerY }, this.towersCfg);
         this.towers.push(tower);
     
         zone.occupied = true;
