@@ -1,7 +1,8 @@
 import { towerUpgrades } from './upgrades.js';
+import { ArrowProjectile, FireballProjectile } from './projectile.js';
 
 export class Tower {
-    constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc) {
+    constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc, attackCfg) {
         this.name = name;
         this.damage = damage;
         this.radius = radius;
@@ -23,6 +24,7 @@ export class Tower {
         }));
 
         this.upgradeLevels = new Array(this.upgrades.length).fill(0);
+        this.attackCfg = attackCfg;
     }
 
     applyUpgrade(index) {
@@ -36,13 +38,14 @@ export class Tower {
         return true;
     }
 
-    update(delta, enemies) {
+    update(delta, enemies, projectiles) {
         this.timeUntilNextShot -= delta;
 
         if (this.timeUntilNextShot <= 0) {
-            this.attack(enemies);
+            this.attack(enemies, projectiles);
             this.timeUntilNextShot = this.cooldown;
         }
+
     }
 
     draw(ctx, x = null, y = null, width = null, height = null) {
@@ -64,7 +67,7 @@ export class Tower {
     }
 
 
-    attack(enemies) {
+    attack(enemies, projectiles) {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
 
@@ -77,13 +80,26 @@ export class Tower {
 
         if (enemiesInRange.length === 0) return;
 
+        const position = {x: this.position.x, y: this.position.y};
+
         if (this.attackType === 'single') {
-            enemiesInRange[0].receiveDamage(this.damage);
-            console.log(`[${this.name} Tower] attacked [${enemiesInRange[0].name}] for ${this.damage} damage. Enemy health left: ${enemiesInRange[0].health}`);
-            if (!enemiesInRange[0].isAlive()) {
-                console.log(`[Enemy] ${enemiesInRange[0].name} is dead now`);
+
+            const nearestEnemy = enemiesInRange[0];
+            let projectile;
+
+            switch (this.name) {
+                case 'Archers': 
+                    projectile = new ArrowProjectile(position, [nearestEnemy.position], nearestEnemy, this.damage, this.attackCfg);
+                    projectiles.push(projectile);
+                    break;
+                case 'Magicians':
+                    projectile = new FireballProjectile(position, [nearestEnemy.position], nearestEnemy, this.damage, this.attackCfg);
+                    projectiles.push(projectile);
+                    break;
             }
+
         } else if (this.attackType === 'area') {
+
             enemiesInRange.forEach(enemy => {
                 enemy.receiveDamage(this.damage);
                 console.log(`[${this.name} Tower] attacked [${enemy.name}] for ${this.damage} damage (area). Enemy health left: ${enemy.health}`);
@@ -96,22 +112,28 @@ export class Tower {
 }
 
 export class ArchersTower extends Tower {
-    static price = 10;
-    constructor(position) {
-        super('Archers', 10, 350, ArchersTower.price, position, 300, 300, 'single', 3, 'images/tower/TowerArchers.png');
+    static price = 10; 
+    constructor(position, cfg) {
+        super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius, 
+            cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.attackType, cfg.archer.cooldown, 
+            cfg.archer.imageSrc, cfg.archer.attack);
     }
 }
 
 export class MagicianTower extends Tower {
     static price = 30;
-    constructor(position) {
-        super('Magician', 20, 300, MagicianTower.price, position, 300, 300, 'single', 5, 'images/tower/TowerMagicians.png');
+    constructor(position, cfg) {
+        super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius, 
+            cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.attackType, cfg.magician.cooldown, 
+            cfg.magician.imageSrc, cfg.magician.attack);
     }
 }
 
 export class MortarTower extends Tower {
     static price = 50;
-    constructor(position) {
-        super('Mortar', 60, 500, MortarTower.price, position, 300, 300, 'area', 7, 'images/tower/MortarTower.png');
+    constructor(position, cfg) {
+        super(cfg.mortar.name, cfg.mortar.damage, cfg.mortar.radius, 
+            cfg.mortar.price, position, cfg.mortar.width, cfg.mortar.height, cfg.mortar.attackType, cfg.mortar.cooldown, 
+            cfg.mortar.imageSrc, cfg.mortar.attack);
     }
 }

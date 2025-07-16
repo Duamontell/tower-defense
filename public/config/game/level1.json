@@ -88,17 +88,17 @@
     2,
     {
       "enemies": {
-        "orcs": 3,
-        "zombies": 3,
+        "orcs": 2,
+        "zombies": 0,
         "goblins": 0
       },
-      "duration": 25,
+      "duration": 15,
       "reward": 100
     },
     {
       "enemies": {
-        "orcs": 5,
-        "zombies": 0,
+        "orcs": 2,
+        "zombies": 1,
         "goblins": 0
       },
       "duration": 20,
