@@ -2,12 +2,13 @@ import { World } from '../entity/world.js';
 import { ArchersTower, MagicianTower, MortarTower } from '../entity/tower.js';
 import { Base } from '../entity/base.js';
 import { TowerPanel } from '../entity/towerPanel.js';
-// import { currentLevel } from './menu.js'
 import { drawTowerZones } from '../systems/towerZones.js';
 import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
 import { changeBalance, drawBalancePanel, getBalance, initBalance } from '../systems/balanceManager.js';
 import { initCanvasResizer } from "../ui/gameView.js";
+import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
+import { GameEventHandler } from '../mercure/gameEventHandler.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -20,6 +21,7 @@ let world;
 let currentWave = 0;
 let lvlCfg = {};
 let enemiesCfg = {};
+let towersCfg = {};
 let waves = {};
 let maxWave;
 let towerPanel;
@@ -50,8 +52,16 @@ if (enemiesResponse.ok) {
     enemiesCfg = await enemiesResponse.json();
 }
 
+let towersResponse = await fetch('./../config/game/towers.json');
+if (towersResponse.ok) {
+    towersCfg = await towersResponse.json();
+}
+
 function gameLoop(timestamp = 0) {
     if (world.gameOver) {
+        if (window.mercureEventSource) {
+            unsubscribe(window.mercureEventSource);
+        }
         return;
     }
     const delta = (timestamp - lastTimestamp) / 1000;
@@ -64,7 +74,7 @@ function gameLoop(timestamp = 0) {
         let wave = waves[currentWave];
         world.summonWave(wave);
         waveDuration = wave.duration;
-    } else if (currentWave == maxWave && world.enemies.length == 0) {
+    } else if (currentWave === maxWave && world.enemies.length === 0) {
         alert("Вы победили");
         return;
     }
@@ -82,14 +92,14 @@ function gameLoop(timestamp = 0) {
     requestAnimationFrame(gameLoop);
 }
 
-function initializeLevel(lvlCfg, enemiesCfg) {
+function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     background.src = lvlCfg.map.backgroundImage;
     nativeWidth = lvlCfg.map.width;
     nativeHeight = lvlCfg.map.height;
     canvas.width = lvlCfg.map.width;
     canvas.height = lvlCfg.map.height;
 
-    world = new World(changeBalance, lvlCfg, enemiesCfg);
+    world = new World(changeBalance, lvlCfg, enemiesCfg, towersCfg);
 
     const baseData = lvlCfg.base;
     world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
@@ -101,17 +111,32 @@ function initializeLevel(lvlCfg, enemiesCfg) {
     towerZones = world.towerZones;
 
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, (TowerClass) => { });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => {});
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => { });
 
-    const archerTower = new ArchersTower({ x: 0, y: 0 });
-    const magicianTower = new MagicianTower({ x: 0, y: 0 });
-    const mortarTower = new MortarTower({ x: 0, y: 0 });
+    const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
+    const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
+    const mortarTower = new MortarTower({ x: 0, y: 0 }, towersCfg);
 
     towerPanel.addTower(archerTower);
     towerPanel.addTower(magicianTower);
     towerPanel.addTower(mortarTower);
+
+    const gameEventHandler = new GameEventHandler(world);
+
+    const topic = 'game?level=1';
+    const mercureCallback = (data) => {
+        try {
+            const parsedData = JSON.parse(data);
+            gameEventHandler.handleEvent(parsedData);
+        } catch (error) {
+            console.error('Ошибка парсинга события:', error);
+        }
+    };
+
+    const eventSource = subscribeToMercure(topic, mercureCallback);
+    window.mercureEventSource = eventSource;
 }
 
-initializeLevel(lvlCfg, enemiesCfg);
+initializeLevel(lvlCfg, enemiesCfg, towersCfg);
 initCanvasResizer(canvas, nativeWidth, nativeHeight);
 gameLoop();

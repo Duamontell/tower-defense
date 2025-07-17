@@ -1,12 +1,12 @@
 {
     "orc" : {
         "name": "Orc",
-        "width": 200,
-        "height": 200,
+        "width": 150,
+        "height": 150,
         "health": 200,
         "damage": 10,
         "reward": 20,
-        "speed": 60,
+        "speed": 20,
         "animationSpeed": 7,
         "imageSrcs": [
             "images/orc/walk_orc/orc1.png",
