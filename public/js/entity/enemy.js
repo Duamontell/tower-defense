@@ -7,6 +7,7 @@ export class Enemy {
         this.health = health;
         this.damage = damage;
         this.reward = reward;
+        this.normalSpeed = speed;
         this.speed = speed;
         this.direction = "left"
         this.waypoints = waypoints;
@@ -15,6 +16,7 @@ export class Enemy {
         this.images = [];
         this.frame = 0;
         this.animationSpeed = animationSpeed;
+        this.normalAnimationSpeed = animationSpeed;
     }
 
     doDamage() {
@@ -33,6 +35,7 @@ export class Enemy {
     }
 
     update(delta) {
+
         this.frame = this.frame + delta * this.animationSpeed;
         if (this.frame > this.images.length - 1) {
             this.frame = 0;
@@ -72,6 +75,10 @@ export class Enemy {
             this.position.x = waypoint.x;
             this.position.y = waypoint.y;
         }
+
+        this.speed = this.normalSpeed;
+        this.animationSpeed = this.normalAnimationSpeed;
+
     }
 
     receiveDamage(damage) {

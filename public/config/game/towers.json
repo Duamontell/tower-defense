@@ -44,21 +44,76 @@
         }
 
     },
-    "mortar" : {
-        "name": "Mortar",
-        "damage": 60,
+    "poison" : {
+        "name": "Poisonous",
+        "damage": 10,
         "radius": 500,
         "price": 50,
         "width": 300,
         "height": 300,
         "attackType": "area",
-        "cooldown": 7,
+        "cooldown": 6,
         "imageSrc": "../../images/tower/MortarTower.png",
         "attack": {
             "duration": 3,
-            "imageSrc": [
-                "/images/fireball/FB1.png"
-            ]
+            "cooldown": 0.5,
+            "radius": 200,
+            "imageSrcs": [
+                "../../images/effects/poison/poison1.png"
+            ],
+            "animationSpeed": 5
+        }
+    },
+    "freezing" : {
+        "name": "Freezing",
+        "damage": 0,
+        "slowness": 0.5,
+        "radius": 500,
+        "price": 50,
+        "width": 300,
+        "height": 300,
+        "attackType": "area",
+        "cooldown": 10,
+        "imageSrc": "../../images/tower/MortarTower.png",
+        "attack": {
+            "duration": 5,
+            "cooldown": 0,
+            "radius": 200,
+            "imageSrcs": [
+                "../../images/effects/ice/ice1.png"
+            ],
+            "animationSpeed": 5
+        }
+    },
+    "exp" : {
+        "name": "Mortar",
+        "damage": 50,
+        "radius": 500,
+        "price": 50,
+        "width": 300,
+        "height": 300,
+        "attackType": "area",
+        "cooldown": 5,
+        "imageSrc": "../../images/tower/MortarTower.png",
+        "attack": {
+            "duration": 5,
+            "cooldown": 5,
+            "radius": 200,
+            "imageSrcs": [
+                "../../images/effects/explosion/exp1.png",
+                "../../images/effects/explosion/exp2.png",
+                "../../images/effects/explosion/exp3.png",
+                "../../images/effects/explosion/exp4.png",
+                "../../images/effects/explosion/exp5.png",
+                "../../images/effects/explosion/exp6.png",
+                "../../images/effects/explosion/exp7.png",
+                "../../images/effects/explosion/exp8.png",
+                "../../images/effects/explosion/exp9.png",
+                "../../images/effects/explosion/exp10.png",
+                "../../images/effects/explosion/exp11.png",
+                "../../images/effects/explosion/exp12.png"
+            ],
+            "animationSpeed": 10
         }
     }
 }

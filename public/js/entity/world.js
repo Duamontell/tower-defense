@@ -6,6 +6,7 @@ export class World {
         this.bases = [];
         this.enemies = [];
         this.projectiles = [];
+        this.effects = [];
         this.waypoints = [];
         this.changeBalance = changeBalance
         this.gameOver = false;
@@ -59,9 +60,24 @@ export class World {
 
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
-                zone.tower.update(delta, this.enemies, this.projectiles);
+                zone.tower.update(delta, this.enemies, this.projectiles, this.effects);
             }
         });
+
+        this.projectiles.forEach(projectile => projectile.update(delta));
+        this.projectiles = this.projectiles.filter(projectile => {
+            if (projectile.reachedEnd) {
+                projectile.enemy.receiveDamage(projectile.damage);
+                return false;
+            }
+            return true
+        });
+
+        this.effects.forEach(effect => effect.update(delta, this.enemies));
+        this.effects = this.effects.filter(effect => {
+            if (effect.duration <= 0) return false;
+            return true;
+        })
 
         this.enemies.forEach(enemy => enemy.update(delta));
         this.enemies = this.enemies.filter(enemy => {
@@ -78,15 +94,6 @@ export class World {
             return true
         });
 
-        this.projectiles.forEach(projectile => projectile.update(delta));
-        this.projectiles = this.projectiles.filter(projectile => {
-            if (projectile.reachedEnd) {
-                projectile.enemy.receiveDamage(projectile.damage);
-                return false;
-            }
-            return true
-        });
-
         if (this.bases.some(base => base.isDestroyed)) {
             this.gameOver = true;
             alert('Игра окончена! Ваша база уничтожена.');
@@ -95,6 +102,7 @@ export class World {
     }
 
     draw(ctx) {
+        this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx)});
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
                 zone.tower.draw(ctx);
@@ -103,6 +111,8 @@ export class World {
         this.bases.forEach(base => base.draw(ctx));
         this.enemies.forEach(enemy => enemy.draw(ctx));
         this.projectiles.forEach(projectile => projectile.draw(ctx));
+        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx)});
+
     }
 
     getZoneByCoordinates(x, y) {

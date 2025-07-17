@@ -1,5 +1,5 @@
 import { World } from '../entity/world.js';
-import { ArchersTower, MagicianTower, MortarTower } from '../entity/tower.js';
+import { ArchersTower, FreezingTower, MagicianTower, MortarTower, PoisonousTower } from '../entity/tower.js';
 import { Base } from '../entity/base.js';
 import { TowerPanel } from '../entity/towerPanel.js';
 import { drawTowerZones } from '../systems/towerZones.js';
@@ -115,10 +115,14 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
     const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
-    const mortarTower = new MortarTower({ x: 0, y: 0 }, towersCfg);
+    const poisonousTower = new PoisonousTower({ x: 0, y: 0 }, towersCfg);
+    const freezingTower = new FreezingTower({x: 0, y: 0}, towersCfg);
+    const mortarTower = new MortarTower({x: 0, y: 0}, towersCfg);
 
     towerPanel.addTower(archerTower);
     towerPanel.addTower(magicianTower);
+    towerPanel.addTower(poisonousTower);
+    towerPanel.addTower(freezingTower);
     towerPanel.addTower(mortarTower);
 
     const gameEventHandler = new GameEventHandler(world);
