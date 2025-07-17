@@ -1,5 +1,6 @@
 export class Base {
 	constructor(health, position, width, height, imageSrc) {
+        this.id = crypto.randomUUID();
 		this.health = health;
 		this.position = position;
 		this.width = width;

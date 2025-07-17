@@ -5,6 +5,9 @@ export class GameEventHandler {
 
     handleEvent(data) {
         switch (data.type) {
+            case 'userId':
+                this.#handleUserId(data);
+                break;
             case 'addTower':
                 this.#handleAddTower(data);
                 break;
@@ -22,8 +25,12 @@ export class GameEventHandler {
         }
     }
 
+    #handleUserId(data) {
+        // this.world.players.set(data.userId, new User(data.userId, ));
+    }
+
     #handleAddTower(data) {
-        
+
     }
 
     #handleTowerAttack(data) {

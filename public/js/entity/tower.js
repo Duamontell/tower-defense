@@ -71,6 +71,7 @@ export class Tower {
     attack(enemies, projectiles) {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
+            if (enemy.ownerId !== currentUserId) return false;
 
             const dx = enemy.position.x + (enemy.width / 2) - this.position.x;
             const dy = enemy.position.y + (enemy.height / 2) - this.position.y;
