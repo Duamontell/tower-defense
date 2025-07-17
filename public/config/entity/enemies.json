@@ -6,7 +6,7 @@
         "health": 200,
         "damage": 10,
         "reward": 20,
-        "speed": 20,
+        "speed": 100,
         "animationSpeed": 7,
         "imageSrcs": [
             "images/orc/walk_orc/orc1.png",

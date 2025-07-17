@@ -87,11 +87,11 @@
     "waves": [
         {
             "enemies": {
-                "orcs": 3,
-                "zombies": 3,
+                "orcs": 2,
+                "zombies": 0,
                 "goblins": 0
             },
-            "duration": 25,
+            "duration": 5,
             "reward": 100
         },
         {

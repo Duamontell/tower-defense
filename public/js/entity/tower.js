@@ -1,5 +1,6 @@
 import { towerUpgrades } from './upgrades.js';
 import { ArrowProjectile, FireballProjectile } from './projectile.js';
+import { ExplosionEffect, FreezeEffect, PoisonEffect } from './effect.js';
 
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc, attackCfg) {
@@ -39,12 +40,13 @@ export class Tower {
         return true;
     }
 
-    update(delta, enemies, projectiles) {
+    update(delta, enemies, projectiles, effects) {
         this.timeUntilNextShot -= delta;
 
         if (this.timeUntilNextShot <= 0) {
-            this.attack(enemies, projectiles);
-            this.timeUntilNextShot = this.cooldown;
+            if (this.attack(enemies, projectiles, effects)) {
+                this.timeUntilNextShot = this.cooldown;
+            }
         }
 
     }
@@ -63,12 +65,10 @@ export class Tower {
         const drawHeight = height ?? this.height;
 
         ctx.drawImage(this.image, drawX, drawY, drawWidth, drawHeight);
-
         ctx.restore();
     }
 
-
-    attack(enemies, projectiles) {
+    attack(enemies, projectiles, effects) {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
             if (enemy.ownerId !== currentUserId) return false;
@@ -83,34 +83,45 @@ export class Tower {
         if (enemiesInRange.length === 0) return;
 
         const position = {x: this.position.x, y: this.position.y};
+        const nearestEnemy = enemiesInRange[0];
+        const nearestEnemyPos = {x: enemiesInRange[0].position.x, y: enemiesInRange[0].position.y};
 
         if (this.attackType === 'single') {
 
-            const nearestEnemy = enemiesInRange[0];
             let projectile;
 
-            let enemyPosition = {x: nearestEnemy.position.x, y: nearestEnemy.position.y - 100};
             switch (this.name) {
                 case 'Archers':
-                    projectile = new ArrowProjectile(position, [enemyPosition], nearestEnemy, this.damage, this.attackCfg);
+                    projectile = new ArrowProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
                     projectiles.push(projectile);
                     break;
                 case 'Magicians':
-                    projectile = new FireballProjectile(position, [enemyPosition], nearestEnemy, this.damage, this.attackCfg);
+                    projectile = new FireballProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
                     projectiles.push(projectile);
                     break;
             }
 
         } else if (this.attackType === 'area') {
 
-            enemiesInRange.forEach(enemy => {
-                enemy.receiveDamage(this.damage);
-                console.log(`[${this.name} Tower] attacked [${enemy.name}] for ${this.damage} damage (area). Enemy health left: ${enemy.health}`);
-                if (!enemy.isAlive()) {
-                    console.log(`[Enemy] ${enemy.name} is dead now`);
-                }
-            });
+            let effect;
+
+            switch (this.name) {
+                case 'Poisonous':
+                    effect = new PoisonEffect(nearestEnemyPos, this.damage, this.attackCfg);
+                    effects.push(effect);
+                    break; 
+                case 'Freezing': 
+                    effect = new FreezeEffect(nearestEnemyPos, this.slowness, this.attackCfg);
+                    effects.push(effect);
+                    break;
+                case 'Mortar': 
+                    effect = new ExplosionEffect(nearestEnemyPos, this.damage, this.attackCfg);
+                    effects.push(effect);
+                    break;
+            }
         }
+
+        return true;
     }
 }
 
@@ -132,11 +143,30 @@ export class MagicianTower extends Tower {
     }
 }
 
+export class PoisonousTower extends Tower {
+    static price = 50;
+    constructor(position, cfg) {
+        super(cfg.poison.name, cfg.poison.damage, cfg.poison.radius,
+            cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.attackType, cfg.poison.cooldown,
+            cfg.poison.imageSrc, cfg.poison.attack);
+    }
+}
+
+export class FreezingTower extends Tower {
+    static price = 30;
+    constructor(position, cfg) {
+        super(cfg.freezing.name, cfg.freezing.damage, cfg.freezing.radius,
+            cfg.freezing.price, position, cfg.freezing.width, cfg.freezing.height, cfg.freezing.attackType, cfg.freezing.cooldown,
+            cfg.freezing.imageSrc, cfg.freezing.attack);
+        this.slowness = cfg.freezing.slowness;
+    }
+}
+
 export class MortarTower extends Tower {
     static price = 50;
     constructor(position, cfg) {
-        super(cfg.mortar.name, cfg.mortar.damage, cfg.mortar.radius,
-            cfg.mortar.price, position, cfg.mortar.width, cfg.mortar.height, cfg.mortar.attackType, cfg.mortar.cooldown,
-            cfg.mortar.imageSrc, cfg.mortar.attack);
+        super(cfg.exp.name, cfg.exp.damage, cfg.exp.radius,
+            cfg.exp.price, position, cfg.exp.width, cfg.exp.height, cfg.exp.attackType, cfg.exp.cooldown,
+            cfg.exp.imageSrc, cfg.exp.attack);
     }
 }
