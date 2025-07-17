@@ -54,7 +54,7 @@ function handleUpgradePanelClick(x, y, upgradePanel, changeBalance, balance) {
         const upgrade = selectedTowerInstance.upgrades[upgradeIndex];
         const level = selectedTowerInstance.upgradeLevels[upgradeIndex] || 0;
         const currentCost = upgrade.costs[level];
-        
+
         console.log(currentCost);
         if (balance >= currentCost) {
             selectedTowerInstance.applyUpgrade(upgradeIndex);
@@ -69,6 +69,11 @@ function handleUpgradePanelClick(x, y, upgradePanel, changeBalance, balance) {
 
 function handleMapClick(x, y, world, towerPanel, upgradePanel) {
     const zone = world.getZoneByCoordinates(x, y);
+
+    if (zone && !world.players.get(currentUserId).towerZonesId.includes(zone.id)) {
+        console.log("Чужая зона!")
+        return;
+    }
 
     if (zone && !zone.occupied) {
         selectedZone = zone;
