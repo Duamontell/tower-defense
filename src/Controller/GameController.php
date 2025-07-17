@@ -21,9 +21,12 @@ class GameController extends AbstractController
     public function game(Request $request) :Response
     {
         $level = (int)$request->get('level');
+        // Получаем id текущего пользователя
+        $userId = 1;
 
         return $this->render('game/game.html.twig', [
             'level' => $level,
+            'userId' => $userId,
         ]);
     }
 }

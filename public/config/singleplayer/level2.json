@@ -289,17 +289,19 @@
         }
     ],
     "base": {
+        "baseId": 2,
         "health": 150,
         "position": {
             "x": 1197,
             "y": 750
         },
-        "width": 0,
-        "height": 0,
+        "width": 100,
+        "height": 100,
         "imageSrc": "images/base/Base.png"
     },
     "towerZones": [
         {
+            "id": 6,
             "topLeft": {
                 "x": 373,
                 "y": 563
@@ -310,6 +312,7 @@
             }
         },
         {
+            "id": 7,
             "topLeft": {
                 "x": 754,
                 "y": 498
@@ -320,6 +323,7 @@
             }
         },
         {
+            "id": 8,
             "topLeft": {
                 "x": 817,
                 "y": 133
@@ -330,6 +334,7 @@
             }
         },
         {
+            "id": 9,
             "topLeft": {
                 "x": 98,
                 "y": 326
@@ -341,7 +346,6 @@
         }
     ],
     "waves": [
-        3,
         {
             "enemies": {
                 "orcs": 0,

@@ -1,5 +1,7 @@
 export class Enemy {
     constructor(name, position, width, height, health, damage, reward, speed, animationSpeed, waypoints) {
+        this.id = crypto.randomUUID();
+        this.ownerId = null;
         this.name = name;
         this.position = position;
         this.width = width;
@@ -17,11 +19,6 @@ export class Enemy {
         this.frame = 0;
         this.animationSpeed = animationSpeed;
         this.normalAnimationSpeed = animationSpeed;
-    }
-
-    doDamage() {
-        Base.recieveDamage(this.damage);
-        this.death();
     }
 
     draw(ctx) {

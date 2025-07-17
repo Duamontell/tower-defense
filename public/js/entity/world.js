@@ -1,63 +1,106 @@
 import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
+import { User } from "./user.js";
 
 export class World {
-    constructor(changeBalance, lvlCfg, enemiesCfg, towersCfg) {
+    constructor(lvlCfg, enemiesCfg, towersCfg) {
+        this.players = new Map;
         this.towers = [];
         this.bases = [];
         this.enemies = [];
         this.projectiles = [];
         this.effects = [];
         this.waypoints = [];
-        this.changeBalance = changeBalance
         this.gameOver = false;
-        this.towerZones = lvlCfg.towerZones.map(zone => ({
-            topLeft: zone.topLeft,
-            bottomRight: zone.bottomRight,
-            occupied: false,
-            tower: null,
-        }));
+        this.towerZones = [];
+        this.waves = [];
         this.enemiesCfg = enemiesCfg;
         this.towersCfg = towersCfg
         this.spawnrate = lvlCfg.spawnrate;
+        this.gameOver = false;
+    }
+
+    addUser(userId, userCfg) {
+        this.players.set(userId, new User(userId, userCfg));
     }
 
     addTower(tower) {
         this.towers.push(tower);
     }
 
-    addEnemy(enemy) {
+    addEnemy(enemy, userId) {
         this.enemies.push(enemy);
+        this.players.get(userId).addEnemyId(enemy.id);
+        enemy.ownerId = userId;
     }
 
-    addBase(base) {
+    addBase(base, userId) {
         this.bases.push(base);
+        this.players.get(userId).setBaseId(base.id);
     }
 
-    summonWave(wave) {
-        let delay = 0;
+    addTowerZones(zones, userId) {
+        zones.forEach(zone => {
+            const id = crypto.randomUUID()
+            this.towerZones.push({
+                id: id,
+                topLeft: zone.topLeft,
+                bottomRight: zone.bottomRight,
+                occupied: false,
+                tower: null,
+            });
+            this.players.get(userId).addTowerZoneId(id);
+        })
+    }
 
-        for (let i = 0; i < wave.enemies.orcs; i++) {
-            let orc = new OrcEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.orc);
-            setTimeout(() => this.addEnemy(orc), delay * 1000);
-            delay = delay + this.spawnrate;
+    summonWaves(wave) {
+        const users = this.players.values();
+        users.forEach((user, index) => {
+            const userWaveConfigs = this.waves[index];
+            if (!userWaveConfigs) return;
 
-        }
+            const currentWave = userWaveConfigs[wave];
+            if (!currentWave) return;
 
-        for (let i = 0; i < wave.enemies.zombies; i++) {
-            let zombie = new ZombieEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.zombie);
-            setTimeout(() => this.addEnemy(zombie), delay * 1000);
-            delay = delay + this.spawnrate;
-        }
+            let delay = 0;
+            const { orcs, zombies, goblins } = currentWave.enemies;
+            const waypoints = user.waypoints;
 
-        for (let i = 0; i < wave.enemies.goblins; i++) {
-            let goblin = new GoblinEnemy({ x: this.waypoints[0].x, y: this.waypoints[0].y }, this.waypoints, this.enemiesCfg.goblin);
-            setTimeout(() => this.addEnemy(goblin), delay * 1000);
-            delay = delay + this.spawnrate;
-        }
+            // Орки
+            for (let i = 0; i < orcs; i++) {
+                setTimeout(() => {
+                    const enemy = new OrcEnemy({ x: waypoints[0].x, y: waypoints[0].y }, waypoints, this.enemiesCfg.orc);
+                    this.addEnemy(enemy, user.id);
+                    }, delay * 1000);
+                delay += this.spawnrate;
+            }
+
+            // Зомби
+            for (let i = 0; i < zombies; i++) {
+                setTimeout(() => {
+                    const enemy = new ZombieEnemy(
+                        { x: waypoints[0].x, y: waypoints[0].y },
+                        waypoints,
+                        this.enemiesCfg.zombie
+                    );
+                    this.addEnemy(enemy, user.id);
+                }, delay * 1000);
+                delay += this.spawnrate;
+            }
+
+            // Гоблины
+            for (let i = 0; i < goblins; i++) {
+                setTimeout(() => {
+                    const enemy = new GoblinEnemy({ x: waypoints[0].x, y: waypoints[0].y }, waypoints,
+                        this.enemiesCfg.goblin
+                    );
+                    this.addEnemy(enemy, user.id);
+                }, delay * 1000);
+                delay += this.spawnrate;
+            }
+        });
     }
 
     update(delta) {
-
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
                 zone.tower.update(delta, this.enemies, this.projectiles, this.effects);
@@ -97,12 +140,17 @@ export class World {
         if (this.bases.some(base => base.isDestroyed)) {
             this.gameOver = true;
             alert('Игра окончена! Ваша база уничтожена.');
-            return;
         }
     }
 
     draw(ctx) {
         this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx)});
+        // const myZones = this.players.get(currentUserId).towerZonesId;
+        // myZones.forEach(zone => {
+        //     if (zone.occupied && zone.tower) {
+        //         zone.tower.draw(ctx);
+        //     }
+        // });
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
                 zone.tower.draw(ctx);
@@ -124,17 +172,18 @@ export class World {
 
     tryPlaceTower(x, y, TowerClass) {
         const zone = this.getZoneByCoordinates(x, y);
+        if (!this.players.get(currentUserId).towerZonesId.some(id => zone.id === id)) {}
         if (!zone || zone.occupied) return false;
-    
+
         const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
         const centerY = (zone.topLeft.y + zone.bottomRight.y) / 2;
         const tower = new TowerClass({ x: centerX, y: centerY }, this.towersCfg);
-        this.towers.push(tower);
-    
+        this.addTower(tower);
+        this.players.get(currentUserId).addTowerId(tower.id);
+
         zone.occupied = true;
         zone.tower = tower;
-    
+
         return true;
     }
-    
 }

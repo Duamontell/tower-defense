@@ -1,10 +1,11 @@
 const MERCURE_URL = 'http://localhost:3000/.well-known/mercure';
 
 export function subscribeToMercure(topic, onMessageCallback) {
-    const eventSource = new EventSource(`${MERCURE_URL}?topic=${topic}`);
+    const eventSource = new EventSource(`${MERCURE_URL}?topic=${encodeURIComponent(topic)}`);
 
     eventSource.onopen = () => {
         console.log('Подключение к Mercure успешно установлено');
+        fetch(`/publish`);
     };
 
     eventSource.onmessage = (event) => {

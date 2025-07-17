@@ -14,19 +14,19 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const background = new Image();
 
-const currentLevel = window.currentLevel
+const currentLevel = window.currentLevel;
+const currentUserId = window.currentUserId;
+
 let waveDuration = 0;
 let lastTimestamp = 0;
-let world;
+let world = null;
 let currentWave = 0;
 let lvlCfg = {};
 let enemiesCfg = {};
 let towersCfg = {};
-let waves = {};
 let maxWave;
 let towerPanel;
 let upgradePanel;
-let towerZones = {};
 let nativeWidth = canvas.width;
 let nativeHeight = canvas.height;
 
@@ -42,20 +42,40 @@ canvas.addEventListener('click', (event) => {
     handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, getBalance());
 });
 
-let lvlResponse = await fetch(`../../config/game/level${currentLevel}.json`);
+let lvlResponse = await fetch(`../../config/singleplayer/level${currentLevel}.json`);
 if (lvlResponse.ok) {
     lvlCfg = await lvlResponse.json();
 }
 
-let enemiesResponse = await fetch('../../config/game/enemies.json');
+// Тестовый второй конфиг
+let lvlCfg1 = {};
+let level = 2;
+let lvlResponse1 = await fetch(`../../config/singleplayer/level${level}.json`);
+if (lvlResponse1.ok) {
+    lvlCfg1 = await lvlResponse1.json();
+}
+
+let enemiesResponse = await fetch('../../config/entity/enemies.json');
 if (enemiesResponse.ok) {
     enemiesCfg = await enemiesResponse.json();
 }
 
-let towersResponse = await fetch('./../config/game/towers.json');
+let towersResponse = await fetch('./../config/entity/towers.json');
 if (towersResponse.ok) {
     towersCfg = await towersResponse.json();
 }
+
+// Тестовые пользователи
+const users = [
+    {
+        userId: currentUserId,
+        userCfg: lvlCfg,
+    },
+    {
+        userId: currentUserId + 1,
+        userCfg: lvlCfg1,
+    }
+]
 
 function gameLoop(timestamp = 0) {
     if (world.gameOver) {
@@ -70,10 +90,9 @@ function gameLoop(timestamp = 0) {
     waveDuration = waveDuration - delta;
 
     if (waveDuration <= 0 && currentWave < maxWave) {
+        world.summonWaves(currentWave);
         currentWave++;
-        let wave = waves[currentWave];
-        world.summonWave(wave);
-        waveDuration = wave.duration;
+        waveDuration = 30;
     } else if (currentWave === maxWave && world.enemies.length === 0) {
         alert("Вы победили");
         return;
@@ -82,7 +101,7 @@ function gameLoop(timestamp = 0) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-    drawTowerZones(ctx, towerZones);
+    drawTowerZones(ctx, world.towerZones, world.players);
     world.update(delta);
     world.draw(ctx);
     towerPanel.draw();
@@ -99,19 +118,23 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     canvas.width = lvlCfg.map.width;
     canvas.height = lvlCfg.map.height;
 
-    world = new World(changeBalance, lvlCfg, enemiesCfg, towersCfg);
+    world = new World(lvlCfg, enemiesCfg, towersCfg);
+    users.forEach((user) => {
+        let data = user.userCfg
+        world.addUser(user.userId, data);
+        world.addBase(new Base(data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
+        world.waves.push(data.waves);
+        world.addTowerZones(data.towerZones, user.userId);
+    })
 
-    const baseData = lvlCfg.base;
-    world.addBase(new Base(baseData.health, baseData.position, baseData.width, baseData.height, baseData.imageSrc));
+    // maxWave = lvlCfg.waves[0];
+    maxWave = 2;
 
-    waves = lvlCfg.waves;
-    world.waypoints = lvlCfg.waypoints;
-    maxWave = lvlCfg.waves[0];
+    // Баланс не сделан!
     initBalance(lvlCfg.startingBalance || 0);
-    towerZones = world.towerZones;
 
-    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, (TowerClass) => { });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, (upgradeIndex) => { });
+    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, () => { });
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, () => { });
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
     const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
@@ -127,18 +150,17 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
 
     const gameEventHandler = new GameEventHandler(world);
 
-    const topic = 'game?level=1';
+    const topic = 'http://localhost:8000/game'
+
     const mercureCallback = (data) => {
         try {
-            const parsedData = JSON.parse(data);
-            gameEventHandler.handleEvent(parsedData);
+            gameEventHandler.handleEvent(data);
         } catch (error) {
             console.error('Ошибка парсинга события:', error);
         }
     };
 
-    const eventSource = subscribeToMercure(topic, mercureCallback);
-    window.mercureEventSource = eventSource;
+    window.mercureEventSource = subscribeToMercure(topic, mercureCallback);
 }
 
 initializeLevel(lvlCfg, enemiesCfg, towersCfg);
