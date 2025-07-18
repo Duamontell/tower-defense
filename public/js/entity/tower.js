@@ -1,10 +1,11 @@
 import { towerUpgrades } from './upgrades.js';
 import { ArrowProjectile, ExplosiveProjectile, FireballProjectile, FreezeProjectile, PoisonProjectile, Projectile } from './projectile.js';
 import { ExplosionEffect, FreezeEffect, PoisonEffect } from './effect.js';
+import { uuidv4 } from '../systems/generateId.js'
 
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, attackCfg) {
-        this.id = crypto.randomUUID();
+        this.id = uuidv4();
         this.ownerId = null;
         this.name = name;
         this.damage = damage;

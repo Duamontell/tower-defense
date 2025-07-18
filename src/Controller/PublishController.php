@@ -51,7 +51,7 @@ class PublishController extends AbstractController
                 'userId' => 2,
                 'towerId' => 'tower1',
                 'zoneId' => 6,
-                'name' => 'ArchersTower'
+                'name' => 'PoisonousTower'
             ])
         );
 

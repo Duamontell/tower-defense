@@ -1,4 +1,4 @@
-import { ArchersTower, MagicianTower, MortarTower } from '../entity/tower.js';
+import { ArchersTower, MagicianTower, PoisonousTower, FreezingTower, MortarTower } from '../entity/tower.js';
 import { ArrowProjectile, FireballProjectile } from '../entity/projectile.js';
 
 export class GameEventHandler {
@@ -38,10 +38,16 @@ export class GameEventHandler {
     #handleAddTower(data) {
         const { userId, towerId, zoneId, name } = data;
 
+        if (userId === window.currentUserId) {
+            return;
+        }
+
         const TOWER_CLASSES = {
             ArchersTower,
             MagicianTower,
-            MortarTower
+            MortarTower,
+            PoisonousTower,
+            FreezingTower
         };
 
         const TowerClass = TOWER_CLASSES[name];
@@ -127,7 +133,11 @@ export class GameEventHandler {
     }
 
     #handleDamageToBase(data) {
-        const { baseId, damage } = data;
+        const { baseId, damage, userId } = data;
+
+        if (userId === window.currentUserId) {
+            return;
+        }
 
         const base = this.world.bases.find(b => b.id === baseId);
         if (!base) {
@@ -135,12 +145,21 @@ export class GameEventHandler {
             return;
         }
 
-        base.recieveDamage(damage);
+        if (base.isDestroyed) {
+            console.warn(`База ${baseId} уже уничтожена. Игнорируем урон.`);
+            return;
+        }
+
+        base.recieveDamage(damage, true);
         console.log(`База ${baseId} получила ${damage} урона.`);
     }
 
     #handleBaseDestroyed(data) {
-        const { baseId, isDestroyed, health } = data;
+        const { baseId, isDestroyed, health, userId } = data;
+
+        if (userId === window.currentUserId) {
+            return;
+        }
 
         const base = this.world.bases.find(b => b.id === baseId);
         if (!base) {
