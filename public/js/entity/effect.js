@@ -90,6 +90,7 @@ export class FreezeEffect extends Effect {
 export class ExplosionEffect extends Effect {
     constructor(position, damage, cfg) {
         super(position, cfg.radius, cfg.duration, cfg.animationSpeed, cfg.cooldown);
+        console.log(cfg);
         cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();
             frame.src = imageSrc;
@@ -115,7 +116,7 @@ export class ExplosionEffect extends Effect {
             this.done = true;
             enemiesInRange.forEach(enemy => {
                 enemy.receiveDamage(this.damage);
-                console.log(`${enemy.name} recieved ${this.damage}`)
+                console.log(`${enemy.name} with id ${enemy.id} recieved ${this.damage} damage, health left: ${enemy.health}`)
             })
         }
 

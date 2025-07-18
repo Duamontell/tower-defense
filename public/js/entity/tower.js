@@ -1,9 +1,9 @@
 import { towerUpgrades } from './upgrades.js';
-import { ArrowProjectile, FireballProjectile } from './projectile.js';
+import { ArrowProjectile, ExplosiveProjectile, FireballProjectile, FreezeProjectile, PoisonProjectile, Projectile } from './projectile.js';
 import { ExplosionEffect, FreezeEffect, PoisonEffect } from './effect.js';
 
 export class Tower {
-    constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc, attackCfg) {
+    constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, attackCfg) {
         this.id = crypto.randomUUID();
         this.name = name;
         this.damage = damage;
@@ -12,7 +12,6 @@ export class Tower {
         this.position = position;
         this.width = width;
         this.height = height;
-        this.attackType = attackType;
         this.cooldown = cooldown;
         this.timeUntilNextShot = 0;
         this.image = new Image;
@@ -48,7 +47,6 @@ export class Tower {
                 this.timeUntilNextShot = this.cooldown;
             }
         }
-
     }
 
     draw(ctx, x = null, y = null, width = null, height = null) {
@@ -86,40 +84,27 @@ export class Tower {
         const nearestEnemy = enemiesInRange[0];
         const nearestEnemyPos = {x: enemiesInRange[0].position.x, y: enemiesInRange[0].position.y};
 
-        if (this.attackType === 'single') {
+        let projectile;
 
-            let projectile;
-
-            switch (this.name) {
-                case 'Archers':
-                    projectile = new ArrowProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
-                    projectiles.push(projectile);
-                    break;
-                case 'Magicians':
-                    projectile = new FireballProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
-                    projectiles.push(projectile);
-                    break;
-            }
-
-        } else if (this.attackType === 'area') {
-
-            let effect;
-
-            switch (this.name) {
-                case 'Poisonous':
-                    effect = new PoisonEffect(nearestEnemyPos, this.damage, this.attackCfg);
-                    effects.push(effect);
-                    break; 
-                case 'Freezing': 
-                    effect = new FreezeEffect(nearestEnemyPos, this.slowness, this.attackCfg);
-                    effects.push(effect);
-                    break;
-                case 'Mortar': 
-                    effect = new ExplosionEffect(nearestEnemyPos, this.damage, this.attackCfg);
-                    effects.push(effect);
-                    break;
-            }
+        switch (this.name) {
+            case 'Archers':
+                projectile = new ArrowProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
+                break;
+            case 'Magicians':
+                projectile = new FireballProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
+                break;
+            case 'Poisonous':
+                projectile = new PoisonProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
+                break;
+            case 'Freezing': 
+                projectile = new FreezeProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.slowness, this.attackCfg);
+                break;
+            case 'Mortar': 
+                projectile = new ExplosiveProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
+                break;
         }
+
+        if (projectile !== undefined) projectiles.push(projectile);
 
         return true;
     }
@@ -129,7 +114,7 @@ export class ArchersTower extends Tower {
     static price = 10;
     constructor(position, cfg) {
         super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
-            cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.attackType, cfg.archer.cooldown,
+            cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.cooldown,
             cfg.archer.imageSrc, cfg.archer.attack);
     }
 }
@@ -138,7 +123,7 @@ export class MagicianTower extends Tower {
     static price = 30;
     constructor(position, cfg) {
         super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
-            cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.attackType, cfg.magician.cooldown,
+            cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.cooldown,
             cfg.magician.imageSrc, cfg.magician.attack);
     }
 }
@@ -147,7 +132,7 @@ export class PoisonousTower extends Tower {
     static price = 50;
     constructor(position, cfg) {
         super(cfg.poison.name, cfg.poison.damage, cfg.poison.radius,
-            cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.attackType, cfg.poison.cooldown,
+            cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.cooldown,
             cfg.poison.imageSrc, cfg.poison.attack);
     }
 }
@@ -156,7 +141,7 @@ export class FreezingTower extends Tower {
     static price = 30;
     constructor(position, cfg) {
         super(cfg.freezing.name, cfg.freezing.damage, cfg.freezing.radius,
-            cfg.freezing.price, position, cfg.freezing.width, cfg.freezing.height, cfg.freezing.attackType, cfg.freezing.cooldown,
+            cfg.freezing.price, position, cfg.freezing.width, cfg.freezing.height, cfg.freezing.cooldown,
             cfg.freezing.imageSrc, cfg.freezing.attack);
         this.slowness = cfg.freezing.slowness;
     }
@@ -166,7 +151,7 @@ export class MortarTower extends Tower {
     static price = 50;
     constructor(position, cfg) {
         super(cfg.exp.name, cfg.exp.damage, cfg.exp.radius,
-            cfg.exp.price, position, cfg.exp.width, cfg.exp.height, cfg.exp.attackType, cfg.exp.cooldown,
+            cfg.exp.price, position, cfg.exp.width, cfg.exp.height, cfg.exp.cooldown,
             cfg.exp.imageSrc, cfg.exp.attack);
     }
 }

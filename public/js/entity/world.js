@@ -110,7 +110,7 @@ export class World {
         this.projectiles.forEach(projectile => projectile.update(delta));
         this.projectiles = this.projectiles.filter(projectile => {
             if (projectile.reachedEnd) {
-                projectile.enemy.receiveDamage(projectile.damage);
+                projectile.doDamage(this.effects);
                 return false;
             }
             return true
