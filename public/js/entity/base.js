@@ -1,8 +1,10 @@
 import { publishToMercure } from '../mercure/mercureHandler.js';
+import { uuidv4 } from '../systems/generateId.js'
 
 export class Base {
 	constructor(health, position, width, height, imageSrc) {
-		this.id = crypto.randomUUID();
+		//this.id = crypto.randomUUID();
+		this.id = uuidv4();
 		this.ownerId = null;
 		this.health = health;
 		this.position = position;

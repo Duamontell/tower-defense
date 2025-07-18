@@ -1,6 +1,8 @@
+import { uuidv4 } from '../systems/generateId.js'
+
 export class Enemy {
     constructor(name, position, width, height, health, damage, reward, speed, animationSpeed, waypoints) {
-        this.id = crypto.randomUUID();
+        this.id = uuidv4();
         this.ownerId = null;
         this.name = name;
         this.position = position;

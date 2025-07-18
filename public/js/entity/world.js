@@ -1,5 +1,6 @@
 import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
 import { User } from "./user.js";
+import { uuidv4 } from '../systems/generateId.js'
 
 export class World {
     constructor(lvlCfg, enemiesCfg, towersCfg) {
@@ -41,7 +42,7 @@ export class World {
 
     addTowerZones(zones, userId) {
         zones.forEach(zone => {
-            const id = crypto.randomUUID()
+            const id = uuidv4()
             this.towerZones.push({
                 id: zone.id,
                 topLeft: zone.topLeft,
