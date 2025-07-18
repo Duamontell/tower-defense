@@ -39,13 +39,13 @@ export class World {
         zones.forEach(zone => {
             const id = crypto.randomUUID()
             this.towerZones.push({
-                id: id,
+                id: zone.id,
                 topLeft: zone.topLeft,
                 bottomRight: zone.bottomRight,
                 occupied: false,
                 tower: null,
             });
-            this.players.get(userId).addTowerZoneId(id);
+            this.players.get(userId).addTowerZoneId(zone.id);
         })
     }
 
@@ -67,7 +67,7 @@ export class World {
                 setTimeout(() => {
                     const enemy = new OrcEnemy({ x: waypoints[0].x, y: waypoints[0].y }, waypoints, this.enemiesCfg.orc);
                     this.addEnemy(enemy, user.id);
-                    }, delay * 1000);
+                }, delay * 1000);
                 delay += this.spawnrate;
             }
 
@@ -160,7 +160,7 @@ export class World {
 
     tryPlaceTower(x, y, TowerClass) {
         const zone = this.getZoneByCoordinates(x, y);
-        if (!this.players.get(currentUserId).towerZonesId.some(id => zone.id === id)) {}
+        if (!this.players.get(currentUserId).towerZonesId.some(id => zone.id === id)) { }
         if (!zone || zone.occupied) return false;
 
         const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
@@ -172,6 +172,7 @@ export class World {
         zone.occupied = true;
         zone.tower = tower;
 
-        return true;
+        //return true;
+        return { tower, zone };
     }
 }
