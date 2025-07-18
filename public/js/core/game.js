@@ -2,6 +2,7 @@ import { World } from '../entity/world.js';
 import { ArchersTower, FreezingTower, MagicianTower, MortarTower, PoisonousTower } from '../entity/tower.js';
 import { Base } from '../entity/base.js';
 import { TowerPanel } from '../entity/towerPanel.js';
+import { EffectPanel } from '../entity/effectPanel.js';
 import { drawTowerZones } from '../systems/towerZones.js';
 import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
@@ -25,6 +26,8 @@ let world = null;
 let lvlCfg = {};
 let enemiesCfg = {};
 let towersCfg = {};
+let effectShopCfg = {};
+let effectPanel;
 let towerPanel;
 let upgradePanel;
 let nativeWidth = canvas.width;
@@ -39,7 +42,7 @@ function getClickCoordinates(canvas, event) {
 
 canvas.addEventListener('click', (event) => {
     const {x, y} = getClickCoordinates(canvas, event);
-    handleClick(x, y, world, towerPanel, upgradePanel);
+    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel);
 });
 
 async function loadUsersConfig() {
@@ -72,6 +75,11 @@ if (enemiesResponse.ok) {
 let towersResponse = await fetch('./../config/entity/towers.json');
 if (towersResponse.ok) {
     towersCfg = await towersResponse.json();
+}
+
+let effectResponse = await fetch('../../config/entity/effectShop.json');
+if (effectResponse.ok) {
+    effectShopCfg = await effectResponse.json();
 }
 
 let lvlResponse = await fetch(`../../config/multiplayer/level.json`);
@@ -108,6 +116,7 @@ function gameLoop(timestamp = 0) {
     world.draw(ctx);
     towerPanel.draw();
     upgradePanel.draw();
+    effectPanel.draw();
     drawBalancePanel(ctx, world.players.get(currentUserId).balance);
 
     requestAnimationFrame(gameLoop);
@@ -140,6 +149,8 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     const getUserBalance = () => world.players.get(currentUserId).balance;
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => {});
     upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => {});
+    effectPanel = new EffectPanel(ctx, canvas.width, canvas.height, getUserBalance, effectShopCfg);
+
 
     const archerTower = new ArchersTower({x: 0, y: 0}, towersCfg);
     const magicianTower = new MagicianTower({x: 0, y: 0}, towersCfg);
