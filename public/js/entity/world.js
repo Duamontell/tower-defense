@@ -11,7 +11,11 @@ export class World {
         this.projectiles = [];
         this.effects = [];
         this.towerZones = [];
-        this.waves = [];
+        this.waves = {
+            currentWave: 0,
+            maxWave: lvlCfg.waves,
+            userWaves: new Map
+        }
         this.enemiesCfg = enemiesCfg;
         this.towersCfg = towersCfg
         this.spawnrate = lvlCfg.spawnrate;
@@ -57,7 +61,7 @@ export class World {
     summonWaves(wave) {
         const users = this.players.values();
         users.forEach((user, index) => {
-            const userWaveConfigs = this.waves[index];
+            const userWaveConfigs = this.waves.userWaves.get(user.id);
             if (!userWaveConfigs) return;
 
             const currentWave = userWaveConfigs[wave];

@@ -17,8 +17,8 @@
         }
     ],
     "base": {
-        "baseId": 1,
-        "health": 30,
+        "health": 200,
+
         "position": {
             "x": 100,
             "y": 450
@@ -84,6 +84,7 @@
             }
         }
     ],
+    "countWaves": 2,
     "waves": [
         {
             "enemies": {

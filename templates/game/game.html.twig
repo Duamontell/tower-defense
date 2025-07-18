@@ -16,7 +16,17 @@
         <canvas id="gameCanvas"></canvas>
     </div>
 
-    <script>window.currentLevel = {{ level }};</script>
-    <script>window.currentUserId = {{ userId }};</script>
+    <script>
+        window.currentLevel = {{ level }};
+        window.currentUserId = {{ userId }};
+        window.gameMode = "multiplayer";
+        window.roomConfig = {
+            players: [
+                {userId: 1, config: 1},
+                {userId: 2, config: 2}
+            ]
+        };
+
+    </script>
 </body>
 {% endblock %}
