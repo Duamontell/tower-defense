@@ -96,10 +96,10 @@ export class Tower {
             case 'Poisonous':
                 projectile = new PoisonProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
                 break;
-            case 'Freezing': 
+            case 'Freezing':
                 projectile = new FreezeProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.slowness, this.attackCfg);
                 break;
-            case 'Mortar': 
+            case 'Mortar':
                 projectile = new ExplosiveProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
                 break;
         }

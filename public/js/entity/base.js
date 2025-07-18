@@ -27,7 +27,7 @@ export class Base {
 				isDestroyed: true,
 				health: 0,
 			};
-			publishToMercure('http://localhost:8000/game', destroyedEventData);
+			// publishToMercure('http://localhost:8000/game', destroyedEventData);
 		} else {
 			this.health -= damage;
 		}
@@ -37,7 +37,7 @@ export class Base {
 			baseId: this.id,
 			damage: damage,
 		};
-		publishToMercure('http://localhost:8000/game', eventData);
+		// publishToMercure('http://localhost:8000/game', eventData);
 	}
 
 	draw(ctx) {

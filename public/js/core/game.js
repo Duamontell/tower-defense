@@ -22,11 +22,9 @@ const roomConfig = window.roomConfig || {};
 let waveDuration = 0;
 let lastTimestamp = 0;
 let world = null;
-let currentWave = 0;
 let lvlCfg = {};
 let enemiesCfg = {};
 let towersCfg = {};
-let maxWave;
 let towerPanel;
 let upgradePanel;
 let nativeWidth = canvas.width;
@@ -44,17 +42,26 @@ canvas.addEventListener('click', (event) => {
     handleClick(x, y, world, towerPanel, upgradePanel);
 });
 
-let lvlResponse = await fetch(`../../config/singleplayer/level${currentLevel}.json`);
-if (lvlResponse.ok) {
-    lvlCfg = await lvlResponse.json();
-}
-
-// Тестовый второй конфиг
-let lvlCfg1 = {};
-let level = 2;
-let lvlResponse1 = await fetch(`../../config/singleplayer/level${level}.json`);
-if (lvlResponse1.ok) {
-    lvlCfg1 = await lvlResponse1.json();
+async function loadUsersConfig() {
+    const users = [];
+    if (gameMode === "singleplayer") {
+        let lvlResponse = await fetch(`../../config/singleplayer/level${currentLevel}.json`);
+        if (lvlResponse.ok) {
+            lvlCfg = await lvlResponse.json();
+            users.push({userId: currentUserId, userCfg: lvlCfg});
+        }
+    } else {
+        for (const player of roomConfig.players) {
+            let userResponse = await fetch(`../../config/multiplayer/player${player.config}.json`);
+            if (userResponse.ok) {
+                const userCfg = await userResponse.json();
+                users.push({userId: player.userId, userCfg: userCfg});
+            } else {
+                console.warn(`Player ${player.config} not found`);
+            }
+        }
+    }
+    return users;
 }
 
 let enemiesResponse = await fetch('../../config/entity/enemies.json');
@@ -67,17 +74,10 @@ if (towersResponse.ok) {
     towersCfg = await towersResponse.json();
 }
 
-// Тестовые пользователи
-const users = [
-    {
-        userId: currentUserId,
-        userCfg: lvlCfg,
-    },
-    {
-        userId: currentUserId + 1,
-        userCfg: lvlCfg1,
-    }
-]
+let lvlResponse = await fetch(`../../config/multiplayer/level.json`);
+if (lvlResponse.ok) {
+    lvlCfg = await lvlResponse.json();
+}
 
 function gameLoop(timestamp = 0) {
     if (world.gameOver) {
@@ -91,11 +91,11 @@ function gameLoop(timestamp = 0) {
 
     waveDuration = waveDuration - delta;
 
-    if (waveDuration <= 0 && currentWave < maxWave) {
-        world.summonWaves(currentWave);
-        currentWave++;
+    if (waveDuration <= 0 && world.waves.currentWave < world.waves.maxWave) {
+        world.summonWaves(world.waves.currentWave);
+        world.waves.currentWave++;
         waveDuration = 30;
-    } else if (currentWave === maxWave && world.enemies.length === 0) {
+    } else if (world.waves.currentWave === world.waves.maxWave && world.enemies.length === 0) {
         alert("Вы победили");
         return;
     }
@@ -113,7 +113,10 @@ function gameLoop(timestamp = 0) {
     requestAnimationFrame(gameLoop);
 }
 
-function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
+function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
+    if (gameMode === "singleplayer") {
+        lvlCfg = users[0].userCfg;
+    }
     background.src = lvlCfg.map.backgroundImage;
     nativeWidth = lvlCfg.map.width;
     nativeHeight = lvlCfg.map.height;
@@ -122,22 +125,21 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
 
     world = new World(lvlCfg, enemiesCfg, towersCfg);
     users.forEach((user) => {
-        let data = user.userCfg
+        const data = user.userCfg;
         world.addUser(user.userId, data);
         world.addBase(new Base(data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
-        world.waves.push(data.waves);
         world.addTowerZones(data.towerZones, user.userId);
+        // world.waves.push(lvlCfg.waves);
+        world.waves.userWaves.set(user.userId, lvlCfg.waves);
     })
+    console.log(world.waves);
 
-    // maxWave = lvlCfg.waves[0];
-    maxWave = 2;
+    world.waves.maxWave = lvlCfg.countWaves;
+    console.log(world);
 
     const getUserBalance = () => world.players.get(currentUserId).balance;
-    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => {
-    });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => {
-    });
-
+    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => {});
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => {});
 
     const archerTower = new ArchersTower({x: 0, y: 0}, towersCfg);
     const magicianTower = new MagicianTower({x: 0, y: 0}, towersCfg);
@@ -151,21 +153,21 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     towerPanel.addTower(freezingTower);
     towerPanel.addTower(mortarTower);
 
-    const gameEventHandler = new GameEventHandler(world);
-
-    const topic = 'http://localhost:8000/game'
-
-    const mercureCallback = (data) => {
-        try {
-            gameEventHandler.handleEvent(data);
-        } catch (error) {
-            console.error('Ошибка парсинга события:', error);
-        }
-    };
-
-    window.mercureEventSource = subscribeToMercure(topic, mercureCallback);
+    if (gameMode === "multiplayer") {
+        const gameEventHandler = new GameEventHandler(world);
+        const topic = 'http://localhost:8000/game'
+        const mercureCallback = (data) => {
+            try {
+                gameEventHandler.handleEvent(data);
+            } catch (error) {
+                console.error('Ошибка парсинга события:', error);
+            }
+        };
+        window.mercureEventSource = subscribeToMercure(topic, mercureCallback);
+    }
 }
 
-initializeLevel(lvlCfg, enemiesCfg, towersCfg);
+const users = await loadUsersConfig();
+initializeLevel(users, lvlCfg, enemiesCfg, towersCfg);
 initCanvasResizer(canvas, nativeWidth, nativeHeight);
 gameLoop();

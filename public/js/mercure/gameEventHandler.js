@@ -63,7 +63,7 @@ export class GameEventHandler {
 
         const tower = new TowerClass(towerPos, this.world.towersCfg);
         tower.id = towerId;
-        this.world.addTower(tower);
+        this.world.addTower(tower, userId);
 
         zone.occupied = true;
         zone.tower = tower;
