@@ -5,6 +5,7 @@ import { ExplosionEffect, FreezeEffect, PoisonEffect } from './effect.js';
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc, attackCfg) {
         this.id = crypto.randomUUID();
+        this.ownerId = null;
         this.name = name;
         this.damage = damage;
         this.radius = radius;
@@ -71,7 +72,7 @@ export class Tower {
     attack(enemies, projectiles, effects) {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
-            if (enemy.ownerId !== currentUserId) return false;
+            if (enemy.ownerId !== this.ownerId) return false;
 
             const dx = enemy.position.x + (enemy.width / 2) - this.position.x;
             const dy = enemy.position.y + (enemy.height / 2) - this.position.y;
@@ -109,12 +110,12 @@ export class Tower {
                 case 'Poisonous':
                     effect = new PoisonEffect(nearestEnemyPos, this.damage, this.attackCfg);
                     effects.push(effect);
-                    break; 
-                case 'Freezing': 
+                    break;
+                case 'Freezing':
                     effect = new FreezeEffect(nearestEnemyPos, this.slowness, this.attackCfg);
                     effects.push(effect);
                     break;
-                case 'Mortar': 
+                case 'Mortar':
                     effect = new ExplosionEffect(nearestEnemyPos, this.damage, this.attackCfg);
                     effects.push(effect);
                     break;

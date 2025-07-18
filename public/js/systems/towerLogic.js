@@ -12,24 +12,26 @@ function resetSelections(towerPanel, upgradePanel) {
     upgradePanel.hide();
 }
 
-function handleTowerPanelClick(x, y, towerPanel, world, changeBalance, balance) {
+function handleTowerPanelClick(x, y, towerPanel, world) {
+    const user = world.players.get(currentUserId);
     const result = towerPanel.handleClick(x, y);
     if (result === 'close') {
         showTowerPanel = false;
         return;
     }
+
     if (result) {
         const clickedTower = result;
         const TowerClass = clickedTower.constructor;
         const towerCost = TowerClass.price;
-        if (balance >= towerCost && selectedZone) {
+        if (user.balance >= towerCost && selectedZone) {
             const placed = world.tryPlaceTower(
                 (selectedZone.topLeft.x + selectedZone.bottomRight.x) / 2,
                 (selectedZone.topLeft.y + selectedZone.bottomRight.y) / 2,
                 TowerClass
             );
             if (placed) {
-                changeBalance(-towerCost);
+                user.changeBalance(-towerCost);
                 selectedZone = null;
                 showTowerPanel = false;
                 towerPanel.hide();
@@ -41,9 +43,9 @@ function handleTowerPanelClick(x, y, towerPanel, world, changeBalance, balance) 
     }
 }
 
-function handleUpgradePanelClick(x, y, upgradePanel, changeBalance, balance) {
+function handleUpgradePanelClick(x, y, upgradePanel, world) {
+    const user = world.players.get(currentUserId);
     const result = upgradePanel.handleClick(x, y);
-
     if (result === 'close') {
         showUpgradePanel = false;
         return;
@@ -56,11 +58,10 @@ function handleUpgradePanelClick(x, y, upgradePanel, changeBalance, balance) {
         const currentCost = upgrade.costs[level];
 
         console.log(currentCost);
-        if (balance >= currentCost) {
+        if (user.balance >= currentCost) {
             selectedTowerInstance.applyUpgrade(upgradeIndex);
-            changeBalance(-currentCost);
+            user.changeBalance(-currentCost);
             console.log(`Улучшение "${upgrade.name}" применено к башне ${selectedTowerInstance.name}`);
-            console.log(selectedTowerInstance);
         } else {
             console.log('Недостаточно средств для улучшения');
         }
@@ -100,13 +101,13 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel) {
     resetSelections(towerPanel, upgradePanel);
 }
 
-export function handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, balance) {
+export function handleClick(x, y, world, towerPanel, upgradePanel) {
     if (showTowerPanel) {
-        handleTowerPanelClick(x, y, towerPanel, world, changeBalance, balance);
+        handleTowerPanelClick(x, y, towerPanel, world);
         return true;
     }
     else if (showUpgradePanel) {
-        handleUpgradePanelClick(x, y, upgradePanel, changeBalance, balance);
+        handleUpgradePanelClick(x, y, upgradePanel, world);
         return true;
     }
     handleMapClick(x, y, world, towerPanel, upgradePanel);
