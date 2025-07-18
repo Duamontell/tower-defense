@@ -6,7 +6,7 @@ export class User {
         this.enemiesId = [];
         this.waypoints = userCfg.waypoints;
         this.towerZonesId = [];
-        this.balance = userCfg.balance; // Баланс не сделан!
+        this.balance = userCfg.startingBalance; // Баланс не сделан!
         this.isLose = false;
     }
 
@@ -31,6 +31,10 @@ export class User {
 
     addEnemyId(enemyId) {
         this.enemiesId.push(enemyId);
+    }
+
+    getBalance() {
+        return this.balance;
     }
 
     changeBalance(amount) {

@@ -5,6 +5,7 @@ import { ExplosionEffect, FreezeEffect, PoisonEffect } from './effect.js';
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, attackCfg) {
         this.id = crypto.randomUUID();
+        this.ownerId = null;
         this.name = name;
         this.damage = damage;
         this.radius = radius;
@@ -69,7 +70,7 @@ export class Tower {
     attack(enemies, projectiles, effects) {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
-            if (enemy.ownerId !== currentUserId) return false;
+            if (enemy.ownerId !== this.ownerId) return false;
 
             const dx = enemy.position.x + (enemy.width / 2) - this.position.x;
             const dy = enemy.position.y + (enemy.height / 2) - this.position.y;
@@ -85,7 +86,6 @@ export class Tower {
         const nearestEnemyPos = {x: enemiesInRange[0].position.x, y: enemiesInRange[0].position.y};
 
         let projectile;
-
         switch (this.name) {
             case 'Archers':
                 projectile = new ArrowProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);

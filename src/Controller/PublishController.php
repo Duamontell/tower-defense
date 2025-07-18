@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PublishController extends AbstractController
 {
-//    #[Route('/publish', name: 'publish')]
+    //    #[Route('/publish', name: 'publish')]
 //    public function publish(HubInterface $hub): Response
 //    {
 //        $update = new Update(
@@ -25,14 +25,33 @@ class PublishController extends AbstractController
 //        return new Response('published!');
 //    }
 
+    // #[Route('/publish', name: 'publish')]
+    // public function testUserId(HubInterface $hub): Response
+    // {
+    //     $update = new Update(
+    //         'http://localhost:8000/game',
+    //         json_encode([
+    //             'type' => 'userId',
+    //             'userId' => 1
+    //         ])
+    //     );
+
+    //     $hub->publish($update);
+
+    //     return new Response('published!');
+    // }
+
     #[Route('/publish', name: 'publish')]
-    public function testUserId(HubInterface $hub): Response
+    public function test(HubInterface $hub): Response
     {
         $update = new Update(
             'http://localhost:8000/game',
             json_encode([
-                'type' => 'userId',
-                'userId' => 1
+                'type' => 'addTower',
+                'userId' => 1,
+                'towerId' => 'tower1',
+                'zoneId' => 6,
+                'name' => 'ArchersTower'
             ])
         );
 

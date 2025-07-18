@@ -9,8 +9,6 @@ export class World {
         this.enemies = [];
         this.projectiles = [];
         this.effects = [];
-        this.waypoints = [];
-        this.gameOver = false;
         this.towerZones = [];
         this.waves = [];
         this.enemiesCfg = enemiesCfg;
@@ -23,8 +21,10 @@ export class World {
         this.players.set(userId, new User(userId, userCfg));
     }
 
-    addTower(tower) {
+    addTower(tower, userId) {
         this.towers.push(tower);
+        this.players.get(currentUserId).addTowerId(tower.id);
+        tower.ownerId = userId;
     }
 
     addEnemy(enemy, userId) {
@@ -42,13 +42,13 @@ export class World {
         zones.forEach(zone => {
             const id = crypto.randomUUID()
             this.towerZones.push({
-                id: id,
+                id: zone.id,
                 topLeft: zone.topLeft,
                 bottomRight: zone.bottomRight,
                 occupied: false,
                 tower: null,
             });
-            this.players.get(userId).addTowerZoneId(id);
+            this.players.get(userId).addTowerZoneId(zone.id);
         })
     }
 
@@ -70,7 +70,7 @@ export class World {
                 setTimeout(() => {
                     const enemy = new OrcEnemy({ x: waypoints[0].x, y: waypoints[0].y }, waypoints, this.enemiesCfg.orc);
                     this.addEnemy(enemy, user.id);
-                    }, delay * 1000);
+                }, delay * 1000);
                 delay += this.spawnrate;
             }
 
@@ -105,6 +105,7 @@ export class World {
             if (zone.occupied && zone.tower) {
                 zone.tower.update(delta, this.enemies, this.projectiles, this.effects);
             }
+            return true
         });
 
         this.projectiles.forEach(projectile => projectile.update(delta));
@@ -118,8 +119,7 @@ export class World {
 
         this.effects.forEach(effect => effect.update(delta, this.enemies));
         this.effects = this.effects.filter(effect => {
-            if (effect.duration <= 0) return false;
-            return true;
+            return effect.duration > 0;
         })
 
         this.enemies.forEach(enemy => enemy.update(delta));
@@ -129,8 +129,8 @@ export class World {
                 return false;
             }
             if (!enemy.isAlive()) {
-                if (this.changeBalance) {
-                    this.changeBalance(enemy.reward);
+                if (this.players.get(currentUserId).changeBalance) {
+                    this.players.get(currentUserId).changeBalance(enemy.reward);
                 }
                 return false;
             }
@@ -145,12 +145,6 @@ export class World {
 
     draw(ctx) {
         this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx)});
-        // const myZones = this.players.get(currentUserId).towerZonesId;
-        // myZones.forEach(zone => {
-        //     if (zone.occupied && zone.tower) {
-        //         zone.tower.draw(ctx);
-        //     }
-        // });
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
                 zone.tower.draw(ctx);
@@ -172,18 +166,19 @@ export class World {
 
     tryPlaceTower(x, y, TowerClass) {
         const zone = this.getZoneByCoordinates(x, y);
-        if (!this.players.get(currentUserId).towerZonesId.some(id => zone.id === id)) {}
+        if (!this.players.get(currentUserId).towerZonesId.some(id => zone.id === id)) { }
         if (!zone || zone.occupied) return false;
 
         const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
         const centerY = (zone.topLeft.y + zone.bottomRight.y) / 2;
         const tower = new TowerClass({ x: centerX, y: centerY }, this.towersCfg);
-        this.addTower(tower);
-        this.players.get(currentUserId).addTowerId(tower.id);
+        this.addTower(tower, currentUserId);
+
 
         zone.occupied = true;
         zone.tower = tower;
 
-        return true;
+        //return true;
+        return { tower, zone };
     }
 }

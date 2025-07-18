@@ -5,7 +5,7 @@ import { TowerPanel } from '../entity/towerPanel.js';
 import { drawTowerZones } from '../systems/towerZones.js';
 import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
-import { changeBalance, drawBalancePanel, getBalance, initBalance } from '../systems/balanceManager.js';
+import { drawBalancePanel } from '../systems/balanceManager.js';
 import { initCanvasResizer } from "../ui/gameView.js";
 import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
 import { GameEventHandler } from '../mercure/gameEventHandler.js';
@@ -14,8 +14,10 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const background = new Image();
 
-const currentLevel = window.currentLevel;
+const gameMode = window.gameMode || 'singleplayer';
+const currentLevel = window.currentLevel || 1;
 const currentUserId = window.currentUserId;
+const roomConfig = window.roomConfig || {};
 
 let waveDuration = 0;
 let lastTimestamp = 0;
@@ -34,12 +36,12 @@ function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
-    return { x, y };
+    return {x, y};
 }
 
 canvas.addEventListener('click', (event) => {
-    const { x, y } = getClickCoordinates(canvas, event);
-    handleClick(x, y, world, towerPanel, upgradePanel, changeBalance, getBalance());
+    const {x, y} = getClickCoordinates(canvas, event);
+    handleClick(x, y, world, towerPanel, upgradePanel);
 });
 
 let lvlResponse = await fetch(`../../config/singleplayer/level${currentLevel}.json`);
@@ -106,7 +108,7 @@ function gameLoop(timestamp = 0) {
     world.draw(ctx);
     towerPanel.draw();
     upgradePanel.draw();
-    drawBalancePanel(ctx, getBalance());
+    drawBalancePanel(ctx, world.players.get(currentUserId).balance);
 
     requestAnimationFrame(gameLoop);
 }
@@ -130,15 +132,16 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     // maxWave = lvlCfg.waves[0];
     maxWave = 2;
 
-    // Баланс не сделан!
-    initBalance(lvlCfg.startingBalance || 0);
+    const getUserBalance = () => world.players.get(currentUserId).balance;
+    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => {
+    });
+    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => {
+    });
 
-    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getBalance, () => { });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getBalance, () => { });
 
-    const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
-    const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
-    const poisonousTower = new PoisonousTower({ x: 0, y: 0 }, towersCfg);
+    const archerTower = new ArchersTower({x: 0, y: 0}, towersCfg);
+    const magicianTower = new MagicianTower({x: 0, y: 0}, towersCfg);
+    const poisonousTower = new PoisonousTower({x: 0, y: 0}, towersCfg);
     const freezingTower = new FreezingTower({x: 0, y: 0}, towersCfg);
     const mortarTower = new MortarTower({x: 0, y: 0}, towersCfg);
 
