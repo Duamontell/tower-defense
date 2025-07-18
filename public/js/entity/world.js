@@ -36,6 +36,7 @@ export class World {
     addBase(base, userId) {
         this.bases.push(base);
         this.players.get(userId).setBaseId(base.id);
+        base.ownerId = userId;
     }
 
     addTowerZones(zones, userId) {
