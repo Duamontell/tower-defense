@@ -9,8 +9,6 @@ export class World {
         this.enemies = [];
         this.projectiles = [];
         this.effects = [];
-        this.waypoints = [];
-        this.gameOver = false;
         this.towerZones = [];
         this.waves = [];
         this.enemiesCfg = enemiesCfg;
@@ -23,8 +21,10 @@ export class World {
         this.players.set(userId, new User(userId, userCfg));
     }
 
-    addTower(tower) {
+    addTower(tower, userId) {
         this.towers.push(tower);
+        this.players.get(currentUserId).addTowerId(tower.id);
+        tower.ownerId = userId;
     }
 
     addEnemy(enemy, userId) {
@@ -118,8 +118,7 @@ export class World {
 
         this.effects.forEach(effect => effect.update(delta, this.enemies));
         this.effects = this.effects.filter(effect => {
-            if (effect.duration <= 0) return false;
-            return true;
+            return effect.duration > 0;
         })
 
         this.enemies.forEach(enemy => enemy.update(delta));
@@ -129,8 +128,8 @@ export class World {
                 return false;
             }
             if (!enemy.isAlive()) {
-                if (this.changeBalance) {
-                    this.changeBalance(enemy.reward);
+                if (this.players.get(currentUserId).changeBalance) {
+                    this.players.get(currentUserId).changeBalance(enemy.reward);
                 }
                 return false;
             }
@@ -144,13 +143,8 @@ export class World {
     }
 
     draw(ctx) {
-        this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx) });
-        // const myZones = this.players.get(currentUserId).towerZonesId;
-        // myZones.forEach(zone => {
-        //     if (zone.occupied && zone.tower) {
-        //         zone.tower.draw(ctx);
-        //     }
-        // });
+        this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx)});
+
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
                 zone.tower.draw(ctx);
@@ -178,8 +172,8 @@ export class World {
         const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
         const centerY = (zone.topLeft.y + zone.bottomRight.y) / 2;
         const tower = new TowerClass({ x: centerX, y: centerY }, this.towersCfg);
-        this.addTower(tower);
-        this.players.get(currentUserId).addTowerId(tower.id);
+        this.addTower(tower, currentUserId);
+
 
         zone.occupied = true;
         zone.tower = tower;

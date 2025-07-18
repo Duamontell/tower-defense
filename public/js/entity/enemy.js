@@ -33,7 +33,6 @@ export class Enemy {
     }
 
     update(delta) {
-
         this.frame = this.frame + delta * this.animationSpeed;
         if (this.frame > this.images.length - 1) {
             this.frame = 0;
@@ -50,7 +49,7 @@ export class Enemy {
         const angle = Math.atan2(yDistance, xDistance);
 
         const distance = Math.hypot(waypoint.x - this.position.x, waypoint.y - this.position.y);
-        if (distance < 2) {
+        if (distance < 3) {
             this.waypointIndex++;
             return;
         }
