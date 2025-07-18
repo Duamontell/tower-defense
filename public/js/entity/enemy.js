@@ -19,6 +19,7 @@ export class Enemy {
         this.frame = 0;
         this.animationSpeed = animationSpeed;
         this.normalAnimationSpeed = animationSpeed;
+
     }
 
     draw(ctx) {
