@@ -2,11 +2,11 @@ export class User {
     constructor(id, userCfg) {
         this.id = id;
         this.towersId = [];
-        this.baseId = userCfg.base.baseId;
+        this.baseId = null;
         this.enemiesId = [];
         this.waypoints = userCfg.waypoints;
         this.towerZonesId = [];
-        this.balance = userCfg.startingBalance; // Баланс не сделан!
+        this.balance = userCfg.startingBalance;
         this.isLose = false;
     }
 

@@ -13,7 +13,7 @@
             "width": 120,
             "height": 120,
             "imageSrcs": ["../../images/projectiles/arrow/arrow.png"],
-            "speed": 750,
+            "speed": 1500,
             "animationSpeed": 3
         }
     },

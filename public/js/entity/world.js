@@ -1,5 +1,6 @@
 import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
 import { User } from "./user.js";
+import { uuidv4 } from '../systems/generateId.js'
 
 export class World {
     constructor(lvlCfg, enemiesCfg, towersCfg) {
@@ -10,7 +11,11 @@ export class World {
         this.projectiles = [];
         this.effects = [];
         this.towerZones = [];
-        this.waves = [];
+        this.waves = {
+            currentWave: 0,
+            maxWave: lvlCfg.waves,
+            userWaves: new Map
+        }
         this.enemiesCfg = enemiesCfg;
         this.towersCfg = towersCfg
         this.spawnrate = lvlCfg.spawnrate;
@@ -36,11 +41,12 @@ export class World {
     addBase(base, userId) {
         this.bases.push(base);
         this.players.get(userId).setBaseId(base.id);
+        base.ownerId = userId;
     }
 
     addTowerZones(zones, userId) {
         zones.forEach(zone => {
-            const id = crypto.randomUUID()
+            const id = uuidv4()
             this.towerZones.push({
                 id: zone.id,
                 topLeft: zone.topLeft,
@@ -55,7 +61,7 @@ export class World {
     summonWaves(wave) {
         const users = this.players.values();
         users.forEach((user, index) => {
-            const userWaveConfigs = this.waves[index];
+            const userWaveConfigs = this.waves.userWaves.get(user.id);
             if (!userWaveConfigs) return;
 
             const currentWave = userWaveConfigs[wave];

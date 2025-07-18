@@ -48,10 +48,10 @@ class PublishController extends AbstractController
             'http://localhost:8000/game',
             json_encode([
                 'type' => 'addTower',
-                'userId' => 1,
+                'userId' => 2,
                 'towerId' => 'tower1',
                 'zoneId' => 6,
-                'name' => 'ArchersTower'
+                'name' => 'PoisonousTower'
             ])
         );
 
