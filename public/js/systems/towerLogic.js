@@ -1,3 +1,5 @@
+import { publishToMercure } from '../mercure/mercureHandler.js';
+
 let selectedZone = null;
 let selectedTowerInstance = null;
 let showTowerPanel = false;
@@ -24,22 +26,33 @@ function handleTowerPanelClick(x, y, towerPanel, world) {
         const clickedTower = result;
         const TowerClass = clickedTower.constructor;
         const towerCost = TowerClass.price;
+
         if (user.balance >= towerCost && selectedZone) {
-            const placed = world.tryPlaceTower(
+            const placedResult = world.tryPlaceTower(
                 (selectedZone.topLeft.x + selectedZone.bottomRight.x) / 2,
                 (selectedZone.topLeft.y + selectedZone.bottomRight.y) / 2,
                 TowerClass
             );
-            if (placed) {
+
+            if (placedResult) {
+                const { tower, zone } = placedResult;
                 user.changeBalance(-towerCost);
                 selectedZone = null;
                 showTowerPanel = false;
                 towerPanel.hide();
-                console.log(`Поставлена башня ${TowerClass.name}`);
+
+                const eventData = {
+                    type: 'addTower',
+                    userId: currentUserId,
+                    towerId: tower.id,
+                    zoneId: zone.id,
+                    name: TowerClass.name
+                };
+                publishToMercure('http://localhost:8000/game', eventData);
             }
-        } else {
-            console.log('Недостаточно средств для покупки башни или зона не выбрана');
         }
+    } else {
+        console.log('Недостаточно средств для покупки башни или зона не выбрана');
     }
 }
 

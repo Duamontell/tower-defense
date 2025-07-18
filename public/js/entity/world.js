@@ -70,7 +70,7 @@ export class World {
                 setTimeout(() => {
                     const enemy = new OrcEnemy({ x: waypoints[0].x, y: waypoints[0].y }, waypoints, this.enemiesCfg.orc);
                     this.addEnemy(enemy, user.id);
-                    }, delay * 1000);
+                }, delay * 1000);
                 delay += this.spawnrate;
             }
 
@@ -144,6 +144,7 @@ export class World {
 
     draw(ctx) {
         this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx)});
+
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
                 zone.tower.draw(ctx);
@@ -152,7 +153,7 @@ export class World {
         this.bases.forEach(base => base.draw(ctx));
         this.enemies.forEach(enemy => enemy.draw(ctx));
         this.projectiles.forEach(projectile => projectile.draw(ctx));
-        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx)});
+        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx) });
 
     }
 
@@ -165,7 +166,7 @@ export class World {
 
     tryPlaceTower(x, y, TowerClass) {
         const zone = this.getZoneByCoordinates(x, y);
-        if (!this.players.get(currentUserId).towerZonesId.some(id => zone.id === id)) {}
+        if (!this.players.get(currentUserId).towerZonesId.some(id => zone.id === id)) { }
         if (!zone || zone.occupied) return false;
 
         const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
@@ -177,6 +178,7 @@ export class World {
         zone.occupied = true;
         zone.tower = tower;
 
-        return true;
+        //return true;
+        return { tower, zone };
     }
 }
