@@ -4,6 +4,7 @@ let selectedZone = null;
 let selectedTowerInstance = null;
 let showTowerPanel = false;
 let showUpgradePanel = false;
+let showEffectPanel = false;
 
 function resetSelections(towerPanel, upgradePanel) {
     selectedZone = null;
@@ -81,7 +82,15 @@ function handleUpgradePanelClick(x, y, upgradePanel, world) {
     }
 }
 
-function handleMapClick(x, y, world, towerPanel, upgradePanel) {
+function handleEffectPanelClick(x, y, effectPanel, world) {
+    const result = effectPanel.handleClick(x, y);
+    if (result === 'close') {
+        showEffectPanel = false;
+        return;
+    }
+}
+
+function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
     const zone = world.getZoneByCoordinates(x, y);
 
     if (zone && !world.players.get(currentUserId).towerZonesId.includes(zone.id)) {
@@ -111,10 +120,17 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel) {
         return;
     }
 
+    if (effectPanel.isClickedOnIcon(x, y)) {
+        showEffectPanel = true;
+        effectPanel.show()
+        return;
+
+    }
+
     resetSelections(towerPanel, upgradePanel);
 }
 
-export function handleClick(x, y, world, towerPanel, upgradePanel) {
+export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
     if (showTowerPanel) {
         handleTowerPanelClick(x, y, towerPanel, world);
         return true;
@@ -122,7 +138,10 @@ export function handleClick(x, y, world, towerPanel, upgradePanel) {
     else if (showUpgradePanel) {
         handleUpgradePanelClick(x, y, upgradePanel, world);
         return true;
+    } else if (showEffectPanel) {
+        handleEffectPanelClick(x, y, effectPanel, world);
+        return true;
     }
-    handleMapClick(x, y, world, towerPanel, upgradePanel);
+    handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel);
     return false;
 }

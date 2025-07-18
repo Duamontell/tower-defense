@@ -133,7 +133,7 @@ export class PoisonousTower extends Tower {
     constructor(position, cfg) {
         super(cfg.poison.name, cfg.poison.damage, cfg.poison.radius,
             cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.cooldown,
-            cfg.poison.imageSrc, cfg.poison.attack);
+            cfg.poison.imageSrc, cfg.poison.attack, cfg.poison.effect);
     }
 }
 

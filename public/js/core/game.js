@@ -2,6 +2,7 @@ import { World } from '../entity/world.js';
 import { ArchersTower, FreezingTower, MagicianTower, MortarTower, PoisonousTower } from '../entity/tower.js';
 import { Base } from '../entity/base.js';
 import { TowerPanel } from '../entity/towerPanel.js';
+import { EffectPanel } from '../entity/effectPanel.js';
 import { drawTowerZones } from '../systems/towerZones.js';
 import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
@@ -26,6 +27,8 @@ let currentWave = 0;
 let lvlCfg = {};
 let enemiesCfg = {};
 let towersCfg = {};
+let effectShopCfg = {};
+let effectPanel;
 let maxWave;
 let towerPanel;
 let upgradePanel;
@@ -41,7 +44,7 @@ function getClickCoordinates(canvas, event) {
 
 canvas.addEventListener('click', (event) => {
     const {x, y} = getClickCoordinates(canvas, event);
-    handleClick(x, y, world, towerPanel, upgradePanel);
+    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel);
 });
 
 let lvlResponse = await fetch(`../../config/singleplayer/level${currentLevel}.json`);
@@ -65,6 +68,11 @@ if (enemiesResponse.ok) {
 let towersResponse = await fetch('./../config/entity/towers.json');
 if (towersResponse.ok) {
     towersCfg = await towersResponse.json();
+}
+
+let effectResponse = await fetch('../../config/entity/effectShop.json');
+if (effectResponse.ok) {
+    effectShopCfg = await effectResponse.json();
 }
 
 // Тестовые пользователи
@@ -108,6 +116,7 @@ function gameLoop(timestamp = 0) {
     world.draw(ctx);
     towerPanel.draw();
     upgradePanel.draw();
+    effectPanel.draw();
     drawBalancePanel(ctx, world.players.get(currentUserId).balance);
 
     requestAnimationFrame(gameLoop);
@@ -137,6 +146,7 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     });
     upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => {
     });
+    effectPanel = new EffectPanel(ctx, canvas.width, canvas.height, getUserBalance, effectShopCfg);
 
 
     const archerTower = new ArchersTower({x: 0, y: 0}, towersCfg);

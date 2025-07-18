@@ -1,0 +1,25 @@
+[
+    {
+        "icon": "../../images/projectiles/poison/poison1.png",
+        "price": 5,
+        "damage": 20,
+        "duration": 3,
+        "cooldown": 0.5,
+        "radius": 200,
+        "imageSrcs": [
+            "../../images/effects/poison/poison1.png"
+        ],
+        "animationSpeed": 5
+    },
+    {
+        "icon": "../../images/projectiles/freeze/freeze1.png",
+        "price": 10,
+        "duration": 5,
+        "cooldown": 0,
+        "radius": 200,
+        "imageSrcs": [
+            "../../images/effects/ice/ice1.png"
+        ],
+        "animationSpeed": 5
+    }
+]
