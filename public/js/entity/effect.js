@@ -115,7 +115,6 @@ export class ExplosionEffect extends Effect {
             this.done = true;
             enemiesInRange.forEach(enemy => {
                 enemy.receiveDamage(this.damage);
-                console.log(`${enemy.name} recieved ${this.damage}`)
             })
         }
 

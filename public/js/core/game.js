@@ -138,6 +138,7 @@ function initializeLevel(lvlCfg, enemiesCfg, towersCfg) {
     upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => {
     });
 
+
     const archerTower = new ArchersTower({x: 0, y: 0}, towersCfg);
     const magicianTower = new MagicianTower({x: 0, y: 0}, towersCfg);
     const poisonousTower = new PoisonousTower({x: 0, y: 0}, towersCfg);

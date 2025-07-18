@@ -105,12 +105,13 @@ export class World {
             if (zone.occupied && zone.tower) {
                 zone.tower.update(delta, this.enemies, this.projectiles, this.effects);
             }
+            return true
         });
 
         this.projectiles.forEach(projectile => projectile.update(delta));
         this.projectiles = this.projectiles.filter(projectile => {
             if (projectile.reachedEnd) {
-                projectile.enemy.receiveDamage(projectile.damage);
+                projectile.doDamage(this.effects);
                 return false;
             }
             return true
@@ -144,7 +145,6 @@ export class World {
 
     draw(ctx) {
         this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx)});
-
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
                 zone.tower.draw(ctx);
@@ -153,7 +153,7 @@ export class World {
         this.bases.forEach(base => base.draw(ctx));
         this.enemies.forEach(enemy => enemy.draw(ctx));
         this.projectiles.forEach(projectile => projectile.draw(ctx));
-        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx) });
+        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx)});
 
     }
 

@@ -19,7 +19,6 @@ export class Enemy {
         this.frame = 0;
         this.animationSpeed = animationSpeed;
         this.normalAnimationSpeed = animationSpeed;
-
     }
 
     draw(ctx) {
@@ -33,6 +32,7 @@ export class Enemy {
     }
 
     update(delta) {
+
         this.frame = this.frame + delta * this.animationSpeed;
         if (this.frame > this.images.length - 1) {
             this.frame = 0;
