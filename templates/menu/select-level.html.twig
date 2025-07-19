@@ -8,12 +8,6 @@
 
 {% block javascripts %}
 	<script defer type="module" src="/js/ui/menu.js"></script>
-    <script>
-        const eventSource = new EventSource("{{ mercure('http://localhost:8000/menu')|escape('js') }}");
-        eventSource.onmessage = event => {
-            console.log(JSON.parse(event.data));
-        }
-    </script>
 {% endblock %}
 
 {% block body %}

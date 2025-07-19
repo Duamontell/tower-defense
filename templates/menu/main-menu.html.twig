@@ -1,0 +1,21 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Главное меню
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/menu.css">
+{% endblock %}
+
+{% block body %}
+<body>
+    <div class="main-menu-container">
+        <h1>Stronghold Legacy</h1>
+        <h2>Главное меню</h2>
+        <a href="/select-level">Одиночная игра</a>
+        <a href="/game">Игра по локальной сети</a>
+    </div>
+</body>
+{% endblock %}
+
