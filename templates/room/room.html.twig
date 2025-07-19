@@ -17,7 +17,6 @@
     <script>
         const roomsList = document.getElementById('rooms-list');
 
-        // Подключаемся к Mercure‑hub (тот же URL, что в config)
         const url = new URL('{{ mercureUrl }}');
         url.searchParams.append('topic', '/rooms');
 
@@ -29,7 +28,6 @@
                 const li = document.createElement('li');
                 li.id = msg.room.id;
                 li.textContent = msg.room.name;
-                // кнопка «подключиться»
                 const btn = document.createElement('button');
                 btn.textContent = 'Войти';
                 btn.onclick = () => window.location='/game/join/'+msg.room.id;
