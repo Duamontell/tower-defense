@@ -15,5 +15,5 @@ lvl2.addEventListener('click', () => {
 })
 
 function startLvl() {
-    window.location.href = `./game?level=${currentLevel}`;
+    window.location.href = `./singleplayer?level=${currentLevel}`;
 }

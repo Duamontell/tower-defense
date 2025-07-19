@@ -52,6 +52,7 @@ function handleTowerPanelClick(x, y, towerPanel, world) {
                     };
                     publishToMercure('http://localhost:8000/game', eventData);
                 }
+
             }
         }
     }

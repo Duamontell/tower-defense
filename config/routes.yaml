@@ -12,12 +12,11 @@ menu:
     path: /menu
     controller: App\Controller\GameController::menu
 
+singleplayer:
+    path: /singleplayer
+    controller: App\Controller\GameController::singleplayer
+
 game:
     path: /game
     controller: App\Controller\GameController::game
     methods:
-
-# Тестовый рут
-publsih:
-    path: /publish
-    controller: App\Controller\PublishController:publish

@@ -29,7 +29,7 @@ export class EffectPanel {
             let icon = new Image();
             icon.src = effect.icon;
             effect.icon = icon;
-            this.effects.push(effect);   
+            this.effects.push(effect);
         })
     }
 
@@ -50,7 +50,7 @@ export class EffectPanel {
         if (!this.visible) {
             this.#drawShopIcon();
             return;
-        } 
+        }
         this.show()
         this.drawBackground();
         this.#drawCloseButton();
@@ -67,7 +67,7 @@ export class EffectPanel {
         const ctx = this.ctx;
 
         let x = 200;
-        let y = 700; //temp decision 
+        let y = 700; //temp decision
 
         for (const effect of this.effects) {
             x += 150;
@@ -88,7 +88,7 @@ export class EffectPanel {
 
             ctx.restore();
         }
-    } 
+    }
 
     isClickedOnIcon(x, y) {
         return x >= this.iconX && x <= this.iconX + this.iconW + 2 * this.padding && y >= this.iconY && y <= this.iconY + this.iconH + 2 * this.padding

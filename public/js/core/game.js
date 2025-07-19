@@ -198,13 +198,11 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
         world.addUser(user.userId, data);
         world.addBase(new Base(data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
         world.addTowerZones(data.towerZones, user.userId);
-        // world.waves.push(lvlCfg.waves);
         world.waves.userWaves.set(user.userId, lvlCfg.waves);
     })
     console.log(world.waves);
 
     world.waves.maxWave = lvlCfg.countWaves;
-    console.log(world);
 
     const getUserBalance = () => world.players.get(currentUserId).balance;
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
