@@ -20,6 +20,8 @@ export class World {
         this.towersCfg = towersCfg
         this.spawnrate = lvlCfg.spawnrate;
         this.gameOver = false;
+        this.winnerId = null;
+        this.isWinEvent = false;
     }
 
     addUser(userId, userCfg) {
@@ -61,6 +63,7 @@ export class World {
     summonWaves(wave) {
         const users = this.players.values();
         users.forEach((user, index) => {
+            if (user.isLose) return;
             const userWaveConfigs = this.waves.userWaves.get(user.id);
             if (!userWaveConfigs) return;
 
@@ -131,7 +134,16 @@ export class World {
         this.enemies.forEach(enemy => enemy.update(delta));
         this.enemies = this.enemies.filter(enemy => {
             if (enemy.reachedEnd) {
-                this.bases.forEach(base => base.recieveDamage(enemy.damage));
+                const base = this.bases.find(base => base.ownerId === enemy.ownerId);
+                if (base) {
+                    base.recieveDamage(enemy.damage);
+                    if (base.isDestroyed) {
+                        const user = this.players.get(base.ownerId);
+                        if (user) {
+                            user.isLose = true;
+                        }
+                    }
+                }
                 return false;
             }
             if (!enemy.isAlive()) {
@@ -140,17 +152,12 @@ export class World {
                 }
                 return false;
             }
-            return true
+            return true;
         });
-
-        if (this.bases.some(base => base.isDestroyed)) {
-            this.gameOver = true;
-            alert('Игра окончена! Ваша база уничтожена.');
-        }
     }
 
     draw(ctx) {
-        this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx)});
+        this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx) });
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
                 zone.tower.draw(ctx);
@@ -159,7 +166,7 @@ export class World {
         this.bases.forEach(base => base.draw(ctx));
         this.enemies.forEach(enemy => enemy.draw(ctx));
         this.projectiles.forEach(projectile => projectile.draw(ctx));
-        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx)});
+        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx) });
 
     }
 

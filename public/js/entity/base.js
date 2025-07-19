@@ -23,20 +23,19 @@ export class Base {
 			this.health = 0;
 			this.isDestroyed = true;
 			console.log("Base on coordinates", this.position.x, "", this.position.y, " was destroyed");
-
-			if (!isFromServer) {
+			if (gameMode === "multiplayer" && !isFromServer) {
 				const destroyedEventData = {
 					type: 'baseDestroyed',
 					baseId: this.id,
 					isDestroyed: true,
 					health: 0,
 					userId: this.ownerId,
-				};
+				}
 				publishToMercure('http://localhost:8000/game', destroyedEventData);
 			}
 		} else {
 			this.health -= damage;
-			if (!isFromServer) {
+			if (gameMode === "multiplayer" && !isFromServer) {
 				const eventData = {
 					type: 'damageToBase',
 					baseId: this.id,
