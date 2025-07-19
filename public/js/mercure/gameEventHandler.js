@@ -173,19 +173,8 @@ export class GameEventHandler {
     }
 
     #handlePlayerIsWin(data) {
-        const { winnerId, gameStatus } = data;
-
-        if (gameStatus !== 'completed') {
-            console.warn('Неверный статус игры:', gameStatus);
-            return;
-        }
-
-        if (winnerId === window.currentUserId) {
-            alert("Поздравляем, вы победили!");
-        } else {
-            alert("Вы проиграли. Победил игрок " + winnerId);
-        }
-
-        console.log(`Игра завершена. Победитель: ${winnerId}`);
+        const { winnerId } = data;
+        this.world.winnerId = winnerId;
+        this.world.isWinEvent = true;
     }
 }
