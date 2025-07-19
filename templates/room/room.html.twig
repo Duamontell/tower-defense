@@ -1,0 +1,43 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Комната
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/menu.css">
+{% endblock %}
+
+{% block body %}
+<body>
+    <div class="main-menu-container">
+        <h1>Список комнат</h1>
+        <ul id="rooms-list"></ul>
+    </div>
+    <script>
+        const roomsList = document.getElementById('rooms-list');
+
+        // Подключаемся к Mercure‑hub (тот же URL, что в config)
+        const url = new URL('{{ mercureUrl }}');
+        url.searchParams.append('topic', '/rooms');
+
+        const eventSource = new EventSource(url, { withCredentials: true });
+
+        eventSource.onmessage = ({ data }) => {
+            const msg = JSON.parse(data);
+            if (msg.action === 'create') {
+                const li = document.createElement('li');
+                li.id = msg.room.id;
+                li.textContent = msg.room.name;
+                // кнопка «подключиться»
+                const btn = document.createElement('button');
+                btn.textContent = 'Войти';
+                btn.onclick = () => window.location='/game/join/'+msg.room.id;
+                li.append(btn);
+                roomsList.append(li);
+            }
+        };
+    </script>
+</body>
+{% endblock %}
+
