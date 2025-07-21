@@ -121,7 +121,7 @@ export class EffectPanel {
             let effect = this.effects[sector];
             if (x <= this.eW && y <= this.eH && effect.price <= this.balance()) return effect;
         }
-
+      
         return null;
     }
 
@@ -169,3 +169,4 @@ export class EffectPanel {
         ctx.drawImage(cross, this.iconX + this.padding, this.iconY + this.padding, this.iconW, this.iconH);
     }
 }
+

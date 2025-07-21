@@ -43,18 +43,18 @@ function handleTowerPanelClick(x, y, towerPanel, world) {
                 showTowerPanel = false;
                 towerPanel.hide();
 
-                const eventData = {
-                    type: 'addTower',
-                    userId: currentUserId,
-                    towerId: tower.id,
-                    zoneId: zone.id,
-                    name: TowerClass.name
-                };
-                // publishToMercure('http://localhost:8000/game', eventData);
+                if (gameMode === "multiplayer") {
+                    const eventData = {
+                        type: 'addTower',
+                        userId: currentUserId,
+                        towerId: tower.id,
+                        zoneId: zone.id,
+                        name: TowerClass.name
+                    };
+                    publishToMercure('http://localhost:8000/game', eventData);
+                }
             }
         }
-    } else {
-        console.log('Недостаточно средств для покупки башни или зона не выбрана');
     }
 }
 
@@ -179,7 +179,6 @@ export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel) 
         return true;
     } else if (showEffectPanel) {
         (effectPanel.isWaitingForCoords) ? handleEffectCoords(x, y, effectPanel, world) : handleEffectPanelClick(x, y, effectPanel);
-        return true;
     }
     handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel);
     return false;
