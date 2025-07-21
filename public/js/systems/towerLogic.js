@@ -179,6 +179,7 @@ export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel) 
         return true;
     } else if (showEffectPanel) {
         (effectPanel.isWaitingForCoords) ? handleEffectCoords(x, y, effectPanel, world) : handleEffectPanelClick(x, y, effectPanel);
+        return true;
     }
     handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel);
     return false;
