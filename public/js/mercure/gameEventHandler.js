@@ -1,5 +1,5 @@
 import { ArchersTower, MagicianTower, PoisonousTower, FreezingTower, MortarTower } from '../entity/tower.js';
-import { ArrowProjectile, FireballProjectile } from '../entity/projectile.js';
+import { ArrowProjectile, FireballProjectile, PoisonProjectile, FreezeProjectile, ExplosiveProjectile } from '../entity/projectile.js';
 
 export class GameEventHandler {
     constructor(world) {
@@ -85,7 +85,11 @@ export class GameEventHandler {
     }
 
     #handleTowerAttack(data) {
-        const { towerId, enemyId } = data;
+        const { towerId, enemyId, playerId, slowness } = data;
+
+        if (playerId === window.currentUserId) {
+            return;
+        }
 
         const tower = this.world.towers.find(t => t.id === towerId);
         if (!tower) {
@@ -99,36 +103,35 @@ export class GameEventHandler {
             return;
         }
 
-        if (tower.attackType === 'single') {
-            let projectile;
-            const startPos = tower.position;
-            const targetPos = {
-                x: enemy.position.x,
-                y: enemy.position.y
-            };
+        let projectile;
+        const startPos = { x: tower.position.x, y: tower.position.y };
+        const targetPos = { x: enemy.position.x, y: enemy.position.y };
 
-            switch (tower.name) {
-                case 'Archers':
-                    projectile = new ArrowProjectile(startPos, [targetPos], enemy, tower.damage, tower.attackCfg);
-                    break;
-                case 'Magicians':
-                    projectile = new FireballProjectile(startPos, [targetPos], enemy, tower.damage, tower.attackCfg);
-                    break;
-                case 'Mortar':
-                    projectile = new ArrowProjectile(startPos, [targetPos], enemy, tower.damage, tower.attackCfg);
-                    break;
-                default:
-                    console.warn(`Неизвестный тип башни для атаки: ${tower.name}`);
-                    return;
-            }
-            if (projectile) {
-                this.world.projectiles.push(projectile);
-                console.log(`Башня ${tower.id} создала снаряд для врага ${enemy.id}.`);
-            }
+        switch (tower.name) {
+            case 'Archers':
+                projectile = new ArrowProjectile(startPos, [targetPos], enemy, tower.damage, tower.attackCfg);
+                break;
+            case 'Magicians':
+                projectile = new FireballProjectile(startPos, [targetPos], enemy, tower.damage, tower.attackCfg);
+                break;
+            case 'Mortar':
+                projectile = new ExplosiveProjectile(startPos, [targetPos], enemy, tower.damage, tower.attackCfg);
+                break;
+            case 'Poisonous':
+                projectile = new PoisonProjectile(startPos, [targetPos], enemy, tower.damage, tower.attackCfg);
+                break;
+            case 'Freezing':
+                const freezeSlowness = slowness ?? tower.slowness;
+                projectile = new FreezeProjectile(startPos, [targetPos], enemy, tower.damage, freezeSlowness, tower.attackCfg);
+                break;
+            default:
+                console.warn(`Неизвестный тип башни для атаки: ${tower.name}`);
+                return;
         }
-        else if (tower.attackType === 'area') {
-            enemy.receiveDamage(tower.damage);
-            console.log(`Башня ${tower.id} нанесла ${tower.damage} урона врагу ${enemy.id} (area attack).`);
+
+        if (projectile) {
+            this.world.projectiles.push(projectile);
+            console.log(`Башня ${tower.id} (${tower.name}) создала снаряд для врага ${enemy.id}.`);
         }
     }
 
