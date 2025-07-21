@@ -9,6 +9,7 @@ export class Enemy {
         this.width = width;
         this.height = height;
         this.health = health;
+        this.maxHealth = health;
         this.damage = damage;
         this.reward = reward;
         this.normalSpeed = speed;
@@ -31,10 +32,30 @@ export class Enemy {
         }
         ctx.drawImage(this.images[Math.round(this.frame)], -this.width / 2, -this.height, this.width, this.height);
         ctx.restore();
+
+        this.drawHealthBar(ctx);
+    }
+
+    drawHealthBar(ctx) {
+        const healthPercent = this.health / this.maxHealth;
+        const barWidth = 100;
+        const barHeight = 7;
+        const x = this.position.x - barWidth / 2;
+        const y = this.position.y - this.height - barHeight - 2;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fillRect(x, y, barWidth, barHeight);
+
+        const hue = 120 * healthPercent; // 120° = зеленый, 0° = красный
+        ctx.fillStyle = `hsl(${hue}, 100%, 50%)`; // Hue (оттенок), Saturation (насыщенность) и Lightness (светлота)
+        ctx.fillRect(x, y, barWidth * healthPercent, barHeight);
+
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, barWidth, barHeight);
     }
 
     update(delta) {
-
         this.frame = this.frame + delta * this.animationSpeed;
         if (this.frame > this.images.length - 1) {
             this.frame = 0;

@@ -6,7 +6,7 @@ import { EffectPanel } from '../entity/effectPanel.js';
 import { drawTowerZones } from '../systems/towerZones.js';
 import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
-import { drawBalancePanel } from '../systems/balanceManager.js';
+import { drawPlayerStatsPanel } from '../systems/playerStats.js';
 import { initCanvasResizer } from "../ui/gameView.js";
 import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
 import { GameEventHandler } from '../mercure/gameEventHandler.js';
@@ -43,10 +43,10 @@ function getClickCoordinates(canvas, event) {
 }
 
 canvas.addEventListener('click', (event) => {
+    const {x, y} = getClickCoordinates(canvas, event);
     const user = world.players.get(currentUserId);
     if (user && user.isLose) return;
     if (world.gameOver) return;
-    const { x, y } = getClickCoordinates(canvas, event);
     handleClick(x, y, world, towerPanel, upgradePanel, effectPanel);
 });
 
@@ -127,7 +127,47 @@ function gameLoop(timestamp = 0) {
     towerPanel.draw();
     upgradePanel.draw();
     effectPanel.draw();
-    drawBalancePanel(ctx, world.players.get(currentUserId).balance);
+    const currentUser = world.players.get(currentUserId);
+    const currentBase = world.bases.find(b => b.ownerId === currentUserId);
+    const baseHealth = currentBase.health;
+    drawPlayerStatsPanel(ctx, currentUser.balance, baseHealth);
+
+    if (gameMode === "singleplayer") {
+        const user = world.players.get(currentUserId);
+        const base = world.bases.find(b => b.ownerId === currentUserId);
+
+        if ((user.isLose || (base && base.isDestroyed)) && !world.gameOver) {
+            gameMessage = "Вы проиграли!";
+            world.gameOver = true;
+        }
+    } else {
+        const alivePlayers = Array.from(world.players.values()).filter(user => !user.isLose);
+        const currentUser = world.players.get(currentUserId);
+        const base = world.bases.find(b => b.ownerId === currentUserId);
+
+        if ((currentUser.isLose || (base && base.isDestroyed)) && !world.gameOver) {
+            if (world.isWinEvent && world.winnerId) {
+                const winner = world.players.get(world.winnerId);
+                gameMessage = `Победил игрок ${winner.id}`;
+            } else {
+                gameMessage = "Вы проиграли!";
+            }
+        }
+        if (alivePlayers.length === 1 && alivePlayers[0].id === currentUserId && !world.gameOver) {
+            gameMessage = "Вы победили!";
+
+            world.gameOver = true;
+            const winEventData = {
+                type: 'playerIsWin',
+                winnerId: currentUser.id,
+            }
+            publishToMercure('http://localhost:8000/game', winEventData);
+        }
+    }
+
+    if (gameMessage) {
+        drawGameMessage(ctx, gameMessage);
+    }
 
     if (gameMode === "singleplayer") {
         const user = world.players.get(currentUserId);
@@ -204,10 +244,10 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     world.waves.maxWave = lvlCfg.countWaves;
 
     const getUserBalance = () => world.players.get(currentUserId).balance;
+  
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
     upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
     effectPanel = new EffectPanel(ctx, canvas.width, canvas.height, getUserBalance, effectShopCfg);
-
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
     const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
