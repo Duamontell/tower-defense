@@ -47,7 +47,6 @@ canvas.addEventListener('click', (event) => {
     const user = world.players.get(currentUserId);
     if (user && user.isLose) return;
     if (world.gameOver) return;
-    const { x, y } = getClickCoordinates(canvas, event);
     handleClick(x, y, world, towerPanel, upgradePanel, effectPanel);
 });
 
