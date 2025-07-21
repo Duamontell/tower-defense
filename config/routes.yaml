@@ -28,6 +28,10 @@ logout:
     controller: App\Controller\SecurityController::logout
 
 # Игра
+select-level:
+    path: /select-level
+    controller: App\Controller\GameController::selectLevel
+
 singleplayer:
     path: /singleplayer
     controller: App\Controller\GameController::singleplayer
