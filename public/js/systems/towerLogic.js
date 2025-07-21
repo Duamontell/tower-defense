@@ -1,3 +1,4 @@
+import { ExplosionEffect, FreezeEffect, PoisonEffect } from '../entity/effect.js';
 import { publishToMercure } from '../mercure/mercureHandler.js';
 
 let selectedZone = null;
@@ -82,12 +83,50 @@ function handleUpgradePanelClick(x, y, upgradePanel, world) {
     }
 }
 
-function handleEffectPanelClick(x, y, effectPanel, world) {
+function handleEffectPanelClick(x, y, effectPanel) {
     const result = effectPanel.handleClick(x, y);
     if (result === 'close') {
         showEffectPanel = false;
+        effectPanel.choosenEffect = null;
+        effectPanel.isWaitingForCoords = false;
         return;
     }
+
+    if (result !== null && result !== undefined) {
+        effectPanel.choosenEffect = result
+        effectPanel.isWaitingForCoords = true;
+    }
+}
+
+function handleEffectCoords(x, y, effectPanel, world) {
+    const user = world.players.get(currentUserId);
+    const choosenEffect = effectPanel.choosenEffect;
+
+    if (!effectPanel.isClickedOnIcon(x, y) && user.balance >= choosenEffect.price) {
+        
+        let effect;
+
+        switch (choosenEffect.name) {
+            case 'Poison':
+                effect = new PoisonEffect({x: x, y: y}, choosenEffect.damage, choosenEffect.cfg);
+                break;
+            case 'Freezing':
+                effect = new FreezeEffect({x: x, y: y}, choosenEffect.slowness, choosenEffect.cfg);
+                break;
+            case 'Bomb': 
+                effect = new ExplosionEffect({x: x, y: y}, choosenEffect.damage, choosenEffect.cfg);
+                break;
+        }
+
+        if (effect !== undefined) world.effects.push(effect);
+        user.changeBalance(-choosenEffect.price);
+
+    }
+
+    showEffectPanel = false;
+    effectPanel.isWaitingForCoords = false;
+    effectPanel.choosenEffect = null;
+    effectPanel.hide();
 }
 
 function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
@@ -139,8 +178,7 @@ export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel) 
         handleUpgradePanelClick(x, y, upgradePanel, world);
         return true;
     } else if (showEffectPanel) {
-        handleEffectPanelClick(x, y, effectPanel, world);
-        return true;
+        (effectPanel.isWaitingForCoords) ? handleEffectCoords(x, y, effectPanel, world) : handleEffectPanelClick(x, y, effectPanel);
     }
     handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel);
     return false;

@@ -56,7 +56,6 @@ export class Enemy {
     }
 
     update(delta) {
-
         this.frame = this.frame + delta * this.animationSpeed;
         if (this.frame > this.images.length - 1) {
             this.frame = 0;

@@ -43,6 +43,7 @@ function getClickCoordinates(canvas, event) {
 }
 
 canvas.addEventListener('click', (event) => {
+    const {x, y} = getClickCoordinates(canvas, event);
     const user = world.players.get(currentUserId);
     if (user && user.isLose) return;
     if (world.gameOver) return;
@@ -245,10 +246,10 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     world.waves.maxWave = lvlCfg.countWaves;
 
     const getUserBalance = () => world.players.get(currentUserId).balance;
+  
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
     upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
     effectPanel = new EffectPanel(ctx, canvas.width, canvas.height, getUserBalance, effectShopCfg);
-
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
     const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
