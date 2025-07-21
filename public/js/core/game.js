@@ -6,7 +6,7 @@ import { EffectPanel } from '../entity/effectPanel.js';
 import { drawTowerZones } from '../systems/towerZones.js';
 import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
-import { drawBalancePanel } from '../systems/balanceManager.js';
+import { drawPlayerStatsPanel } from '../systems/playerStats.js';
 import { initCanvasResizer } from "../ui/gameView.js";
 import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
 import { GameEventHandler } from '../mercure/gameEventHandler.js';
@@ -127,7 +127,10 @@ function gameLoop(timestamp = 0) {
     towerPanel.draw();
     upgradePanel.draw();
     effectPanel.draw();
-    drawBalancePanel(ctx, world.players.get(currentUserId).balance);
+    const currentUser = world.players.get(currentUserId);
+    const currentBase = world.bases.find(b => b.ownerId === currentUserId);
+    const baseHealth = currentBase.health;
+    drawPlayerStatsPanel(ctx, currentUser.balance, baseHealth);
 
     if (gameMode === "singleplayer") {
         const user = world.players.get(currentUserId);

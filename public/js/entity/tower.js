@@ -2,6 +2,7 @@ import { towerUpgrades } from './upgrades.js';
 import { ArrowProjectile, ExplosiveProjectile, FireballProjectile, FreezeProjectile, PoisonProjectile, Projectile } from './projectile.js';
 import { ExplosionEffect, FreezeEffect, PoisonEffect } from './effect.js';
 import { uuidv4 } from '../systems/generateId.js'
+import { publishToMercure } from '../mercure/mercureHandler.js';
 
 export class Tower {
     constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, attackCfg) {
@@ -82,9 +83,9 @@ export class Tower {
 
         if (enemiesInRange.length === 0) return;
 
-        const position = {x: this.position.x, y: this.position.y};
+        const position = { x: this.position.x, y: this.position.y };
         const nearestEnemy = enemiesInRange[0];
-        const nearestEnemyPos = {x: enemiesInRange[0].position.x, y: enemiesInRange[0].position.y};
+        const nearestEnemyPos = { x: enemiesInRange[0].position.x, y: enemiesInRange[0].position.y };
 
         let projectile;
         switch (this.name) {
@@ -105,7 +106,24 @@ export class Tower {
                 break;
         }
 
-        if (projectile !== undefined) projectiles.push(projectile);
+        if (projectile !== undefined) {
+            projectiles.push(projectile);
+
+            if (gameMode === "multiplayer") {
+                const attackEventData = {
+                    type: 'towerAttack',
+                    towerId: this.id,
+                    enemyId: nearestEnemy.id,
+                    playerId: this.ownerId
+                };
+
+                if (this.name === 'Freezing' && this.slowness !== undefined) {
+                    attackEventData.slowness = this.slowness;
+                }
+
+                publishToMercure('http://localhost:8000/game', attackEventData);
+            }
+        }
 
         return true;
     }
