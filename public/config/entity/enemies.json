@@ -3,7 +3,7 @@
         "name": "Orc",
         "width": 150,
         "height": 150,
-        "health": 200,
+        "health": 500,
         "damage": 10,
         "reward": 20,
         "speed": 100,
