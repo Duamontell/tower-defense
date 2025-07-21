@@ -50,7 +50,7 @@ function handleTowerPanelClick(x, y, towerPanel, world) {
                     zoneId: zone.id,
                     name: TowerClass.name
                 };
-                publishToMercure('http://localhost:8000/game', eventData);
+                // publishToMercure('http://localhost:8000/game', eventData);
             }
         }
     } else {
