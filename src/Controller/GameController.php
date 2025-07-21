@@ -11,13 +11,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class GameController extends AbstractController
 {
-    #[Route('/menu', name: 'menu')]
     public function menu() :Response
     {
         return $this->render('menu/main-menu.html.twig');
     }
 
-    #[Route('/select-level', name: 'select-level')]
     public function selectLevel() :Response
     {
         return $this->render('menu/select-level.html.twig');
@@ -35,7 +33,6 @@ class GameController extends AbstractController
         ]);
     }
 
-    #[Route('/game', name: 'game', methods: ['GET'])]
     public function game(Request $request) :Response
     {
         $level = (int)$request->get('level');

@@ -10,15 +10,20 @@
 
 {% block body %}
 <body>
-    <div class="main-menu-container">
+    <div class="rooms-list-container">
         <h1>Список комнат</h1>
-        <ul id="rooms-list"></ul>
+        <ul id="rooms-list">
+            {% for room in openRooms %}
+                <li id="room-{{ room.id }}">
+                    {{ room.name }}
+            {% endfor %}
+        </ul>
     </div>
     <script>
         const roomsList = document.getElementById('rooms-list');
 
         const url = new URL('{{ mercureUrl }}');
-        url.searchParams.append('topic', '/rooms');
+        url.searchParams.append('topic', '/room-list');
 
         const eventSource = new EventSource(url, { withCredentials: true });
 

@@ -41,7 +41,6 @@ class PublishController extends AbstractController
     //     return new Response('published!');
     // }
 
-    #[Route('/publish', name: 'publish')]
     public function test(HubInterface $hub): Response
     {
         $update = new Update(

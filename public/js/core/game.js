@@ -107,7 +107,7 @@ function gameLoop(timestamp = 0) {
     if (waveDuration <= 0 && world.waves.currentWave < world.waves.maxWave) {
         world.summonWaves(world.waves.currentWave);
         world.waves.currentWave++;
-        waveDuration = 30;
+        waveDuration = 5;
     } else if (
         gameMode === "singleplayer" &&
         world.waves.currentWave === world.waves.maxWave &&
@@ -240,7 +240,6 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
         world.addTowerZones(data.towerZones, user.userId);
         world.waves.userWaves.set(user.userId, lvlCfg.waves);
     })
-    console.log(world.waves);
 
     world.waves.maxWave = lvlCfg.countWaves;
 
