@@ -35,12 +35,17 @@ class GameController extends AbstractController
 
     public function singleplayer(Request $request): Response
     {
+        if (!$securityUser = $this->getUser()) {
+            return $this->redirectToRoute('login');
+        }
         $level = (int) $request->get('level');
-        $userId = uniqid();
+
+        $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
+
 
         return $this->render('game/game.html.twig', [
             'level' => $level,
-            'userId' => $userId,
+            'userId' => $user->getId(),
             'gamemode' => 'singleplayer',
         ]);
     }
