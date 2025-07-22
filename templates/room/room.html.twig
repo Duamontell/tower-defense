@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Комната
+{% endblock %}
+
+{% block javascripts %}
+    <script defer src="/js/room/room.js"></script>
+{% endblock %}
+
+{% block body %}
+<body>
+    <div class="room-container">
+        <div class="menu-header">
+            <h1>Комната {{ room.id }}</h1>
+        </div>
+        <div class="room-content">
+            {% for player in players %}
+                <div class="player" id="player-{{ player.id }}">
+                    <span class="player-slot">{{ player.slot }}: </span>
+                    <span class="player-name">{{ player.player.email }}</span>
+                    <button class="ready-btn"
+                            data-player-id="{{ player.id }}"
+                            data-ready="{{ player.isReady ? '1' : '0' }}">
+                        {{ player.isReady ? 'Готов' : 'Не готов' }}
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+{% endblock %}

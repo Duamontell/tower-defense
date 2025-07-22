@@ -13,6 +13,13 @@ class RoomRepository extends ServiceEntityRepository
         parent::__construct($registry, Room::class);
     }
 
+    public function store(Room $room) :int
+    {
+        $this->getEntityManager()->persist($room);
+        $this->getEntityManager()->flush();
+        return $room->getId();
+    }
+
     public function findById(int $id): ?Room
     {
         return $this->getEntityManager()->getRepository(Room::class)->find($id);

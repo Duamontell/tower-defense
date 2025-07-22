@@ -6,9 +6,18 @@ menu:
     path: /menu
     controller: App\Controller\GameController::menu
 
-room-list:
+# Комната
+room_list:
     path: /room-list
     controller: App\Controller\RoomController::roomList
+
+room_create:
+    path: /room/create
+    controller: App\Controller\RoomController::createRoom
+
+show_room:
+    path: /room/{roomId}
+    controller: App\Controller\RoomController::showRoom
 
 # Пользователь
 registration_page:
