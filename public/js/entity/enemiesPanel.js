@@ -97,6 +97,7 @@ export class EnemiesPanel {
             );
 
             enemy.description.split('\n').forEach((line, index) => ctx.fillText(line, x + this.eW / 2, y + this.eH + this.textPadding * 2 + index * this.lineH));
+
             ctx.restore();
 
             x += this.eW + this.interval;
