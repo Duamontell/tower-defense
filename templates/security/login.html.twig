@@ -1,34 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Вход в аккаунт{% endblock %}
+{% block title %}Вход в аккаунт
+{% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="/styles/css/login.css">
+{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+	<div class="login-container">
+		<h1>Вход в аккаунт</h1>
 
-    {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('logout') }}">Logout</a>
-        </div>
-    {% endif %}
+		<form method="post" class="login-form">
+			{% if error %}
+				<div class="alert-message">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+			{% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Пожалуйста, войдите в аккаунт</h1>
-    <label for="username">User</label>
-    <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" required autofocus>
-    <label for="password">Password</label>
-    <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
-    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+			{% if app.user %}
+				<div class="user-logged-message">
+					Вы уже вошли как
+					{{ app.user.userIdentifier }},
+					<a href="{{ path('logout') }}">Выйти</a>
+				</div>
+			{% endif %}
 
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" name="_remember_me"> Запомнить меня
-        </label>
-    </div>
+			<div class="field">
+				<label for="username">Email</label>
+				<input type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus>
+			</div>
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Вход
-    </button>
-</form>
+			<div class="field">
+				<label for="password">Пароль</label>
+				<input type="password" name="_password" id="password" autocomplete="current-password" required>
+			</div>
+
+			<input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+			<div class="remember-me">
+				<label>
+					<input type="checkbox" name="_remember_me">
+					<span>Запомнить меня</span>
+				</label>
+			</div>
+
+			<button type="submit">Войти</button>
+		</form>
+		<div class="register-link">
+			<span>Нет аккаунта?</span>
+			<a href="/registration">Создать</a>
+		</div>
+	</div>
 {% endblock %}

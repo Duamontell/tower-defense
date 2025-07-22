@@ -1,28 +1,32 @@
 {% extends "base.html.twig" %}
 
 {% block title %}
-    Регистрация
+	Регистрация
 {% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="/css/menu.css">
+	<link rel="stylesheet" href="/styles/css/registration.css">
 {% endblock %}
 
 {% block body %}
-<body>
-    <h1>Регистрация нового пользователя!</h1>
-    <form method="POST" action="/register">
-        <div class="field">
-            <label>
-                Email
-                <input type="email" name="email" placeholder="Email" maxlength="50" required autofocus>
-            </label>
-            <label>
-                Пароль
-                <input type="password" name="password" placeholder="Пароль" maxlength="20" required>
-            </label>
-            <button type="submit">Зарегистрироваться</button>
-        </div>
-    </form>
-</body>
+	<div class="registration-container">
+		<h1>Регистрация нового пользователя</h1>
+		<form method="POST" action="/register">
+			<div class="field">
+				<label>
+					Email
+					<input type="email" name="email" placeholder="Email" maxlength="50" required autofocus>
+				</label>
+				<label>
+					Пароль
+					<input type="password" name="password" placeholder="Пароль" maxlength="20" required>
+				</label>
+				<button type="submit">Зарегистрироваться</button>
+			</div>
+		</form>
+		<div class="register-link">
+			<span>Уже есть аккаунт?</span>
+			<a href="/login">Войти</a>
+		</div>
+	</div>
 {% endblock %}

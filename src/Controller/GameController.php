@@ -11,19 +11,24 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class GameController extends AbstractController
 {
-    public function menu() :Response
+    public function menu(): Response
     {
         return $this->render('menu/main-menu.html.twig');
     }
 
-    public function selectLevel() :Response
+    public function selectLevel(): Response
     {
         return $this->render('menu/select-level.html.twig');
     }
 
-    public function singleplayer(Request $request) :Response
+    public function gameRules(): Response
     {
-        $level = (int)$request->get('level');
+        return $this->render('game/game-rules.html.twig');
+    }
+
+    public function singleplayer(Request $request): Response
+    {
+        $level = (int) $request->get('level');
         $userId = uniqid();
 
         return $this->render('game/game.html.twig', [
@@ -33,12 +38,12 @@ class GameController extends AbstractController
         ]);
     }
 
-    public function game(Request $request) :Response
+    public function game(Request $request): Response
     {
-        $level = (int)$request->get('level');
+        $level = (int) $request->get('level');
         // Получаем id текущего пользователя, пока что генерация
         $userId = uniqid();
-//      Можно сделать подписку(topic) на имя комнаты: topic=/game/room=$roomId
+        //      Можно сделать подписку(topic) на имя комнаты: topic=/game/room=$roomId
 //        $roomId = uniqid();
         $players = [
             [
@@ -54,7 +59,7 @@ class GameController extends AbstractController
         return $this->render('game/game.html.twig', [
             'level' => $level,
             'userId' => $userId,
-            'gamemode'   => 'multiplayer',
+            'gamemode' => 'multiplayer',
             'roomConfig' => [
                 'players' => array_map(fn($p) => [
                     'userId' => $p['userId'],
