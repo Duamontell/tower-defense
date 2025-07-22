@@ -6,14 +6,18 @@ let selectedTowerInstance = null;
 let showTowerPanel = false;
 let showUpgradePanel = false;
 let showEffectPanel = false;
+let showEnemiesPanel = false;
 
-function resetSelections(towerPanel, upgradePanel) {
+function resetSelections(towerPanel, upgradePanel, enemiesPanel) {
     selectedZone = null;
     selectedTowerInstance = null;
     showTowerPanel = false;
     towerPanel.hide();
     showUpgradePanel = false;
     upgradePanel.hide();
+    enemiesPanel.baseOwnerId = null;
+    enemiesPanel.hide();
+    showEnemiesPanel = false;
 }
 
 function handleTowerPanelClick(x, y, towerPanel, world) {
@@ -92,7 +96,7 @@ function handleEffectPanelClick(x, y, effectPanel) {
         return;
     }
 
-    if (result !== null && result !== undefined) {
+    if (result) {
         effectPanel.choosenEffect = result
         effectPanel.isWaitingForCoords = true;
     }
@@ -129,8 +133,27 @@ function handleEffectCoords(x, y, effectPanel, world) {
     effectPanel.hide();
 }
 
-function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
+function handleEnemiesPanelClick(x, y, enemiesPanel, world) {
+    const user = world.players.get(currentUserId);
+    const result = enemiesPanel.handleClick(x, y);
+
+    if (result === 'close') {
+        showEnemiesPanel = false;
+        return;
+    }
+
+    if (result) {
+        user.changeBalance(-result.price);
+        world.summonWave(result.enemies, enemiesPanel.baseOwnerId);
+        showEnemiesPanel = false;
+        enemiesPanel.hide();
+        enemiesPanel.baseOwnerId = null;
+    }
+}
+
+function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, enemiesPanel) {
     const zone = world.getZoneByCoordinates(x, y);
+    const base = world.getBaseByCoordinates(x, y);
 
     if (zone && !world.players.get(currentUserId).towerZonesId.includes(zone.id)) {
         console.log("Чужая зона!")
@@ -163,13 +186,19 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
         showEffectPanel = true;
         effectPanel.show()
         return;
-
     }
 
-    resetSelections(towerPanel, upgradePanel);
+    if (base && !base.isDestroyed) {
+        enemiesPanel.baseOwnerId = base.ownerId;
+        showEnemiesPanel = true;
+        enemiesPanel.show();
+        return;
+    }
+
+    resetSelections(towerPanel, upgradePanel, enemiesPanel);
 }
 
-export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
+export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, enemiesPanel) {
     if (showTowerPanel) {
         handleTowerPanelClick(x, y, towerPanel, world);
         return true;
@@ -180,7 +209,10 @@ export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel) 
     } else if (showEffectPanel) {
         (effectPanel.isWaitingForCoords) ? handleEffectCoords(x, y, effectPanel, world) : handleEffectPanelClick(x, y, effectPanel);
         return true;
+    } else if (showEnemiesPanel) {
+        handleEnemiesPanelClick(x, y, enemiesPanel, world);
+        return true;
     }
-    handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel);
+    handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, enemiesPanel);
     return false;
 }

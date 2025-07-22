@@ -1,11 +1,12 @@
-export class EffectPanel {
+export class EnemiesPanel {
     constructor(ctx, canvasWidth, canvasHeight, balance, cfg) {
         this.ctx = ctx;
         this.width = 1000;
         this.height = 350;
         this.x = (canvasWidth - this.width) / 2;
         this.y = canvasHeight - this.height;
-        this.effects = [];
+        this.baseOwnerId = null;     
+        this.enemies = [];
         this.balance = balance;
         this.visible = false;
         this.closeSize = 40;
@@ -13,8 +14,6 @@ export class EffectPanel {
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
         this.cfg = cfg;
-        this.isWaitingForCoords = false;
-        this.choosenEffect = null;
         this.iconX = 1450;
         this.iconY = 10;
         this.iconH = 50;
@@ -25,17 +24,16 @@ export class EffectPanel {
 
     #initialize(cfg) {
         this.eX = 350;
-        this.eY = 700;
+        this.eY = 750;
         this.eH = 100;
         this.eW = 100;
         this.interval = 100;
-        this.textX = 50;
-        this.textY = 120;
-        cfg.forEach(effect => {
+        this.textPadding = 30;
+        cfg.forEach(enemy => {
             let icon = new Image();
-            icon.src = effect.icon;
-            effect.icon = icon;
-            this.effects.push(effect);   
+            icon.src = enemy.icon;
+            enemy.icon = icon;
+            this.enemies.push(enemy);   
         });
     }
 
@@ -48,18 +46,27 @@ export class EffectPanel {
     }
 
     draw() {
-        if (!this.visible) {
-            this.#drawShopIcon();
-            return;
-        } 
-        if (this.isWaitingForCoords) {
-            this.$drawCancelChoosing();
-            return;
-        }
+        if (!this.visible) return;
+        
         this.show()
         this.drawBackground();
+        this.drawTitle();
         this.#drawCloseButton();
-        this.drawEffects();
+        this.drawEnemies();
+    }
+
+    drawTitle() {
+        const ctx = this.ctx;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+
+        const titleX = this.x + this.width / 2;
+        const titleY = this.y + 40;
+
+        let temp = this.baseOwnerId
+
+        ctx.fillText('Призвать дополнительную волну', titleX, titleY);
     }
 
     drawBackground() {
@@ -68,27 +75,29 @@ export class EffectPanel {
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
-    drawEffects() {
+    drawEnemies() {
         const ctx = this.ctx;
 
         let x = this.eX;
         let y = this.eY;
 
-        for (const effect of this.effects) {
-            const canBuild = this.balance() >= effect.price;
+        for (const enemy of this.enemies) {
+            const canBuild = this.balance() >= enemy.price;
             ctx.save();
             ctx.globalAlpha = canBuild ? 1 : 0.4;
 
-            ctx.drawImage(effect.icon, x, y, this.eW, this.eH)
+            ctx.drawImage(enemy.icon, x, y, this.eW, this.eH);
 
             ctx.fillStyle = '#FFFFFF';
             ctx.font = '20px Arial';
             ctx.textAlign = 'center';
             ctx.fillText(
-                effect.price,
-                x + this.textX, 
-                y + this.textY
+                enemy.price,
+                x + this.eW / 2, 
+                y + this.eH + this.textPadding
             );
+
+            enemy.description.split('\n').forEach((line, index) => ctx.fillText(line, x + this.eW / 2, y + this.eH + this.textPadding * 2 + index * 20)) //50 = lineheight
 
             ctx.restore();
 
@@ -97,7 +106,7 @@ export class EffectPanel {
     } 
 
     isClickedOnIcon(x, y) {
-        return x >= this.iconX && x <= this.iconX + this.iconW + 2 * this.padding && y >= this.iconY && y <= this.iconY + this.iconH + 2 * this.padding
+        return x >= this.iconX && x <= this.iconX + this.iconW + 2 * this.padding && y >= this.iconY && y <= this.iconY + this.iconH + 2 * this.padding;
     }
 
     handleClick(x, y) {
@@ -118,8 +127,8 @@ export class EffectPanel {
             y -= this.eY;
             let sector = Math.trunc(x / (this.eW + this.interval));
             x -= (this.eW + this.interval) * sector;
-            let effect = this.effects[sector];
-            if (x <= this.eW && y <= this.eH && effect && effect.price <= this.balance()) return effect;
+            let enemy = this.enemies[sector];
+            if (x <= this.eW && y <= this.eH && enemy && enemy.price <= this.balance()) return enemy;
         }
       
         return null;
@@ -147,26 +156,6 @@ export class EffectPanel {
         ctx.stroke();
 
         ctx.restore();
-    }
-
-    #drawShopIcon() {
-        const ctx = this.ctx;
-        ctx.fillStyle = '#00000080';
-        ctx.fillRect(this.iconX, this.iconY, this.iconW + 2 * this.padding, this.iconH + 2 * this.padding);
-        const icon = new Image;
-        icon.src = '../../images/assets/cart.png';
-        ctx.drawImage(icon, this.iconX + this.padding, this.iconY + this.padding, this.iconW - this.padding, this.iconH - this.padding);
-    }
-
-    $drawCancelChoosing() {
-        const ctx = this.ctx;
-        ctx.fillStyle = '#00000080';
-        ctx.fillRect(this.iconX, this.iconY, this.iconW + 2 * this.padding, this.iconH + 2 * this.padding);
-        ctx.drawImage(this.choosenEffect.icon, this.iconX + this.padding, this.iconY + this.padding, this.iconW, this.iconH);
-        
-        const cross = new Image;
-        cross.src = '../../images/assets/cross.png';
-        ctx.drawImage(cross, this.iconX + this.padding, this.iconY + this.padding, this.iconW, this.iconH);
     }
 }
 

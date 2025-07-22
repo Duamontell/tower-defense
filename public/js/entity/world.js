@@ -77,7 +77,11 @@ export class World {
             // Орки
             for (let i = 0; i < orcs; i++) {
                 setTimeout(() => {
-                    const enemy = new OrcEnemy({ x: waypoints[0].x, y: waypoints[0].y }, waypoints, this.enemiesCfg.orc);
+                    const enemy = new OrcEnemy(
+                        { x: waypoints[0].x, y: waypoints[0].y }, 
+                        waypoints,
+                        this.enemiesCfg.orc
+                    );
                     this.addEnemy(enemy, user.id);
                 }, delay * 1000);
                 delay += this.spawnrate;
@@ -99,7 +103,9 @@ export class World {
             // Гоблины
             for (let i = 0; i < goblins; i++) {
                 setTimeout(() => {
-                    const enemy = new GoblinEnemy({ x: waypoints[0].x, y: waypoints[0].y }, waypoints,
+                    const enemy = new GoblinEnemy(
+                        { x: waypoints[0].x, y: waypoints[0].y },
+                        waypoints,
                         this.enemiesCfg.goblin
                     );
                     this.addEnemy(enemy, user.id);
@@ -107,6 +113,50 @@ export class World {
                 delay += this.spawnrate;
             }
         });
+    }
+
+    summonWave(enemies, userId) {
+        const user = this.players.get(userId);
+        const {orcs, zombies, goblins} = enemies;
+        const waypoints = user.waypoints;
+
+        let delay = 0;
+
+        for (let i = 0; i < orcs; i++) {
+            setTimeout(() => {
+                const enemy = new OrcEnemy(
+                    { x: waypoints[0].x, y: waypoints[0].y },
+                    waypoints,
+                    this.enemiesCfg.orc
+                );
+                this.addEnemy(enemy, user.id);
+            }, delay * 1000);
+            delay += this.spawnrate;
+        }
+
+        for (let i = 0; i < zombies; i++) {
+            setTimeout(() => {
+                const enemy = new ZombieEnemy(
+                    { x: waypoints[0].x, y: waypoints[0].y },
+                    waypoints,
+                    this.enemiesCfg.zombie
+                );
+                this.addEnemy(enemy, user.id);
+            }, delay * 1000);
+            delay += this.spawnrate;
+        }        
+        
+        for (let i = 0; i < goblins; i++) {
+            setTimeout(() => {
+                const enemy = new GoblinEnemy(
+                    { x: waypoints[0].x, y: waypoints[0].y },
+                    waypoints,
+                    this.enemiesCfg.goblin
+                );
+                this.addEnemy(enemy, user.id);
+            }, delay * 1000);
+            delay += this.spawnrate;
+        }
     }
 
     update(delta) {
@@ -175,6 +225,13 @@ export class World {
             x >= zone.topLeft.x && x <= zone.bottomRight.x &&
             y >= zone.topLeft.y && y <= zone.bottomRight.y
         );
+    }
+
+    getBaseByCoordinates(x, y) {
+        return this.bases.find(base => 
+            x >= base.position.x - base.width / 2 && x <= base.position.x + base.width / 2 &&
+            y >= base.position.y - base.height / 2 && y <= base.position.y + base.height / 2  
+        )
     }
 
     tryPlaceTower(x, y, TowerClass) {
