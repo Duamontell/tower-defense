@@ -65,8 +65,6 @@ export class EnemiesPanel {
         const titleX = this.x + this.width / 2;
         const titleY = this.y + 40;
 
-        let temp = this.baseOwnerId
-
         ctx.fillText('Призвать дополнительную волну', titleX, titleY);
     }
 
