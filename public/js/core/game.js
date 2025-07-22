@@ -19,7 +19,7 @@ const background = new Image();
 
 const gameMode = window.gameMode || 'singleplayer';
 const currentLevel = window.currentLevel || 1;
-const currentUserId = window.currentUserId;
+const currentUserId = Number(window.currentUserId);
 const roomConfig = window.roomConfig || {};
 
 let waveDuration = 0;
@@ -80,7 +80,7 @@ if (enemiesResponse.ok) {
     enemiesCfg = await enemiesResponse.json();
 }
 
-let towersResponse = await fetch('./../config/entity/towers.json');
+let towersResponse = await fetch('../../config/entity/towers.json');
 if (towersResponse.ok) {
     towersCfg = await towersResponse.json();
 }
@@ -253,7 +253,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     world.waves.maxWave = lvlCfg.countWaves;
 
     const getUserBalance = () => world.players.get(currentUserId).balance;
-  
+
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
     upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
     effectPanel = new EffectPanel(ctx, canvas.width, canvas.height, getUserBalance, effectShopCfg);

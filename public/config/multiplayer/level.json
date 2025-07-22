@@ -1,8 +1,8 @@
 {
     "map": {
-        "backgroundImage": "images/map/first_level.png",
-        "width": 1536,
-        "height": 1024
+        "backgroundImage": "/images/map/multiplayer_map.jpg",
+        "width": 5000,
+        "height": 5000
     },
     "spawnrate": 3,
     "countWaves": 3,

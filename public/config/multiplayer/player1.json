@@ -12,14 +12,14 @@
     ],
     "base": {
         "baseId": 1,
-        "health": 200,
+        "health": 150,
         "position": {
             "x": 100,
             "y": 450
         },
         "width": 300,
         "height": 300,
-        "imageSrc": "images/base/Base.png"
+        "imageSrc": "/images/base/Base.png"
     },
     "towerZones": [
         {

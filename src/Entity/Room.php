@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 class Room
@@ -12,29 +13,26 @@ class Room
     public const STATUS_PLAYING = 1;
     public const  STATUS_FINISHED = 2;
 
+    private Collection $players;
+
     public function __construct(
         private ?int $id,
-        private string $name,
-        private string $code,
+//        private string $code,
         private int $status,
         private \DateTime $createdAt,
-        private Collection $players,
-    ) {}
+    ) {
+        $this->players = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getCode(): string
-    {
-        return $this->code;
-    }
+//    public function getCode(): string
+//    {
+//        return $this->code;
+//    }
 
     public function getStatus(): int
     {
@@ -56,10 +54,10 @@ class Room
         $this->id = $id;
     }
 
-    public function setCode(string $code): void
-    {
-        $this->code = $code;
-    }
+//    public function setCode(string $code): void
+//    {
+//        $this->code = $code;
+//    }
 
     public function setStatus(int $status): void
     {

@@ -6,10 +6,6 @@ menu:
     path: /menu
     controller: App\Controller\GameController::menu
 
-room-list:
-    path: /room-list
-    controller: App\Controller\RoomController::roomList
-
 # Пользователь
 registration_page:
     path: /registration
@@ -27,6 +23,31 @@ logout:
     path: /logout
     controller: App\Controller\SecurityController::logout
 
+# Комната
+room_list:
+    path: /room-list
+    controller: App\Controller\RoomController::roomList
+
+room_create:
+    path: /room/create
+    controller: App\Controller\RoomController::createRoom
+
+join_room:
+    path: /room/join/{roomId}
+    controller: App\Controller\RoomController::joinToRoom
+
+show_room:
+    path: /room/{roomId}
+    controller: App\Controller\RoomController::showRoom
+
+player_ready:
+    path: /room/{roomId}/ready
+    controller: App\Controller\RoomController::playerChangeReady
+
+all_player_ready:
+    path: /room/{roomId}/all-ready
+    controller: App\Controller\RoomController::checkAllReady
+
 # Игра
 select-level:
     path: /select-level
@@ -37,10 +58,5 @@ singleplayer:
     controller: App\Controller\GameController::singleplayer
 
 game:
-    path: /game
+    path: /game/room/{roomId}
     controller: App\Controller\GameController::game
-
-# Сервер
-publish:
-    path: /publish
-    controller: App\Controoler\PublishController::test
