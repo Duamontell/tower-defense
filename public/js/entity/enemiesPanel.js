@@ -29,6 +29,7 @@ export class EnemiesPanel {
         this.eW = 100;
         this.interval = 100;
         this.textPadding = 30;
+        this.lineH = 20;
         cfg.forEach(enemy => {
             let icon = new Image();
             icon.src = enemy.icon;
@@ -97,8 +98,7 @@ export class EnemiesPanel {
                 y + this.eH + this.textPadding
             );
 
-            enemy.description.split('\n').forEach((line, index) => ctx.fillText(line, x + this.eW / 2, y + this.eH + this.textPadding * 2 + index * 20)) //50 = lineheight
-
+            enemy.description.split('\n').forEach((line, index) => ctx.fillText(line, x + this.eW / 2, y + this.eH + this.textPadding * 2 + index * this.lineH));
             ctx.restore();
 
             x += this.eW + this.interval;
