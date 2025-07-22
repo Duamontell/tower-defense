@@ -25,12 +25,12 @@ export class EffectPanel {
 
     #initialize(cfg) {
         this.eX = 350;
-        this.eY = 700;
+        this.eY = 750;
         this.eH = 100;
         this.eW = 100;
-        this.interval = 100;
-        this.textX = 50;
-        this.textY = 120;
+        this.interval = 150;
+        this.textPadding = 30;
+        this.lineH = 20;
         cfg.forEach(effect => {
             let icon = new Image();
             icon.src = effect.icon;
@@ -58,6 +58,7 @@ export class EffectPanel {
         }
         this.show()
         this.drawBackground();
+        this.drawTitle();
         this.#drawCloseButton();
         this.drawEffects();
     }
@@ -66,6 +67,18 @@ export class EffectPanel {
         const ctx = this.ctx;
         ctx.fillStyle = '#000000B3';
         ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+
+    drawTitle() {
+        const ctx = this.ctx;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+
+        const titleX = this.x + this.width / 2;
+        const titleY = this.y + 40;
+
+        ctx.fillText('Покупка эффектов', titleX, titleY);
     }
 
     drawEffects() {
@@ -86,9 +99,11 @@ export class EffectPanel {
             ctx.textAlign = 'center';
             ctx.fillText(
                 effect.price,
-                x + this.textX, 
-                y + this.textY
+                x + this.eW / 2, 
+                y + this.eH + this.textPadding
             );
+            effect.description.split('\n').forEach((line, index) => ctx.fillText(line, x + this.eW / 2, y + this.eH + this.textPadding * 2 + index * this.lineH));
+
 
             ctx.restore();
 
