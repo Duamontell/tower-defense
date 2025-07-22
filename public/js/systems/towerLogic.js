@@ -6,6 +6,7 @@ let selectedTowerInstance = null;
 let showTowerPanel = false;
 let showUpgradePanel = false;
 let showEffectPanel = false;
+let showRulesPanel = false;
 
 function resetSelections(towerPanel, upgradePanel) {
     selectedZone = null;
@@ -98,23 +99,31 @@ function handleEffectPanelClick(x, y, effectPanel) {
     }
 }
 
+function handleRulesPanelClick(x, y, rulesPanel) {
+    const result = rulesPanel.handleClick(x, y);
+    if (result === 'close') {
+        showRulesPanel = false;
+        return;
+    }
+}
+
 function handleEffectCoords(x, y, effectPanel, world) {
     const user = world.players.get(currentUserId);
     const choosenEffect = effectPanel.choosenEffect;
 
     if (!effectPanel.isClickedOnIcon(x, y) && user.balance >= choosenEffect.price) {
-        
+
         let effect;
 
         switch (choosenEffect.name) {
             case 'Poison':
-                effect = new PoisonEffect({x: x, y: y}, choosenEffect.damage, choosenEffect.cfg);
+                effect = new PoisonEffect({ x: x, y: y }, choosenEffect.damage, choosenEffect.cfg);
                 break;
             case 'Freezing':
-                effect = new FreezeEffect({x: x, y: y}, choosenEffect.slowness, choosenEffect.cfg);
+                effect = new FreezeEffect({ x: x, y: y }, choosenEffect.slowness, choosenEffect.cfg);
                 break;
-            case 'Bomb': 
-                effect = new ExplosionEffect({x: x, y: y}, choosenEffect.damage, choosenEffect.cfg);
+            case 'Bomb':
+                effect = new ExplosionEffect({ x: x, y: y }, choosenEffect.damage, choosenEffect.cfg);
                 break;
         }
 
@@ -129,7 +138,7 @@ function handleEffectCoords(x, y, effectPanel, world) {
     effectPanel.hide();
 }
 
-function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
+function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel) {
     const zone = world.getZoneByCoordinates(x, y);
 
     if (zone && !world.players.get(currentUserId).towerZonesId.includes(zone.id)) {
@@ -163,13 +172,18 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
         showEffectPanel = true;
         effectPanel.show()
         return;
+    }
 
+    if (rulesPanel.isClickedOnIcon(x, y)) {
+        showRulesPanel = true;
+        rulesPanel.show();
+        return;
     }
 
     resetSelections(towerPanel, upgradePanel);
 }
 
-export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel) {
+export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel) {
     if (showTowerPanel) {
         handleTowerPanelClick(x, y, towerPanel, world);
         return true;
@@ -180,7 +194,11 @@ export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel) 
     } else if (showEffectPanel) {
         (effectPanel.isWaitingForCoords) ? handleEffectCoords(x, y, effectPanel, world) : handleEffectPanelClick(x, y, effectPanel);
         return true;
+
+    } else if (showRulesPanel) {
+        handleRulesPanelClick(x, y, rulesPanel);
+        return true;
     }
-    handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel);
+    handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel);
     return false;
 }

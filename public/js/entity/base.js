@@ -7,6 +7,7 @@ export class Base {
 		this.id = uuidv4();
 		this.ownerId = null;
 		this.health = health;
+		this.maxHealth = health;
 		this.position = position;
 		this.width = width;
 		this.height = height;
