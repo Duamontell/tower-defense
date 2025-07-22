@@ -1,0 +1,25 @@
+[
+    {
+        "name": "Шайка огров",
+        "icon": "../../images/orc/walk_orc/orc3.png",
+        "description": "Призовите шайку \n страшных огров! \n Состоит из: \n -3 огров",
+        "price": 25,
+        "enemies": {
+            "orcs": 3,
+            "zombies": 0,
+            "goblins": 0
+        }
+
+    },
+    {
+        "name": "Орда зомби",
+        "icon": "../../images/zombie/walk_zombie/zombie2.png",
+        "description": "Призывает орду зомби \n на вашего неприятеля\n Состоит из: \n -5 зомби",
+        "price": 45,
+        "enemies": {
+            "orcs": 0,
+            "zombies": 5,
+            "goblins": 0
+        }
+    }
+]

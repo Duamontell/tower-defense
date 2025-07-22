@@ -2,6 +2,7 @@
     {
         "name": "Poison",
         "icon": "../../images/projectiles/poison/poison1.png",
+        "description": "Отрпвляющее зелье. \n Наносит переодический \n урон каждому, \n кто в него наступил ",
         "price": 5,
         "damage": 20,
         "cfg": {
@@ -17,6 +18,7 @@
     {
         "name": "Freezing",
         "icon": "../../images/projectiles/freeze/freeze1.png",
+        "description": "Замораживающее зелье. \n Останавливает всех, \n кто угодил в зону \n его действия",
         "price": 10,
         "slowness": 0.1,
         "cfg": {
@@ -32,6 +34,7 @@
     {
         "name": "Bomb",
         "icon": "../../images/projectiles/bomb/bomb8.png",
+        "description": "Бомба. \n Наносит колоссальный \n урон по площади",
         "price": 25,
         "damage": 150,
         "cfg": {

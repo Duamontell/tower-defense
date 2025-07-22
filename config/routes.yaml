@@ -60,8 +60,3 @@ singleplayer:
 game:
     path: /game/room/{roomId}
     controller: App\Controller\GameController::game
-
-# Сервер
-publish:
-    path: /publish
-    controller: App\Controoler\PublishController::test

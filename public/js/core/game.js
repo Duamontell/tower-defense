@@ -11,6 +11,7 @@ import { initCanvasResizer } from "../ui/gameView.js";
 import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
 import { GameEventHandler } from '../mercure/gameEventHandler.js';
 import { publishToMercure } from '../mercure/mercureHandler.js';
+import { EnemiesPanel } from '../entity/enemiesPanel.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -28,9 +29,11 @@ let lvlCfg = {};
 let enemiesCfg = {};
 let towersCfg = {};
 let effectShopCfg = {};
+let enemiesShopCfg = {};
 let effectPanel;
 let towerPanel;
 let upgradePanel;
+let enemiesPanel;
 let nativeWidth = canvas.width;
 let nativeHeight = canvas.height;
 let gameMessage = "";
@@ -47,7 +50,7 @@ canvas.addEventListener('click', (event) => {
     const user = world.players.get(currentUserId);
     if (user && user.isLose) return;
     if (world.gameOver) return;
-    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel);
+    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, enemiesPanel);
 });
 
 async function loadUsersConfig() {
@@ -92,6 +95,11 @@ if (lvlResponse.ok) {
     lvlCfg = await lvlResponse.json();
 }
 
+let enemiesShopResponse = await fetch('../../config/entity/enemiesShop.json');
+if (enemiesShopResponse.ok) {
+    enemiesShopCfg  = await enemiesShopResponse.json();
+}
+
 function gameLoop(timestamp = 0) {
     if (world.gameOver) {
         if (window.mercureEventSource) {
@@ -127,6 +135,7 @@ function gameLoop(timestamp = 0) {
     towerPanel.draw();
     upgradePanel.draw();
     effectPanel.draw();
+    enemiesPanel.draw();
     const currentUser = world.players.get(currentUserId);
     const currentBase = world.bases.find(b => b.ownerId === currentUserId);
     const baseHealth = currentBase.health;
@@ -248,6 +257,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
     upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
     effectPanel = new EffectPanel(ctx, canvas.width, canvas.height, getUserBalance, effectShopCfg);
+    enemiesPanel = new EnemiesPanel(ctx, canvas.width, canvas.height, getUserBalance, enemiesShopCfg);
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
     const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
