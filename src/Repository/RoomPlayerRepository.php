@@ -23,6 +23,11 @@ class RoomPlayerRepository extends ServiceEntityRepository
         return $roomPlayer->getId();
     }
 
+    public function findOneByPlayerAndRoom(int $playerId, int $roomId): ?RoomPlayer
+    {
+        return $this->findOneBy(['player' => $playerId, 'room' => $roomId]);
+    }
+
     public function countPlayersInRoom(Room $room) : int
     {
         return $this->count(['room' => $room]);

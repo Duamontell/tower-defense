@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Repository\RoomRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
 class GameController extends AbstractController
 {
+    public function __construct(
+        private RoomRepository $roomRepository,
+        private UserRepository $userRepository
+    ) {}
+
     public function menu() :Response
     {
         return $this->render('menu/main-menu.html.twig');
@@ -33,33 +39,31 @@ class GameController extends AbstractController
         ]);
     }
 
-    public function game(Request $request) :Response
+    public function game(int $roomId) :Response
     {
-        $level = (int)$request->get('level');
-        // Получаем id текущего пользователя, пока что генерация
-        $userId = uniqid();
 //      Можно сделать подписку(topic) на имя комнаты: topic=/game/room=$roomId
-//        $roomId = uniqid();
-        $players = [
-            [
-                'userId' => $userId,
-                'config' => '1'
-            ],
-            [
-                'userId' => uniqid(),
-                'config' => '2'
-            ]
-        ];
+        if (!$securityUser = $this->getUser()) {
+            return $this->redirectToRoute('login');
+        }
+
+        $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
+
+        $room = $this->roomRepository->findById($roomId);
+        $players = $room->getPlayers();
+        $playerData = [];
+        foreach ($players as $player) {
+            $playerData[] = [
+                'userId' => $player->getPlayer()->getId(),
+                'config' => $player->getSlot(),
+            ];
+        }
 
         return $this->render('game/game.html.twig', [
-            'level' => $level,
-            'userId' => $userId,
+            'userId' => $user->getId(),
+            'level' => 1,
             'gamemode'   => 'multiplayer',
             'roomConfig' => [
-                'players' => array_map(fn($p) => [
-                    'userId' => $p['userId'],
-                    'config' => $p['config']
-                ], $players),
+                'players' => $playerData,
             ],
         ]);
     }

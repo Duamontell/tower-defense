@@ -9,13 +9,13 @@
         "speed": 100,
         "animationSpeed": 7,
         "imageSrcs": [
-            "images/orc/walk_orc/orc1.png",
-            "images/orc/walk_orc/orc2.png",
-            "images/orc/walk_orc/orc3.png",
-            "images/orc/walk_orc/orc4.png",
-            "images/orc/walk_orc/orc5.png",
-            "images/orc/walk_orc/orc6.png",
-            "images/orc/walk_orc/orc7.png"
+            "/images/orc/walk_orc/orc1.png",
+            "/images/orc/walk_orc/orc2.png",
+            "/images/orc/walk_orc/orc3.png",
+            "/images/orc/walk_orc/orc4.png",
+            "/images/orc/walk_orc/orc5.png",
+            "/images/orc/walk_orc/orc6.png",
+            "/images/orc/walk_orc/orc7.png"
         ]
     },
     "zombie" :{
@@ -28,12 +28,12 @@
         "speed": 100,
         "animationSpeed": 4,
         "imageSrcs": [
-            "images/zombie/walk_zombie/zombie1.png",
-            "images/zombie/walk_zombie/zombie2.png",
-            "images/zombie/walk_zombie/zombie3.png",
-            "images/zombie/walk_zombie/zombie4.png",
-            "images/zombie/walk_zombie/zombie5.png",
-            "images/zombie/walk_zombie/zombie6.png"
+            "/images/zombie/walk_zombie/zombie1.png",
+            "/images/zombie/walk_zombie/zombie2.png",
+            "/images/zombie/walk_zombie/zombie3.png",
+            "/images/zombie/walk_zombie/zombie4.png",
+            "/images/zombie/walk_zombie/zombie5.png",
+            "/images/zombie/walk_zombie/zombie6.png"
         ]
     },
     "goblin" :{
