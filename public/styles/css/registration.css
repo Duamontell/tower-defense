@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+
+body {
+    min-height: 100vh;
+    font-family: 'MedievalSharp', serif;
+    background: url("../images/background.png");
+    background-size: 100% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+
+.registration-container {
+    background: rgba(30, 25, 10, 0.65);
+    border: 3px solid #bfa76f;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px #000a, 0 0 0 6px #bfa76f33;
+    padding: 40px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 700px;
+}
+
+h1 {
+    font-size: 36px;
+    color: #ffe08a;
+    text-shadow: 0 2px 8px #000, 0 0 16px #bfa76f;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+form {
+    width: 80%;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    color: #bfa76f;
+    font-size: 18px;
+    text-shadow: 0 1px 4px #000;
+    margin-bottom: 5px;
+}
+
+input {
+    margin-top: 8px;
+    padding: 12px 15px;
+    background: rgba(230, 201, 122, 0.2);
+    border: 2px solid #bfa76f;
+    border-radius: 8px;
+    color: #ffe08a;
+    font-family: 'MedievalSharp', serif;
+    font-size: 16px;
+}
+
+input::placeholder {
+    color: rgba(191, 167, 111, 0.6);
+}
+
+input:focus {
+    outline: none;
+    border-color: #ffe08a;
+    background: rgba(230, 201, 122, 0.3);
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 18px 0;
+    margin-top: 10px;
+    font-size: 18px;
+    color: #5a3e00;
+    background: #e6c97a;
+    border: none;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-family: 'MedievalSharp', serif;
+    cursor: pointer;
+    transition:
+        color 0.3s,
+        transform 0.15s,
+        box-shadow 0.2s;
+}
+
+button:hover,
+button:focus {
+    background: #fadf96;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.register-link {
+    margin-top: 16px;
+    text-align: center;
+    color: #666;
+    font-size: 15px;
+}
+
+.register-link a {
+    color: #b3a170;
+    text-decoration: underline;
+    margin-left: 5px;
+    transition: color 0.2s;
+}
+
+.register-link a:hover {
+    color: #fadf96;
+}

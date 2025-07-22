@@ -15,21 +15,27 @@ class GameController extends AbstractController
     public function __construct(
         private RoomRepository $roomRepository,
         private UserRepository $userRepository
-    ) {}
+    ) {
+    }
 
-    public function menu() :Response
+    public function menu(): Response
     {
         return $this->render('menu/main-menu.html.twig');
     }
 
-    public function selectLevel() :Response
+    public function selectLevel(): Response
     {
         return $this->render('menu/select-level.html.twig');
     }
 
-    public function singleplayer(Request $request) :Response
+    public function gameRules(): Response
     {
-        $level = (int)$request->get('level');
+        return $this->render('game/game-rules.html.twig');
+    }
+
+    public function singleplayer(Request $request): Response
+    {
+        $level = (int) $request->get('level');
         $userId = uniqid();
 
         return $this->render('game/game.html.twig', [
@@ -39,9 +45,9 @@ class GameController extends AbstractController
         ]);
     }
 
-    public function game(int $roomId) :Response
+    public function game(int $roomId): Response
     {
-//      Можно сделать подписку(topic) на имя комнаты: topic=/game/room=$roomId
+        //      Можно сделать подписку(topic) на имя комнаты: topic=/game/room=$roomId
         if (!$securityUser = $this->getUser()) {
             return $this->redirectToRoute('login');
         }
@@ -61,7 +67,7 @@ class GameController extends AbstractController
         return $this->render('game/game.html.twig', [
             'userId' => $user->getId(),
             'level' => 1,
-            'gamemode'   => 'multiplayer',
+            'gamemode' => 'multiplayer',
             'roomConfig' => [
                 'players' => $playerData,
             ],

@@ -53,6 +53,10 @@ select-level:
     path: /select-level
     controller: App\Controller\GameController::selectLevel
 
+game-rules:
+    path: /game-rules
+    controller: App\Controller\GameController::gameRules
+
 singleplayer:
     path: /singleplayer
     controller: App\Controller\GameController::singleplayer
