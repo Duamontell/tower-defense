@@ -18,7 +18,7 @@
     {
         "name": "Freezing",
         "icon": "../../images/projectiles/freeze/freeze1.png",
-        "description": "Замораживающее зелье. \n Полностью \n останавливает всех, \n кто угодил в зону \n его действия",
+        "description": "Замораживающее зелье. \n Останавливает всех, \n кто угодил в зону \n его действия",
         "price": 10,
         "slowness": 0.1,
         "cfg": {
