@@ -119,7 +119,7 @@ export class EffectPanel {
             let sector = Math.trunc(x / (this.eW + this.interval));
             x -= (this.eW + this.interval) * sector;
             let effect = this.effects[sector];
-            if (x <= this.eW && y <= this.eH && effect.price <= this.balance()) return effect;
+            if (x <= this.eW && y <= this.eH && effect && effect.price <= this.balance()) return effect;
         }
       
         return null;
