@@ -4,6 +4,7 @@ export function drawPlayerStatsPanel(ctx, balance, baseHealth) {
 
     ctx.fillStyle = '#FFFFFF';
     ctx.font = '20px Arial';
+    ctx.textAlign = 'left';
 
     ctx.fillText(`Баланс: ${balance}`, 20, 35);
     ctx.fillText(`HP: ${baseHealth}`, 20, 60);
