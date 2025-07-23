@@ -16,6 +16,7 @@ export class RulesPanel {
         this.iconW = 60;
 
         this.icons = {
+            help: this.loadIcon('../../images/assets/help.png'),
             archer: this.loadIcon('/images/tower/TowerArchers.webp'),
             magic: this.loadIcon('../../images/tower/TowerMagicians.webp'),
             poison: this.loadIcon('/images/tower/MortarTower.webp'),
@@ -188,6 +189,6 @@ export class RulesPanel {
         const ctx = this.ctx;
         const icon = new Image;
         icon.src = '../../images/assets/help.png';
-        ctx.drawImage(icon, this.iconX + this.padding, this.iconY + this.padding, this.iconW - this.padding, this.iconH - this.padding);
+        ctx.drawImage(this.icons.help, this.iconX + this.padding, this.iconY + this.padding, this.iconW - this.padding, this.iconH - this.padding);
     }
 }
