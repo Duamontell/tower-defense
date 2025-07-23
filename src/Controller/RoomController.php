@@ -66,7 +66,7 @@ class RoomController extends AbstractController
         return $this->redirectToRoute('show_room', ['roomId' => $roomId]);
     }
 
-    public function joinToRoom(int $roomId)
+    public function joinToRoom(int $roomId): Response
     {
         if (!$securityUser = $this->getUser()) {
             return $this->redirectToRoute('login');
@@ -81,9 +81,9 @@ class RoomController extends AbstractController
     public function playerChangeReady(int $roomId, Request $request) :JsonResponse
     {
         if (!$this->getUser()) {
-//            TODO: Сделать редирект на login
+//            TODO: Добавить проверку на пользователя
         }
-//        TODO: Вынести обработку в RoomService?
+
         $data = json_decode($request->getContent(), true);
         $playerId = (int) $data['playerId'];
         $ready = $data['ready'];
@@ -93,14 +93,28 @@ class RoomController extends AbstractController
         return $this->json(['playerId' => $playerId, 'isReady' => $ready], Response::HTTP_OK);
     }
 
-    public function checkAllReady(int $roomId, Request $request ) :JsonResponse
+    public function checkAllReady(int $roomId) :JsonResponse
     {
         if (!$this->getUser()) {
-            //  TODO: Сделать редирект на login
+            //  TODO: Добавить проверку на пользователя
         }
 
         $this->roomService->allPlayerReady($roomId);
 
         return $this->json(['allReady' => true], Response::HTTP_OK);
+    }
+
+    public function changeRoomStatus(Request $request) :JsonResponse
+    {
+        if (!$this->getUser()) {
+            return $this->json(['error' => 'Вы не авторизованы'], Response::HTTP_FORBIDDEN);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $roomId = (int) $data['roomId'];
+        $roomStatus = (int) $data['status'];
+        $this->roomService->changeRoomStatus($roomId, $roomStatus);
+
+        return $this->json(['success' => true], Response::HTTP_OK);
     }
 }

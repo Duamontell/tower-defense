@@ -34,17 +34,32 @@ class RoomService
             throw new \RuntimeException("Комната с ID {$roomId} не найдена!");
         }
 
-//        if ($this->userAlreadyInRoom($player->getId(), $roomId)) {
-//            throw new \RuntimeException("User is already in room");
-//        }
+        if ($roomPlayer = $this->userAlreadyInRoom($player->getId(), $roomId)) {
+            return $roomPlayer->getId();
+        }
 
         // TODO: Возможно стоит убрать, так как есть проверка свободных слотов дальше
-        if ($this->roomPlayerRepository->countPlayersInRoom($room) === 4) {
+//        if ($this->roomPlayerRepository->countPlayersInRoom($room) === 4) {
+//            throw new \RuntimeException("Комната с ID {$roomId} полная!");
+//        }
+
+        $freeSlots = $this->getFreeSlots($room);
+        if (empty($freeSlots)) {
             throw new \RuntimeException("Комната с ID {$roomId} полная!");
         }
 
-        $freeSlots = $this->getFreeSlots($room);
         $roomPlayer = new RoomPlayer(null, $room, $player, $freeSlots[0], false);
+
+        $this->mercureService->publish(
+            topic: "/room/{$roomId}",
+            data: [
+                'action' => 'playerJoin',
+                'id' => $player->getId(),
+                'name' => $player->getEmail(),
+                'slot' => $roomPlayer->getSlot(),
+                'isReady' => $roomPlayer->isReady(),
+            ],
+        );
 
         return $this->roomPlayerRepository->store($roomPlayer);
     }
@@ -67,13 +82,19 @@ class RoomService
             throw new \RuntimeException("Комната с ID {$roomId} не найдена!");
         }
 
-
         if ($this->checkAllPlayerReady($room)) {
             $this->mercureService->publish(
                 topic: "/room/{$roomId}",
                 data: [
                     'action' => 'allReady'
                 ],
+            );
+        } else {
+            $this->mercureService->publish(
+                topic: "/room/{$roomId}",
+                data: [
+                    'action' => 'cancel'
+                ]
             );
         }
     }
@@ -89,11 +110,19 @@ class RoomService
         return true;
     }
 
-    private function userAlreadyInRoom($userId, $roomId): bool
+    private function userAlreadyInRoom(int $userId, int $roomId): ?RoomPlayer
     {
-        // TODO: Сделать проверкку пользователя в комнате
-        return false;
+        return $this->roomPlayerRepository->findOneByPlayerAndRoom($userId, $roomId);
     }
 
+    public function changeRoomStatus(int $roomId, int $roomStatus): void
+    {
+        if (!$room = $this->roomRepository->find($roomId)) {
+            throw new \RuntimeException("Комната с ID {$roomId} не найдена!");
+        }
+
+        $room->setStatus($roomStatus);
+        $this->roomRepository->store($room);
+    }
 
 }
