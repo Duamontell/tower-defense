@@ -152,13 +152,14 @@ function handleEnemiesPanelClick(x, y, enemiesPanel, world) {
         return;
     }
 
-    if (result) {
+    if (result && user.id !== enemiesPanel.baseOwnerId) {
         user.changeBalance(-result.price);
         world.summonWave(result.enemies, enemiesPanel.baseOwnerId);
-        showEnemiesPanel = false;
-        enemiesPanel.hide();
-        enemiesPanel.baseOwnerId = null;
     }
+    
+    showEnemiesPanel = false;
+    enemiesPanel.hide();
+    enemiesPanel.baseOwnerId = null;
 }
 
 function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel) {
@@ -204,7 +205,7 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, rule
         return;
     }
 
-    if (base && !base.isDestroyed) {
+    if (base && !base.isDestroyed && base.ownerId !== currentUserId) {
         enemiesPanel.baseOwnerId = base.ownerId;
         showEnemiesPanel = true;
         enemiesPanel.show();
