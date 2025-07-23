@@ -1,5 +1,6 @@
 import { ArchersTower, MagicianTower, PoisonousTower, FreezingTower, MortarTower } from '../entity/tower.js';
 import { ArrowProjectile, FireballProjectile, PoisonProjectile, FreezeProjectile, ExplosiveProjectile } from '../entity/projectile.js';
+import { publishToMercure } from './mercureHandler.js';
 
 export class GameEventHandler {
     constructor(world) {
@@ -147,7 +148,6 @@ export class GameEventHandler {
             console.warn(`База с id ${baseId} не найдена.`);
             return;
         }
-
         if (base.isDestroyed) {
             console.warn(`База ${baseId} уже уничтожена. Игнорируем урон.`);
             return;
@@ -160,21 +160,33 @@ export class GameEventHandler {
     #handleBaseDestroyed(data) {
         const { baseId, isDestroyed, health, userId } = data;
 
-        if (userId === window.currentUserId) {
-            return;
-        }
-
         const base = this.world.bases.find(b => b.id === baseId);
         if (!base) {
             console.warn(`База с id ${baseId} не найдена.`);
             return;
         }
-
         base.health = health;
         base.isDestroyed = isDestroyed;
-        console.log(`База ${baseId} уничтожена. Health = ${health}.`);
+
+        const player = this.world.players.get(userId);
+        if (player) {
+            player.isLose = true;
+        }
+        this.#checkWinCondition();
     }
 
+    #checkWinCondition() {
+        const alivePlayers = Array.from(this.world.players.values()).filter(user => !user.isLose);
+        if (alivePlayers.length === 1 && !this.world.gameOver && !this.world.isWinEvent) {
+            if (alivePlayers[0].id === window.currentUserId) {
+                const winEventData = {
+                    type: 'playerIsWin',
+                    winnerId: alivePlayers[0].id,
+                }
+                publishToMercure('http://localhost:8000/game', winEventData);
+            }
+        }
+    }
     #handlePlayerIsWin(data) {
         const { winnerId } = data;
         this.world.winnerId = winnerId;
