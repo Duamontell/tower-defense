@@ -7,12 +7,12 @@
         "width": 300,
         "height": 300,
         "cooldown": 2,
-        "imageSrc": "../../images/tower/TowerArchers.png",
+        "imageSrc": "../../images/tower/TowerArchers.webp",
         "attack": {
             "name": "Arrow",
             "width": 120,
             "height": 120,
-            "imageSrcs": ["../../images/projectiles/arrow/arrow.png"],
+            "imageSrcs": ["../../images/projectiles/arrow/arrow.webp"],
             "speed": 1500,
             "animationSpeed": 3
         }
@@ -25,7 +25,7 @@
         "width": 300,
         "height": 300,
         "cooldown": 2,
-        "imageSrc": "../../images/tower/TowerMagicians.png",
+        "imageSrc": "../../images/tower/TowerMagicians.webp",
         "attack": {
             "name": "Fireball",
             "width": 256,
@@ -50,7 +50,7 @@
         "width": 300,
         "height": 300,
         "cooldown": 6,
-        "imageSrc": "../../images/tower/MortarTower.png",
+        "imageSrc": "../../images/tower/MortarTower.webp",
         "attack": {
             "name": "Poison",
             "width": 48,
@@ -72,7 +72,7 @@
                 "cooldown": 0.5,
                 "radius": 200,
                 "imageSrcs": [
-                    "../../images/effects/poison/poison1.png"
+                    "../../images/effects/poison/poison1.webp"
                 ],
                 "animationSpeed": 5
             }
@@ -87,7 +87,7 @@
         "width": 300,
         "height": 300,
         "cooldown": 10,
-        "imageSrc": "../../images/tower/MortarTower.png",
+        "imageSrc": "../../images/tower/MortarTower.webp",
         "attack": {
             "name": "Freezing",
             "width": 48,
@@ -123,7 +123,7 @@
         "width": 300,
         "height": 300,
         "cooldown": 5,
-        "imageSrc": "../../images/tower/MortarTower.png",
+        "imageSrc": "../../images/tower/MortarTower.webp",
         "attack": {
             "name": "Explosion",
             "width": 100,

@@ -10,7 +10,7 @@
             "cooldown": 0.5,
             "radius": 200,
             "imageSrcs": [
-                "../../images/effects/poison/poison1.png"
+                "../../images/effects/poison/poison1.webp"
             ],
             "animationSpeed": 5
         }

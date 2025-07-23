@@ -1,6 +1,6 @@
 {
     "map": {
-        "backgroundImage": "/images/map/multiplayer_map.jpg",
+        "backgroundImage": "/images/map/multiplayer_map.webp",
         "width": 5000,
         "height": 5000
     },

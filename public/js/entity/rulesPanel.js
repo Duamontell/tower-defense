@@ -16,11 +16,11 @@ export class RulesPanel {
         this.iconW = 60;
 
         this.icons = {
-            archer: this.loadIcon('/images/tower/TowerArchers.png'),
-            magic: this.loadIcon('../../images/tower/TowerMagicians.png'),
-            poison: this.loadIcon('/images/tower/MortarTower.png'),
-            slow: this.loadIcon('/images/tower/MortarTower.png'),
-            mine: this.loadIcon('/images/tower/MortarTower.png'),
+            archer: this.loadIcon('/images/tower/TowerArchers.webp'),
+            magic: this.loadIcon('../../images/tower/TowerMagicians.webp'),
+            poison: this.loadIcon('/images/tower/MortarTower.webp'),
+            slow: this.loadIcon('/images/tower/MortarTower.webp'),
+            mine: this.loadIcon('/images/tower/MortarTower.webp'),
             freeze: this.loadIcon('/images/projectiles/freeze/freeze1.png'),
             poisonEff: this.loadIcon('/images/projectiles/poison/poison1.png'),
             bomb: this.loadIcon('/images/projectiles/bomb/bomb8.png')

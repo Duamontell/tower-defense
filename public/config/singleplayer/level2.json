@@ -1,6 +1,6 @@
 {
     "map": {
-        "backgroundImage": "images/map/second_level.png",
+        "backgroundImage": "images/map/second_level.webp",
         "width": 1536,
         "height": 1024
     },
@@ -296,7 +296,7 @@
         },
         "width": 100,
         "height": 100,
-        "imageSrc": "images/base/Base.png"
+        "imageSrc": "images/base/Base.webp"
     },
     "towerZones": [
         {

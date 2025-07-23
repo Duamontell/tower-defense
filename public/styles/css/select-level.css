@@ -3,7 +3,7 @@
 body {
     min-height: 100vh;
     font-family: 'MedievalSharp', serif;
-    background: url("../images/background.png");
+    background: url("../images/background.webp");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: bottom;
