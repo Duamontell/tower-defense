@@ -38,7 +38,7 @@
         const url = new URL('{{ mercureUrl }}');
         url.searchParams.append('topic', '/room-list');
 
-        const eventSource = new EventSource(url, { withCredentials: true });
+        const eventSource = new EventSource(url);
 
         eventSource.onmessage = ({ data }) => {
             const msg = JSON.parse(data);
