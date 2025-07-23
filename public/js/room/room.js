@@ -22,7 +22,8 @@ function sendReady(roomId, playerId, ready) {
 function checkAllReady() {
     fetch(`/room/${roomId}/all-ready`, {
         credentials: 'include',
-    }).catch(console.error);}
+    }).catch(console.error);
+}
 
 document.querySelectorAll('.ready-button').forEach(button => {
     button.addEventListener('click', () => {
@@ -87,6 +88,23 @@ es.onmessage = ({ data }) => {
 };
 
 function handleReady(msg) {
+    const playerCard = document.getElementById(`player-${msg.player.id}`);
+    if (playerCard) {
+        if (msg.player.isReady) {
+            playerCard.classList.add('ready');
+        } else {
+            playerCard.classList.remove('ready');
+        }
+    }
+
+    const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
+    if (button) {
+        updateButton(button, msg.player.isReady);
+        if (msg.player.id === userId) {
+            checkAllReady();
+        }
+    }
+
     if (msg.player.id === userId) {
         const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
         if (button) {
