@@ -48,6 +48,10 @@ export class EffectPanel {
             effect.icon = icon;
             this.effects.push(effect);
         });
+        this.cross = new Image;
+        this.cross.src = '../../images/assets/cross.png';
+        this.icon = new Image;
+        this.icon.src = '../../images/assets/cart.png';
     }
 
     show() {
@@ -234,9 +238,8 @@ export class EffectPanel {
         const ctx = this.ctx;
         ctx.fillStyle = '#00000080';
         ctx.fillRect(this.iconX, this.iconY, this.iconW + 2 * this.padding, this.iconH + 2 * this.padding);
-        const icon = new Image;
-        icon.src = '../../images/assets/cart.png';
-        ctx.drawImage(icon, this.iconX + this.padding, this.iconY + this.padding, this.iconW - this.padding, this.iconH - this.padding);
+
+        ctx.drawImage(this.icon, this.iconX + this.padding, this.iconY + this.padding, this.iconW - this.padding, this.iconH - this.padding);
     }
 
     $drawCancelChoosing() {
@@ -244,9 +247,6 @@ export class EffectPanel {
         ctx.fillStyle = '#00000080';
         ctx.fillRect(this.iconX, this.iconY, this.iconW + 2 * this.padding, this.iconH + 2 * this.padding);
         ctx.drawImage(this.choosenEffect.icon, this.iconX + this.padding, this.iconY + this.padding, this.iconW, this.iconH);
-
-        const cross = new Image;
-        cross.src = '../../images/assets/cross.png';
-        ctx.drawImage(cross, this.iconX + this.padding, this.iconY + this.padding, this.iconW, this.iconH);
+        ctx.drawImage(this.cross, this.iconX + this.padding, this.iconY + this.padding, this.iconW, this.iconH);
     }
 }
