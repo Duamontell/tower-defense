@@ -78,7 +78,7 @@ export class World {
             for (let i = 0; i < orcs; i++) {
                 setTimeout(() => {
                     const enemy = new OrcEnemy(
-                        { x: waypoints[0].x, y: waypoints[0].y }, 
+                        { x: waypoints[0].x, y: waypoints[0].y },
                         waypoints,
                         this.enemiesCfg.orc
                     );
@@ -117,7 +117,7 @@ export class World {
 
     summonWave(enemies, userId) {
         const user = this.players.get(userId);
-        const {orcs, zombies, goblins} = enemies;
+        const { orcs, zombies, goblins } = enemies;
         const waypoints = user.waypoints;
 
         let delay = 0;
@@ -144,8 +144,8 @@ export class World {
                 this.addEnemy(enemy, user.id);
             }, delay * 1000);
             delay += this.spawnrate;
-        }        
-        
+        }
+
         for (let i = 0; i < goblins; i++) {
             setTimeout(() => {
                 const enemy = new GoblinEnemy(
@@ -186,7 +186,9 @@ export class World {
             if (enemy.reachedEnd) {
                 const base = this.bases.find(base => base.ownerId === enemy.ownerId);
                 if (base) {
-                    base.recieveDamage(enemy.damage);
+                    if (gameMode === "singleplayer" || (gameMode === "multiplayer" && currentUserId === base.ownerId)) {
+                        base.recieveDamage(enemy.damage);
+                    }
                     if (base.isDestroyed) {
                         const user = this.players.get(base.ownerId);
                         if (user) {
@@ -228,9 +230,9 @@ export class World {
     }
 
     getBaseByCoordinates(x, y) {
-        return this.bases.find(base => 
+        return this.bases.find(base =>
             x >= base.position.x - base.width / 2 && x <= base.position.x + base.width / 2 &&
-            y >= base.position.y - base.height / 2 && y <= base.position.y + base.height / 2  
+            y >= base.position.y - base.height / 2 && y <= base.position.y + base.height / 2
         )
     }
 
