@@ -1,58 +1,38 @@
 {% extends "base.html.twig" %}
 
 {% block title %}
-    Комната
+	Комната
 {% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="/styles/css/room-list.css">
+	<link rel="stylesheet" href="/styles/css/room-list.css">
 {% endblock %}
 
 {% block javascripts %}
-    <script defer src="/js/room/room-list.js"></script>
+	<script defer src="/js/room/room-list.js"></script>
 {% endblock %}
 
 {% block body %}
-<body>
-    <div class="rooms-list-container">
-        <div class="rooms-list-header">
-            <h1>Список комнат</h1>
-            <label style="margin-left: auto">
-                Поиск:
-                <input type="text" maxlength="10" placeholder="Введите код комнаты">
-            </label>
-        </div>
-        <ul id="rooms-list">
-            {% for room in openRooms %}
-                <li id="room-{{ room.id }}">
-                    <span>Комната {{ room.id }}</span>
-                    <button onclick="location.href='/room/join/{{ room.id }}'">Войти</button>
-                </li>
-            {% endfor %}
-        </ul>
-        <button id="create-room-button">Создать комнату</button>
-    </div>
-    <script>
-        const roomsList = document.getElementById('rooms-list');
-
-        const url = new URL('{{ mercureUrl }}');
-        url.searchParams.append('topic', '/room-list');
-
-        const eventSource = new EventSource(url);
-
-        eventSource.onmessage = ({ data }) => {
-            const msg = JSON.parse(data);
-            if (msg.action === 'create') {
-                const li = document.createElement('li');
-                li.id = msg.room.id;
-                li.textContent = msg.room.name;
-                const btn = document.createElement('button');
-                btn.textContent = 'Войти';
-                btn.onclick = () => window.location='/game/join/'+msg.room.id;
-                li.append(btn);
-                roomsList.append(li);
-            }
-        };
-    </script>
-</body>
+	<div class="rooms-list-container">
+		<div class="rooms-list-header">
+			<h1>Список комнат</h1>
+			<label style="margin-left: auto">
+				Поиск:
+				<input type="text" maxlength="10" placeholder="Введите код комнаты">
+			</label>
+		</div>
+		<div class="rooms-list-scroll">
+			<ul id="rooms-list">
+				{% for room in openRooms %}
+					<li id="room-{{ room.id }}">
+						<span>Комната
+							{{ room.id }}</span>
+						<button onclick="location.href='/room/join/{{ room.id }}'">Войти</button>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		<div class="create-room-separator"></div>
+		<button id="create-room-button">Создать комнату</button>
+	</div>
 {% endblock %}
