@@ -101,7 +101,6 @@ es.onmessage = ({data}) => {
 };
 
 function handleReady(msg) {
-    if (msg.player.id === currentUserId) {
     const playerCard = document.getElementById(`player-${msg.player.id}`);
     if (playerCard) {
         if (msg.player.isReady) {
@@ -111,6 +110,7 @@ function handleReady(msg) {
         }
     }
 
+    // if (msg.player.id === currentUserId) {
     const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
     if (button) {
         updateButton(button, msg.player.isReady);
@@ -119,19 +119,19 @@ function handleReady(msg) {
         }
     }
 
-    if (msg.player.id === currentUserId) {
-        const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
-        if (button) {
-            updateButton(button, msg.player.isReady);
-            checkAllReady();
-        }
-    } else {
-        const playerStatus = document.getElementById(`player-status-${msg.player.id}`);
-        if (playerStatus) {
-            playerStatus.textContent = msg.player.isReady ? 'Готов' : 'Не готов';
-        }
-    }
+    // const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
+    // if (button) {
+    //     updateButton(button, msg.player.isReady);
+    //     checkAllReady();
+    // }
+    // } else {
+    // const playerStatus = document.getElementById(`player-status-${msg.player.id}`);
+    // if (playerStatus) {
+    //     playerStatus.textContent = msg.player.isReady ? 'Готов' : 'Не готов';
+    // }
+    // }
 }
+
 
 function handlePlayerJoin(msg) {
     const {id, name, slot, isReady} = msg;
@@ -157,3 +157,4 @@ function handlePlayerJoin(msg) {
         playerSlot.appendChild(playerStatus);
     }
 }
+

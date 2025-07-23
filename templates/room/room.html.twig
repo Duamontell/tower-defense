@@ -33,7 +33,7 @@
                     {% endif %}
                 {% endfor %}
                 {% if p %}
-                    <div class="player-card {{ player.isReady ? 'ready' : '' }}" id="player-{{ player.player.id }}">
+                    <div class="player-card {{ p.isReady ? 'ready' : '' }}" id="player-{{ p.player.id }}">
                         <span class="player-slot">{{ p.slot }}: </span>
                         <img src="../styles/images/shield.png" alt="shield" class="player-shield">
                         <span class="player-name">{{ p.player.email }}</span>
@@ -44,13 +44,9 @@
                                 {{ p.isReady ? 'Готов' : 'Не готов' }}
                             </button>
                         {% else %}
-                            <button class="ready-button" id="player-status-{{ player.player.id }}" data-ready="{{ player.isReady ? '1' : '0' }}" disabled>
-                                {{ player.isReady ? 'Готов' : 'Не готов' }}
+                            <button class="ready-button" id="player-status-{{ p.player.id }}" data-ready="{{ p.isReady ? '1' : '0' }}" disabled>
+                                {{ p.isReady ? 'Готов' : 'Не готов' }}
                             </button>
-                            <span class="player-status"
-                                  id="player-status-{{ p.player.id }}">
-                    {{ p.isReady ? 'Готов' : 'Не готов' }}
-                        </span>
                         {% endif %}
                     </div>
                 {% else %}
