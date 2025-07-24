@@ -50,7 +50,7 @@
         "width": 300,
         "height": 300,
         "cooldown": 6,
-        "imageSrc": "../../images/tower/MortarTower.webp",
+        "imageSrc": "../../images/tower/poison1.webp",
         "attack": {
             "name": "Poison",
             "width": 48,
@@ -84,10 +84,10 @@
         "slowness": 0.5,
         "radius": 500,
         "price": 50,
-        "width": 300,
-        "height": 300,
+        "width": 350,
+        "height": 350,
         "cooldown": 10,
-        "imageSrc": "../../images/tower/MortarTower.webp",
+        "imageSrc": "../../images/tower/freezing1.webp",
         "attack": {
             "name": "Freezing",
             "width": 48,
