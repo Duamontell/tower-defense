@@ -1,5 +1,7 @@
 import { ArchersTower, MagicianTower, PoisonousTower, FreezingTower, MortarTower } from '../entity/tower.js';
 import { ArrowProjectile, FireballProjectile, PoisonProjectile, FreezeProjectile, ExplosiveProjectile } from '../entity/projectile.js';
+import { ExplosionEffect, FreezeEffect, PoisonEffect } from '../entity/effect.js';
+import { publishToMercure } from './mercureHandler.js';
 
 export class GameEventHandler {
     constructor(world) {
@@ -25,6 +27,12 @@ export class GameEventHandler {
                 break;
             case 'playerIsWin':
                 this.#handlePlayerIsWin(data);
+                break;
+            case 'addEffect':
+                this.#handleAddEffect(data);
+                break;
+            case 'summonWave':
+                this.#handleSummonWave(data);
                 break;
             default:
                 console.warn('Неизвестный тип события:', data.type);
@@ -147,7 +155,6 @@ export class GameEventHandler {
             console.warn(`База с id ${baseId} не найдена.`);
             return;
         }
-
         if (base.isDestroyed) {
             console.warn(`База ${baseId} уже уничтожена. Игнорируем урон.`);
             return;
@@ -160,24 +167,69 @@ export class GameEventHandler {
     #handleBaseDestroyed(data) {
         const { baseId, isDestroyed, health, userId } = data;
 
-        if (userId === window.currentUserId) {
-            return;
-        }
-
         const base = this.world.bases.find(b => b.id === baseId);
         if (!base) {
             console.warn(`База с id ${baseId} не найдена.`);
             return;
         }
-
         base.health = health;
         base.isDestroyed = isDestroyed;
-        console.log(`База ${baseId} уничтожена. Health = ${health}.`);
+
+        const player = this.world.players.get(userId);
+        if (player) {
+            player.isLose = true;
+        }
+        this.#checkWinCondition();
     }
 
+    #checkWinCondition() {
+        const alivePlayers = Array.from(this.world.players.values()).filter(user => !user.isLose);
+        if (alivePlayers.length === 1 && !this.world.gameOver && !this.world.isWinEvent) {
+            if (alivePlayers[0].id === window.currentUserId) {
+                const winEventData = {
+                    type: 'playerIsWin',
+                    winnerId: alivePlayers[0].id,
+                }
+                publishToMercure('http://localhost:8000/game', winEventData);
+            }
+        }
+    }
     #handlePlayerIsWin(data) {
         const { winnerId } = data;
         this.world.winnerId = winnerId;
         this.world.isWinEvent = true;
+    }
+
+    #handleAddEffect(data) {
+        const { userId, effectType, x, y, damage, slowness, cfg } = data;
+
+        if (userId === window.currentUserId) return;
+
+        let effect;
+        switch (effectType) {
+            case 'Poison':
+                effect = new PoisonEffect({ x, y }, damage, cfg);
+                break;
+            case 'Freezing':
+                effect = new FreezeEffect({ x, y }, slowness, cfg);
+                break;
+            case 'Bomb':
+                effect = new ExplosionEffect({ x, y }, damage, cfg);
+                break;
+            default:
+                console.warn('Неизвестный тип эффекта:', effectType);
+                return;
+        }
+        if (effect) {
+            this.world.effects.push(effect);
+        }
+    }
+
+    #handleSummonWave(data) {
+        const { userId, targetUserId, enemies } = data;
+
+        if (userId === window.currentUserId) return;
+
+        this.world.summonWave(enemies, targetUserId);
     }
 }

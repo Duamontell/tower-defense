@@ -34,4 +34,8 @@ class RoomRepository extends ServiceEntityRepository
     {
         return $this->findBy(['status' => $status]);
     }
+
+//    public function changeStatus(int $roomId, int $roomStatus): void
+//    {
+//    }
 }

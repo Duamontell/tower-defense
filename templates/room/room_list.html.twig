@@ -9,7 +9,10 @@
 {% endblock %}
 
 {% block javascripts %}
-	<script defer src="/js/room/room-list.js"></script>
+    <script>
+        window.mercureUrl = '{{ mercureUrl }}';
+    </script>
+    <script defer src="/js/room/room-list.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -27,7 +30,7 @@
 					<li id="room-{{ room.id }}">
 						<span>Комната
 							{{ room.id }}</span>
-						<button onclick="location.href='/room/join/{{ room.id }}'">Войти</button>
+						<button class="join-room-button" data-room-id="{{ room.id }}">Войти</button>
 					</li>
 				{% endfor %}
 			</ul>

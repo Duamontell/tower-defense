@@ -40,6 +40,10 @@ show_room:
     path: /room/{roomId}
     controller: App\Controller\RoomController::showRoom
 
+change-status-room:
+    path: /room/{roomId}/change-status
+    controller: App\Controller\RoomController::changeRoomStatus
+
 player_ready:
     path: /room/{roomId}/ready
     controller: App\Controller\RoomController::playerChangeReady

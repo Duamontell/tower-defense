@@ -1,7 +1,6 @@
-const playersList = document.getElementById('players-list');
 const roomId = window.roomId;
 const mercureUrl = window.mercureUrl;
-const userId = window.userId;
+const currentUserId = window.currentUserId;
 let countdownTimer = null;
 
 function updateButton(button, isReady) {
@@ -14,8 +13,8 @@ function sendReady(roomId, playerId, ready) {
     fetch(`/room/${roomId}/ready`, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ playerId, ready })
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({playerId, ready})
     }).catch(console.error);
 }
 
@@ -45,15 +44,27 @@ function startCountdown() {
         countEl.textContent = counter;
         if (counter <= 0) {
             clearInterval(countdownTimer);
-            window.location.href = `/game/room/${roomId}`;
+            fetch(`/room/${roomId}/change-status`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({roomId, status: 1})
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Ошибка при обновления статуса');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    window.location.href = `/game/room/${roomId}`;
+                })
+                .catch(error => {
+                    console.error('Error updating room status:', error);
+                });
         }
     }, 1000);
 }
-
-// function allPlayersReady() {
-//     const statuses = playersList.querySelectorAll('.player-status, .ready-button');
-//     return Array.from(statuses).every(el => el.dataset.ready === '1');
-// }
 
 function cancelCountdown() {
     if (countdownTimer) {
@@ -67,16 +78,18 @@ const url = new URL(mercureUrl);
 url.searchParams.append('topic', `/room/${roomId}`);
 const es = new EventSource(url);
 
-es.onmessage = ({ data }) => {
+es.onmessage = ({data}) => {
     const msg = JSON.parse(data);
     console.log(data);
     switch (msg.action) {
+        case 'playerJoin':
+            handlePlayerJoin(msg);
+            break;
         case 'ready':
             handleReady(msg);
             break;
         case 'allReady':
             startCountdown()
-            // Вот тут вызов handle для обработки пришедшего сообщения
             break;
         case 'cancel':
             cancelCountdown();
@@ -97,25 +110,51 @@ function handleReady(msg) {
         }
     }
 
+    // if (msg.player.id === currentUserId) {
     const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
     if (button) {
         updateButton(button, msg.player.isReady);
-        if (msg.player.id === userId) {
+        if (msg.player.id === currentUserId) {
             checkAllReady();
         }
     }
 
-    if (msg.player.id === userId) {
-        const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
-        if (button) {
-            updateButton(button, msg.player.isReady);
-            checkAllReady();
-        }
-    } else {
-        const playerStatus = document.getElementById(`player-status-${msg.player.id}`);
-        if (playerStatus) {
-            playerStatus.textContent = msg.player.isReady ? 'Готов' : 'Не готов';
-        }
-    }
-
+    // const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
+    // if (button) {
+    //     updateButton(button, msg.player.isReady);
+    //     checkAllReady();
+    // }
+    // } else {
+    // const playerStatus = document.getElementById(`player-status-${msg.player.id}`);
+    // if (playerStatus) {
+    //     playerStatus.textContent = msg.player.isReady ? 'Готов' : 'Не готов';
+    // }
+    // }
 }
+
+
+function handlePlayerJoin(msg) {
+    const {id, name, slot, isReady} = msg;
+
+    if (id === currentUserId) {
+        return;
+    }
+
+    const playerSlot = document.getElementById(`empty-slot-${slot}`);
+    if (playerSlot) {
+        playerSlot.id = `player-slot-${slot}`;
+
+        const playerName = playerSlot.querySelector(".player-name");
+        if (playerName) {
+            playerName.textContent = name;
+        }
+
+        const playerStatus = document.createElement('span');
+        console.log(playerStatus);
+        playerStatus.textContent = isReady ? "Готов" : "Не готов";
+        playerStatus.classList.add('player-status');
+        playerStatus.id = `player-status-${id}`;
+        playerSlot.appendChild(playerStatus);
+    }
+}
+

@@ -11,7 +11,6 @@ import { drawPlayerStatsPanel } from '../systems/playerStats.js';
 import { initCanvasResizer } from "../ui/gameView.js";
 import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
 import { GameEventHandler } from '../mercure/gameEventHandler.js';
-import { publishToMercure } from '../mercure/mercureHandler.js';
 import { EnemiesPanel } from '../entity/enemiesPanel.js';
 
 const canvas = document.getElementById('gameCanvas');
@@ -48,7 +47,7 @@ function getClickCoordinates(canvas, event) {
 }
 
 canvas.addEventListener('click', (event) => {
-    const {x, y} = getClickCoordinates(canvas, event);
+    const { x, y } = getClickCoordinates(canvas, event);
     const user = world.players.get(currentUserId);
     if (user && user.isLose) return;
     if (world.gameOver) return;
@@ -99,7 +98,7 @@ if (lvlResponse.ok) {
 
 let enemiesShopResponse = await fetch('../../config/entity/enemiesShop.json');
 if (enemiesShopResponse.ok) {
-    enemiesShopCfg  = await enemiesShopResponse.json();
+    enemiesShopCfg = await enemiesShopResponse.json();
 }
 
 function gameLoop(timestamp = 0) {
@@ -153,28 +152,17 @@ function gameLoop(timestamp = 0) {
             gameMessage = "Вы проиграли!";
             world.gameOver = true;
         }
-    } else {
-        const alivePlayers = Array.from(world.players.values()).filter(user => !user.isLose);
+    }
+    if (gameMode === "multiplayer") {
         const currentUser = world.players.get(currentUserId);
         const base = world.bases.find(b => b.ownerId === currentUserId);
 
         if ((currentUser.isLose || (base && base.isDestroyed)) && !world.gameOver) {
-            if (world.isWinEvent && world.winnerId) {
-                const winner = world.players.get(world.winnerId);
-                gameMessage = `Победил игрок ${winner.id}`;
-            } else {
-                gameMessage = "Вы проиграли!";
-            }
-        }
-        if (alivePlayers.length === 1 && alivePlayers[0].id === currentUserId && !world.gameOver) {
-            gameMessage = "Вы победили!";
-
+            gameMessage = "Вы проиграли!";
             world.gameOver = true;
-            const winEventData = {
-                type: 'playerIsWin',
-                winnerId: currentUser.id,
-            }
-            publishToMercure('http://localhost:8000/game', winEventData);
+        } else if (world.isWinEvent && world.winnerId === currentUserId && !world.gameOver) {
+            gameMessage = "Вы победили!";
+            world.gameOver = true;
         }
     }
 
@@ -212,7 +200,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     users.forEach((user) => {
         const data = user.userCfg;
         world.addUser(user.userId, data);
-        world.addBase(new Base(data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
+        world.addBase(new Base(data.base.id, data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
         world.addTowerZones(data.towerZones, user.userId);
         world.waves.userWaves.set(user.userId, lvlCfg.waves);
     })

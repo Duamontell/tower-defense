@@ -181,7 +181,6 @@ export class EffectPanel {
     handleClick(x, y) {
         if (!this.visible) return null;
 
-        // Крестик — по кругу!
         const cx = this.closeX;
         const cy = this.closeY;
         const r = this.closeSize / 2;
@@ -190,7 +189,6 @@ export class EffectPanel {
             return 'close';
         }
 
-        // Клик по эффекту
         const iconW = 70, iconH = 70, gap = 60;
         const startX = this.x + 70;
         const y0 = this.y + 90;
