@@ -182,11 +182,11 @@ function handleEnemiesPanelClick(x, y, enemiesPanel, world) {
             };
             publishToMercure('http://localhost:8000/game', eventData);
         }
-    }
 
-    showEnemiesPanel = false;
-    enemiesPanel.hide();
-    enemiesPanel.baseOwnerId = null;
+        showEnemiesPanel = false;
+        enemiesPanel.hide();
+        enemiesPanel.baseOwnerId = null;
+    }
 }
 
 function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel) {

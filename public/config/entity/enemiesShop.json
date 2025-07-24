@@ -2,7 +2,7 @@
     {
         "name": "Шайка огров",
         "icon": "../../images/orc/walk_orc/orc3.webp",
-        "description": "Призовите шайку \n страшных огров! \n Состоит из: \n -3 огров",
+        "description": "Шайка огров. \n Состоит из: \n -3 огров",
         "price": 25,
         "enemies": {
             "orcs": 3,
@@ -14,7 +14,7 @@
     {
         "name": "Орда зомби",
         "icon": "../../images/zombie/walk_zombie/zombie2.webp",
-        "description": "Призывает орду зомби \n на вашего неприятеля\n Состоит из: \n -5 зомби",
+        "description": "Орда зомби. \n Состоит из: \n -5 зомби",
         "price": 45,
         "enemies": {
             "orcs": 0,

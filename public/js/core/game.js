@@ -111,7 +111,7 @@ function gameLoop(timestamp = 0) {
     const delta = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
 
-    waveDuration = waveDuration - delta;
+    waveDuration -= delta;
 
     if (waveDuration <= 0 && world.waves.currentWave < world.waves.maxWave) {
         world.summonWaves(world.waves.currentWave);

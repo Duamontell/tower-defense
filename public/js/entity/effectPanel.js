@@ -111,18 +111,6 @@ export class EffectPanel {
         ctx.restore();
     }
 
-    drawTitle() {
-        const ctx = this.ctx;
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = '24px Arial';
-        ctx.textAlign = 'center';
-
-        const titleX = this.x + this.width / 2;
-        const titleY = this.y + 40;
-
-        ctx.fillText('Покупка эффектов', titleX, titleY);
-    }
-
     drawEffects() {
         const ctx = this.ctx;
         const iconW = 70, iconH = 70;
