@@ -132,29 +132,50 @@ function handleReady(msg) {
     // }
 }
 
-
 function handlePlayerJoin(msg) {
     const {id, name, slot, isReady} = msg;
 
-    if (id === currentUserId) {
-        return;
-    }
-
     const playerSlot = document.getElementById(`empty-slot-${slot}`);
     if (playerSlot) {
-        playerSlot.id = `player-slot-${slot}`;
-
-        const playerName = playerSlot.querySelector(".player-name");
-        if (playerName) {
-            playerName.textContent = name;
-        }
-
-        const playerStatus = document.createElement('span');
-        console.log(playerStatus);
-        playerStatus.textContent = isReady ? "Готов" : "Не готов";
-        playerStatus.classList.add('player-status');
-        playerStatus.id = `player-status-${id}`;
-        playerSlot.appendChild(playerStatus);
+        const div = document.createElement('div');
+        div.className = 'player-card' + (isReady ? ' ready' : '') + (id === window.currentUserId ? ' my-card' : '');
+        div.id = `player-${id}`;
+        div.innerHTML = `
+            <span class="player-slot">${slot}:</span>
+            <img src="../styles/images/shield.png" alt="shield" class="player-shield">
+            <span class="player-name">${name}</span>
+            ${
+                id === window.currentUserId
+                ? `<button class="ready-button my-button" data-player-id="${id}" data-ready="${isReady ? '1' : '0'}">${isReady ? 'Готов' : 'Не готов'}</button>`
+                : `<button class="ready-button" id="player-status-${id}" data-ready="${isReady ? '1' : '0'}" disabled>${isReady ? 'Готов' : 'Не готов'}</button>`
+            }
+        `;
+        playerSlot.replaceWith(div);
     }
 }
 
+// немного переписала функцию (выше)
+// function handlePlayerJoin(msg) {
+//     const {id, name, slot, isReady} = msg;
+
+//     if (id === currentUserId) {
+//         return;
+//     }
+
+//     const playerSlot = document.getElementById(`empty-slot-${slot}`);
+//     if (playerSlot) {
+//         playerSlot.id = `player-slot-${slot}`;
+
+//         const playerName = playerSlot.querySelector(".player-name");
+//         if (playerName) {
+//             playerName.textContent = name;
+//         }
+
+//         const playerStatus = document.createElement('span');
+//         console.log(playerStatus);
+//         playerStatus.textContent = isReady ? "Готов" : "Не готов";
+//         playerStatus.classList.add('player-status');
+//         playerStatus.id = `player-status-${id}`;
+//         playerSlot.appendChild(playerStatus);
+//     }
+// }
