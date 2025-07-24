@@ -1,8 +1,8 @@
 {
     "map": {
         "backgroundImage": "images/map/first_level.webp",
-        "width": 1536,
-        "height": 1024
+        "width": 1500,
+        "height": 1000
     },
     "startingBalance": 100,
     "spawnrate": 3,
@@ -84,24 +84,31 @@
             }
         }
     ],
-    "countWaves": 2,
+    "countWaves": 3,
+    "wavesDuration": 15,
     "waves": [
         {
+            "enemies": {
+                "orcs": 1,
+                "zombies": 0,
+                "goblins": 0
+            },
+            "reward": 100
+        },
+        {
+            "enemies": {
+                "orcs": 1,
+                "zombies": 0,
+                "goblins": 0
+            },
+            "reward": 300
+        },
+                {
             "enemies": {
                 "orcs": 2,
                 "zombies": 0,
                 "goblins": 0
             },
-            "duration": 5,
-            "reward": 100
-        },
-        {
-            "enemies": {
-                "orcs": 5,
-                "zombies": 0,
-                "goblins": 0
-            },
-            "duration": 20,
             "reward": 300
         }
     ]

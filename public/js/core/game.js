@@ -116,7 +116,7 @@ function gameLoop(timestamp = 0) {
     if (waveDuration <= 0 && world.waves.currentWave < world.waves.maxWave) {
         world.summonWaves(world.waves.currentWave);
         world.waves.currentWave++;
-        waveDuration = 5;
+        waveDuration = world.waves.waveDuration;
     } else if (
         gameMode === "singleplayer" &&
         world.waves.currentWave === world.waves.maxWave &&
@@ -126,7 +126,7 @@ function gameLoop(timestamp = 0) {
         gameMessage = "Вы победили!";
         world.gameOver = true;
     }
-
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
