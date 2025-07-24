@@ -20,21 +20,11 @@ export class Projectile {
         this.angle = this.#calcAngle();
     }
 
-    draw(ctx, camera) {
+    draw(ctx) {
         ctx.save();
-        const { x, y } = camera.worldToScreen(this.position.x, this.position.y);
-        const drawWidth = this.width * camera.scale;
-        const drawHeight = this.height * camera.scale;
-        ctx.translate(x, y);
-        ctx.rotate(this.angle || 0);
-
-        const img = this.images[Math.floor(this.frame)];
-        if (!img || !img.complete) {
-            ctx.restore();
-            return;
-        }
-        ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
-
+        ctx.translate(this.position.x, this.position.y);
+        ctx.rotate(this.angle);
+        ctx.drawImage(this.images[Math.round(this.frame)], -this.width / 2, -this.height / 2, this.width, this.height);
         ctx.restore();
     }
 

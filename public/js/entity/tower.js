@@ -52,7 +52,7 @@ export class Tower {
         }
     }
 
-    draw(ctx, camera, x = null, y = null, width = null, height = null) {
+    draw(ctx, x = null, y = null, width = null, height = null) {
         ctx.save();
 
         if (!this.isLoaded) {
@@ -60,16 +60,10 @@ export class Tower {
             return;
         }
 
-        let worldX = x !== null ? x : this.position.x;
-        let worldY = y !== null ? y : this.position.y;
-
-        const screenPos = camera.worldToScreen(worldX, worldY);
-
-        const drawWidth = (width ?? this.width) * camera.scale;
-        const drawHeight = (height ?? this.height) * camera.scale;
-
-        const drawX = screenPos.x - drawWidth / 2;
-        const drawY = screenPos.y - drawHeight + drawHeight / 4;
+        const drawX = x !== null ? x - (width ?? this.width) / 2 : this.position.x - this.width / 2;
+        const drawY = y !== null ? y - (height ?? this.height) / 2 : this.position.y - this.height + this.height / 4;
+        const drawWidth = width ?? this.width;
+        const drawHeight = height ?? this.height;
 
         ctx.drawImage(this.image, drawX, drawY, drawWidth, drawHeight);
         ctx.restore();
@@ -132,18 +126,6 @@ export class Tower {
         }
 
         return true;
-    }
-
-    drawIcon(ctx, x, y, width, height) {
-        ctx.save();
-        if (!this.isLoaded) {
-            ctx.restore();
-            return;
-        }
-        const drawX = x - width / 2;
-        const drawY = y - height / 2;
-        ctx.drawImage(this.image, drawX, drawY, width, height);
-        ctx.restore();
     }
 }
 

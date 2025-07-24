@@ -50,14 +50,10 @@ export class Base {
 		}
 	}
 
-	draw(ctx, camera) {
-		if (!camera) return;
+	draw(ctx) {
 		ctx.save();
-		const { x, y } = camera.worldToScreen(this.position.x, this.position.y);
-		const drawWidth = this.width * camera.scale;
-		const drawHeight = this.height * camera.scale;
-		ctx.translate(x, y);
-		ctx.drawImage(this.image, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+		if (!this.isLoaded) return;
+		ctx.drawImage(this.image, this.position.x - this.width / 2, this.position.y - this.height / 2, this.width, this.height);
 		ctx.restore();
 	}
 }

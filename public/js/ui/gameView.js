@@ -1,24 +1,13 @@
-export function initCanvasResizer(canvas, nativeWidth, nativeHeight, camera, clampCamera) {
+export function initCanvasResizer(canvas, nativeWidth, nativeHeight) {
     function resizeCanvas() {
         const scale = Math.min(
-            window.innerWidth / nativeWidth,
-            window.innerHeight / nativeHeight,
-            1
+            window.innerWidth  / nativeWidth,
+            window.innerHeight / nativeHeight
         );
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        if (camera) {
-            camera.width = canvas.width;
-            camera.height = canvas.height;
-            camera.scale = scale;
-            camera.x = (nativeWidth - camera.width / camera.scale) / 2;
-            camera.y = (nativeHeight - camera.height / camera.scale) / 2;
-            if (clampCamera) clampCamera();
-        }
+        canvas.style.transform = `scale(${scale})`;
     }
 
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
+    // return resizeCanvas;
 }

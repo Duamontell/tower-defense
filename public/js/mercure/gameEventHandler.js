@@ -39,7 +39,7 @@ export class GameEventHandler {
                 break;
             default:
                 console.warn('Неизвестный тип события:', data.type);
-        }
+        }upgradeTower
     }
 
     #handleUserId(data) {

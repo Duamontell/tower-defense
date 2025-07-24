@@ -2,7 +2,7 @@ export class RulesPanel {
     constructor(ctx, canvasWidth, canvasHeight) {
         this.ctx = ctx;
         this.width = 900;
-        this.height = 880;
+        this.height = 900;
         this.x = (canvasWidth - this.width) / 2;
         this.y = (canvasHeight - this.height) / 2;
         this.visible = false;

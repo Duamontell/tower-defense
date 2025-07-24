@@ -4,7 +4,7 @@ export class TowerPanel {
         this.width = 1000;
         this.height = 300;
         this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height - 70;
+        this.y = canvasHeight - this.height - 50;
         this.towers = [];
         this.padding = 20;
         this.paddingX = 40;
@@ -97,7 +97,7 @@ export class TowerPanel {
             ctx.save();
             ctx.globalAlpha = canBuild ? 1 : 0.4;
 
-            tower.drawIcon(
+            tower.draw(
                 ctx,
                 tower.panelPosition.x,
                 tower.panelPosition.y,
@@ -146,7 +146,7 @@ export class TowerPanel {
     }
 
     handleClick(x, y) {
-        if (!this.visible) return false;
+        if (!this.visible) return null;
 
         this.#updatePositions();
 
@@ -173,11 +173,13 @@ export class TowerPanel {
                 y >= ty - halfHeight &&
                 y <= ty + halfHeight
             ) {
+                if (this.onTowerSelect) {
+                    this.onTowerSelect(tower.constructor);
+                }
                 return tower;
             }
         }
-
-        return false;
+        return null;
     }
 
     #updatePositions() {

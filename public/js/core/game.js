@@ -12,14 +12,10 @@ import { initCanvasResizer } from "../ui/gameView.js";
 import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
 import { GameEventHandler } from '../mercure/gameEventHandler.js';
 import { EnemiesPanel } from '../entity/enemiesPanel.js';
-import { Camera } from '../entity/camera.js';
-import { initCameraControls } from '../systems/cameraController.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const background = new Image();
-canvas.width = innerWidth;
-canvas.height = 1024;
 
 const gameMode = window.gameMode || 'singleplayer';
 const currentLevel = window.currentLevel || 1;
@@ -39,23 +35,9 @@ let towerPanel;
 let upgradePanel;
 let enemiesPanel;
 let rulesPanel;
+let nativeWidth = canvas.width;
+let nativeHeight = canvas.height;
 let gameMessage = "";
-let camera;
-let nativeWidth;
-let nativeHeight;
-
-function clampCamera() {
-    if (nativeWidth * camera.scale <= camera.width) {
-        camera.x = -(camera.width / camera.scale - nativeWidth) / 2;
-    } else {
-        camera.x = Math.max(0, Math.min(camera.x, nativeWidth - camera.width / camera.scale));
-    }
-    if (nativeHeight * camera.scale <= camera.height) {
-        camera.y = -(camera.height / camera.scale - nativeHeight) / 2;
-    } else {
-        camera.y = Math.max(0, Math.min(camera.y, nativeHeight - camera.height / camera.scale));
-    }
-}
 
 function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -66,16 +48,10 @@ function getClickCoordinates(canvas, event) {
 
 canvas.addEventListener('click', (event) => {
     const { x, y } = getClickCoordinates(canvas, event);
-    handleClick(
-        x, y,
-        world,
-        towerPanel,
-        upgradePanel,
-        effectPanel,
-        rulesPanel,
-        enemiesPanel,
-        camera
-    );
+    const user = world.players.get(currentUserId);
+    if (user && user.isLose) return;
+    if (world.gameOver) return;
+    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel);
 });
 
 async function loadUsersConfig() {
@@ -152,17 +128,11 @@ function gameLoop(timestamp = 0) {
     }
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(
-        background,
-        -camera.x * camera.scale,
-        -camera.y * camera.scale,
-        nativeWidth * camera.scale,
-        nativeHeight * camera.scale
-    );
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-    drawTowerZones(ctx, world.towerZones, world.players, camera);
+    drawTowerZones(ctx, world.towerZones, world.players);
     world.update(delta);
-    world.draw(ctx, camera);
+    world.draw(ctx);
     towerPanel.draw();
     upgradePanel.draw();
     effectPanel.draw();
@@ -223,16 +193,8 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     background.src = lvlCfg.map.backgroundImage;
     nativeWidth = lvlCfg.map.width;
     nativeHeight = lvlCfg.map.height;
-    const scaleX = canvas.width / nativeWidth;
-    const scaleY = canvas.height / nativeHeight;
-    const initialScale = Math.min(scaleX, scaleY, 1);
-
-    camera = new Camera(0, 0, canvas.width, canvas.height, initialScale);
-
-    camera.x = (nativeWidth - canvas.width / camera.scale) / 2;
-    camera.y = (nativeHeight - canvas.height / camera.scale) / 2;
-    clampCamera();
-    initCameraControls(canvas, camera, clampCamera, getClickCoordinates, initialScale, 2);
+    canvas.width = lvlCfg.map.width;
+    canvas.height = lvlCfg.map.height;
 
     world = new World(lvlCfg, enemiesCfg, towersCfg);
     users.forEach((user) => {
@@ -241,7 +203,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
         world.addBase(new Base(data.base.id, data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
         world.addTowerZones(data.towerZones, user.userId);
         world.waves.userWaves.set(user.userId, lvlCfg.waves);
-    });
+    })
 
     world.waves.maxWave = lvlCfg.countWaves;
 
@@ -281,6 +243,5 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
 
 const users = await loadUsersConfig();
 initializeLevel(users, lvlCfg, enemiesCfg, towersCfg);
-// initCanvasResizer(canvas, nativeWidth, nativeHeight);
-initCanvasResizer(canvas, nativeWidth, nativeHeight, camera, clampCamera);
+initCanvasResizer(canvas, nativeWidth, nativeHeight);
 gameLoop();
