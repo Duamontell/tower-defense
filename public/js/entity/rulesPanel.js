@@ -2,7 +2,7 @@ export class RulesPanel {
     constructor(ctx, canvasWidth, canvasHeight) {
         this.ctx = ctx;
         this.width = 900;
-        this.height = 750;
+        this.height = 900;
         this.x = (canvasWidth - this.width) / 2;
         this.y = (canvasHeight - this.height) / 2;
         this.visible = false;
@@ -92,10 +92,13 @@ export class RulesPanel {
         ctx.fillText("Как улучшить башню: кликните на башню → выберите улучшение.", tx, ty);
         ty += lh;
         ctx.fillText("Как купить эффект: кликните на корзинку → выберите эффект → выберите место на карте.", tx, ty);
+        ty += lh;
+        ctx.fillText("Как направить врагов на соперника: кликните на крепость соперника → выберите волну врагов.", tx, ty);
         ty += lh * 1.5;
 
-        // Башни
+        // Типы башен
         ctx.font = "bold 18px Arial";
+        ctx.fillStyle = "#3a2a00";
         ctx.fillText("Типы башен:", tx, ty);
         ty += lh;
         let bx = tx + 10, by = ty;
@@ -115,9 +118,7 @@ export class RulesPanel {
             ctx.fillText(t.text, bx + 36, by);
             by += lh;
         });
-        ty = by + 10;
-
-        ty = by + 10;
+        ty = by + lh * 0.5;
 
         // Улучшения башен
         ctx.font = "bold 18px Arial";
@@ -128,8 +129,8 @@ export class RulesPanel {
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Каждая башня может быть улучшена за монеты.", tx, ty);
         ty += lh;
-        ctx.fillText("Улучшения увеличивают урон, радиус действия, скорость стрельбы", tx, ty);
-        ty += lh * 1.2;
+        ctx.fillText("Улучшения увеличивают урон, радиус действия, скорость стрельбы.", tx, ty);
+        ty += lh * 1.5;
 
         // Эффекты
         ctx.font = "bold 18px Arial";
@@ -151,7 +152,7 @@ export class RulesPanel {
             ctx.fillText(e.text, bx + 36, by);
             by += lh;
         });
-        ty = by + 10;
+        ty = by + lh * 0.5;
 
         // Ресурсы
         ctx.font = "bold 18px Arial";
@@ -159,11 +160,22 @@ export class RulesPanel {
         ctx.fillText("Ресурсы:", tx, ty);
         ty += lh;
         ctx.font = "16px Arial";
+        ctx.fillStyle = "#3a2a00";
         ctx.fillText("За уничтожение врагов вы будете получать денежное вознаграждение.", tx, ty);
         ty += lh;
         ctx.fillText("Используйте их для строительства и улучшений.", tx, ty);
+        ty += lh * 1.2;
 
-        ctx.restore();
+        // Дополнительные волны врагов
+        ctx.font = "bold 18px Arial";
+        ctx.fillStyle = "#3a2a00";
+        ctx.fillText("Дополнительные волны врагов:", tx, ty);
+        ty += lh;
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#3a2a00";
+        ctx.fillText("Вы можете покупать и отправлять дополнительные волны врагов на соперников за монеты.", tx, ty);
+        ty += lh;
+        ctx.fillText("Для этого кликните на крепость соперника и выберите нужную волну.", tx, ty);
     }
 
     handleClick(x, y) {
