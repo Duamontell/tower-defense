@@ -25,9 +25,7 @@ class RoomController extends AbstractController
         private RoomService          $roomService,
         private RoomPlayerService    $roomPlayerService,
         private MercureService       $mercureService
-    )
-    {
-    }
+    ) {}
 
     public function roomList(): Response
     {
@@ -41,14 +39,25 @@ class RoomController extends AbstractController
 
     public function showRoom($roomId): Response
     {
-//        TODO: Запретить просмотр комнаты всем кроме её участников!
+//        TODO: Переделать условия?
         $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
 
         if (!$room = $this->roomRepository->findById((int)$roomId)) {
-            $this->addFlash('error', 'Комната с ID ' . $roomId . ' не найдена');
+            $this->addFlash('error', 'Комната с номером ' . $roomId . ' не найдена');
             return $this->redirectToRoute('room_list');
         }
+
+        if ($room->getStatus() !== Room::STATUS_WAITING) {
+            $this->addFlash('error', 'Игра в комнате уже идёт!');
+            return $this->redirectToRoute('room_list');
+        }
+
+        if (!$this->roomService->isRoomPlayer($user, $roomId)) {
+            $this->addFlash('error', 'Вы не можете просматривать эту комнату!');
+            return $this->redirectToRoute('room_list');
+        }
+
         $players = $room->getPlayers();
 
         return $this->render('room/room.html.twig', [
@@ -63,6 +72,18 @@ class RoomController extends AbstractController
     {
         $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
+        if ($userRoom = $this->roomRepository->findByIdAndStatusAndPlayer($user->getId(), ROOM::STATUS_WAITING)) {
+            $leaveUrl = $this->generateUrl('room_leave', ['roomId' => $userRoom->getId()]);
+            $this->addFlash(
+                'warning',
+                sprintf(
+                    'Вы уже находитесь в комнате %d. <a href="%s">Выйти из неё?</a>',
+                    $userRoom->getId(),
+                    $leaveUrl
+                )
+            );
+            return $this->redirectToRoute('room_list');
+        }
         $roomId = $this->roomService->createRoom($user);
 
         return $this->redirectToRoute('show_room', ['roomId' => $roomId]);
@@ -73,7 +94,7 @@ class RoomController extends AbstractController
         $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
         if ($userRoom = $this->roomRepository->findByIdAndStatusAndPlayer($user->getId(), ROOM::STATUS_WAITING)) {
-            if ($userRoom !== $roomId) {
+            if ($userRoom->getId() !== $roomId) {
                 $leaveUrl = $this->generateUrl('room_leave', ['roomId' => $userRoom->getId()]);
                 $this->addFlash(
                     'warning',
@@ -86,6 +107,7 @@ class RoomController extends AbstractController
                 return $this->redirectToRoute('room_list');
             }
         }
+
         try {
             $this->roomService->addPlayerToRoom($user, $roomId);
         } catch (\RuntimeException $e) {
@@ -101,8 +123,13 @@ class RoomController extends AbstractController
         $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
 
-//        TODO
-        $this->roomService->leaveRoom($user, $roomId);
+        try {
+            $this->roomService->leaveRoom($user, $roomId);
+        } catch (\RuntimeException $e) {
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('room_list');
+        }
+
         $this->addFlash('success', 'Вы вышли из комнаты ' . $roomId);
 
         return $this->redirectToRoute('room_list');

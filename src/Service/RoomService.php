@@ -26,6 +26,14 @@ class RoomService
         $roomId = $this->roomRepository->store($room);
         $this->addPlayerToRoom($host, $roomId);
 
+        $this->mercureService->publish(
+            topic: "/room-list",
+            data: [
+                'action' => 'createRoom',
+                'roomId' => $roomId,
+            ],
+        );
+
         return $roomId;
     }
 
@@ -130,20 +138,20 @@ class RoomService
     public function leaveRoom(User $user, int $roomId): void
     {
         if (!$room = $this->roomRepository->find($roomId)) {
-            throw new \RuntimeException("Комнаты под номером $roomId, из который вы хотите выйти, не существует");
+            throw new \RuntimeException("Комнаты под номером $roomId, из которой вы хотите выйти, не существует");
         }
 
         $players = $room->getPlayers();
         foreach ($players as $player) {
             if ($player->getPlayer() === $user) {
                 $this->roomPlayerRepository->delete($player);
+                $players->removeElement($player);
                 break;
             }
         }
 
-        if (empty($room->getPlayers())) {
+        if ($players->count() === 0) {
             $this->deleteRoom($room->getId());
-//            TODO: Закинуть в Mercure?
         }
     }
 
@@ -154,6 +162,24 @@ class RoomService
         }
 
         $this->roomRepository->delete($room);
+        $this->mercureService->publish(
+            topic: "/room-list",
+            data: [
+                'action' => 'deleteRoom',
+                'roomId' => $roomId
+            ]
+        );
+    }
+
+    public function isRoomPlayer(?User $user, $roomId): bool
+    {
+        $room = $this->roomRepository->find($roomId);
+        foreach ($room->getPlayers() as $player) {
+            if ($player->getPlayer() === $user) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -1,11 +1,11 @@
 {% extends "base.html.twig" %}
 
 {% block title %}
-	Комната
+    Комната
 {% endblock %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="/styles/css/room-list.css">
+    <link rel="stylesheet" href="/styles/css/room-list.css">
 {% endblock %}
 
 {% block javascripts %}
@@ -16,26 +16,32 @@
 {% endblock %}
 
 {% block body %}
-	<div class="rooms-list-container">
-		<div class="rooms-list-header">
-			<h1>Список комнат</h1>
-			<label style="margin-left: auto">
-				Поиск:
-				<input type="text" maxlength="10" placeholder="Введите номер комнаты">
-			</label>
-		</div>
-		<div class="rooms-list-scroll">
-			<ul id="rooms-list">
-				{% for room in openRooms %}
-					<li id="room-{{ room.id }}">
+    <div class="rooms-list-container">
+        <div class="rooms-list-header">
+            <h1>Список комнат</h1>
+            <label style="margin-left: auto">
+                Поиск:
+                <input type="text" maxlength="10" placeholder="Введите номер комнаты">
+            </label>
+        </div>
+        <div class="rooms-list-scroll">
+            <ul id="rooms-list">
+                {% for room in openRooms %}
+{#                    {% set playersCount = room.getPlayers()|length %}#}
+                    <li id="room-{{ room.id }}">
 						<span>Комната
 							{{ room.id }}</span>
-						<button class="join-room-button" data-room-id="{{ room.id }}">Войти</button>
-					</li>
-				{% endfor %}
-			</ul>
-		</div>
-		<div class="create-room-separator"></div>
-		<button id="create-room-button">Создать комнату</button>
-	</div>
+{#                        <div class="room-actions">#}
+{#                        <span id="room-players-count-{{ room.id }}">#}
+{#                            {{ playersCount }}/4#}
+{#                        </span>#}
+                            <button class="join-room-button" data-room-id="{{ room.id }}">Войти</button>
+{#                        </div>#}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="create-room-separator"></div>
+        <button id="create-room-button">Создать комнату</button>
+    </div>
 {% endblock %}

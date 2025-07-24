@@ -9,26 +9,50 @@ createRoom.addEventListener('click', () => {
 document.querySelectorAll('.join-room-button').forEach(button => {
     button.addEventListener('click', () => {
         const roomId = button.dataset.roomId;
-        location.href=`/room/join/${roomId}`
+        location.href = `/room/join/${roomId}`
     });
 });
 
 const url = new URL(mercureUrl);
-const eventSource = new EventSource(url);
 url.searchParams.append('topic', '/room-list');
+const es = new EventSource(url);
 
-eventSource.onmessage = ({data}) => {
+es.onmessage = ({data}) => {
     const msg = JSON.parse(data);
-    if (msg.action === 'create') {
-        const li = document.createElement('li');
-        li.id = msg.room.id;
-        li.textContent = msg.room.name;
-        const btn = document.createElement('button');
-        btn.textContent = 'Войти';
-        btn.onclick = () => window.location = '/game/join/' + msg.room.id;
-        li.append(btn);
-        roomsList.append(li);
+    switch (msg.action) {
+        case 'createRoom':
+            handleCreateRoom(msg);
+            break;
+        case 'deleteRoom':
+            handleDeleteRoom(msg)
+            break;
     }
 };
 
+function handleCreateRoom(msg) {
+    const {roomId} = msg;
 
+    const roomRow = document.createElement('li');
+    roomRow.id = "room-" + roomId;
+    const roomName = document.createElement('span');
+    roomName.textContent = "Комната " + roomId;
+    const joinButton = document.createElement('button');
+    joinButton.classList.add('join-room-button');
+    joinButton.dataset.roomId = roomId;
+    joinButton.textContent = "Войти";
+    joinButton.addEventListener('click', () => {
+        location.href = `/room/join/${roomId}`
+    });
+
+    roomRow.appendChild(roomName);
+    roomRow.appendChild(joinButton);
+    roomsList.appendChild(roomRow);
+}
+
+function handleDeleteRoom(msg) {
+    const {roomId} = msg;
+
+    const roomRowId = 'room-' + roomId;
+    const roomRow = document.getElementById(roomRowId);
+    roomRow.remove();
+}
