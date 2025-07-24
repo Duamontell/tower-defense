@@ -34,9 +34,12 @@ export class GameEventHandler {
             case 'summonWave':
                 this.#handleSummonWave(data);
                 break;
+            case 'upgradeTower':
+                this.#handleUpgradeTower(data);
+                break;
             default:
                 console.warn('Неизвестный тип события:', data.type);
-        }
+        }upgradeTower
     }
 
     #handleUserId(data) {
@@ -231,5 +234,24 @@ export class GameEventHandler {
         if (userId === window.currentUserId) return;
 
         this.world.summonWave(enemies, targetUserId);
+    }
+
+    #handleUpgradeTower(data) {
+        const { userId, towerId, upgradeIndex, newLevel } = data;
+
+        if (userId === window.currentUserId) return;
+
+        const tower = this.world.towers.find(t => t.id === towerId);
+        if (!tower) {
+            console.warn(`Башня с id ${towerId} не найдена для апгрейда`);
+            return;
+        }
+
+        if (typeof tower.applyUpgrade === 'function') {
+            tower.applyUpgrade(upgradeIndex);
+            if (Array.isArray(tower.upgradeLevels)) {
+                tower.upgradeLevels[upgradeIndex] = newLevel;
+            }
+        }
     }
 }
