@@ -116,24 +116,41 @@ function handleEffectCoords(x, y, effectPanel, world) {
     const choosenEffect = effectPanel.choosenEffect;
 
     if (!effectPanel.isClickedOnIcon(x, y) && user.balance >= choosenEffect.price) {
-
         let effect;
+        let effectType = null;
+        let effectData = {};
 
         switch (choosenEffect.name) {
             case 'Poison':
                 effect = new PoisonEffect({ x: x, y: y }, choosenEffect.damage, choosenEffect.cfg);
+                effectType = 'Poison';
+                effectData = { damage: choosenEffect.damage, cfg: choosenEffect.cfg };
                 break;
             case 'Freezing':
                 effect = new FreezeEffect({ x: x, y: y }, choosenEffect.slowness, choosenEffect.cfg);
+                effectType = 'Freezing';
+                effectData = { slowness: choosenEffect.slowness, cfg: choosenEffect.cfg };
                 break;
             case 'Bomb':
                 effect = new ExplosionEffect({ x: x, y: y }, choosenEffect.damage, choosenEffect.cfg);
+                effectType = 'Bomb';
+                effectData = { damage: choosenEffect.damage, cfg: choosenEffect.cfg };
                 break;
         }
 
         if (effect !== undefined) world.effects.push(effect);
         user.changeBalance(-choosenEffect.price);
 
+        if (gameMode === "multiplayer" && effectType) {
+            const eventData = {
+                type: 'addEffect',
+                userId: currentUserId,
+                effectType,
+                x, y,
+                ...effectData
+            };
+            publishToMercure('http://localhost:8000/game', eventData);
+        }
     }
 
     showEffectPanel = false;
@@ -155,8 +172,18 @@ function handleEnemiesPanelClick(x, y, enemiesPanel, world) {
     if (result && user.id !== enemiesPanel.baseOwnerId) {
         user.changeBalance(-result.price);
         world.summonWave(result.enemies, enemiesPanel.baseOwnerId);
+
+        if (gameMode === "multiplayer") {
+            const eventData = {
+                type: 'summonWave',
+                userId: currentUserId,
+                targetUserId: enemiesPanel.baseOwnerId,
+                enemies: result.enemies
+            };
+            publishToMercure('http://localhost:8000/game', eventData);
+        }
     }
-    
+
     showEnemiesPanel = false;
     enemiesPanel.hide();
     enemiesPanel.baseOwnerId = null;

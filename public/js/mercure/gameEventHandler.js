@@ -1,5 +1,6 @@
 import { ArchersTower, MagicianTower, PoisonousTower, FreezingTower, MortarTower } from '../entity/tower.js';
 import { ArrowProjectile, FireballProjectile, PoisonProjectile, FreezeProjectile, ExplosiveProjectile } from '../entity/projectile.js';
+import { ExplosionEffect, FreezeEffect, PoisonEffect } from '../entity/effect.js';
 import { publishToMercure } from './mercureHandler.js';
 
 export class GameEventHandler {
@@ -26,6 +27,12 @@ export class GameEventHandler {
                 break;
             case 'playerIsWin':
                 this.#handlePlayerIsWin(data);
+                break;
+            case 'addEffect':
+                this.#handleAddEffect(data);
+                break;
+            case 'summonWave':
+                this.#handleSummonWave(data);
                 break;
             default:
                 console.warn('Неизвестный тип события:', data.type);
@@ -191,5 +198,38 @@ export class GameEventHandler {
         const { winnerId } = data;
         this.world.winnerId = winnerId;
         this.world.isWinEvent = true;
+    }
+
+    #handleAddEffect(data) {
+        const { userId, effectType, x, y, damage, slowness, cfg } = data;
+
+        if (userId === window.currentUserId) return;
+
+        let effect;
+        switch (effectType) {
+            case 'Poison':
+                effect = new PoisonEffect({ x, y }, damage, cfg);
+                break;
+            case 'Freezing':
+                effect = new FreezeEffect({ x, y }, slowness, cfg);
+                break;
+            case 'Bomb':
+                effect = new ExplosionEffect({ x, y }, damage, cfg);
+                break;
+            default:
+                console.warn('Неизвестный тип эффекта:', effectType);
+                return;
+        }
+        if (effect) {
+            this.world.effects.push(effect);
+        }
+    }
+
+    #handleSummonWave(data) {
+        const { userId, targetUserId, enemies } = data;
+
+        if (userId === window.currentUserId) return;
+
+        this.world.summonWave(enemies, targetUserId);
     }
 }
