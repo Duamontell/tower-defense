@@ -13,7 +13,7 @@ class RoomRepository extends ServiceEntityRepository
         parent::__construct($registry, Room::class);
     }
 
-    public function store(Room $room) :int
+    public function store(Room $room): int
     {
         $this->getEntityManager()->persist($room);
         $this->getEntityManager()->flush();
@@ -35,7 +35,22 @@ class RoomRepository extends ServiceEntityRepository
         return $this->findBy(['status' => $status]);
     }
 
-//    public function changeStatus(int $roomId, int $roomStatus): void
-//    {
-//    }
+    public function findByIdAndStatusAndPlayer(int $playerId, int $status): ?Room
+    {
+        return $this->createQueryBuilder('r')
+            ->innerJoin('r.players', 'p_i_r')
+            ->where('r.status = :status')
+            ->setParameter('status', $status)
+            ->andWhere('p_i_r.player = :playerId')
+            ->setParameter('playerId', $playerId)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function delete(Room $room): void
+    {
+        $this->getEntityManager()->remove($room);
+        $this->getEntityManager()->flush();
+    }
 }

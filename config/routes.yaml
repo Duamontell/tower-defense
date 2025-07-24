@@ -36,6 +36,10 @@ join_room:
     path: /room/join/{roomId}
     controller: App\Controller\RoomController::joinToRoom
 
+room_leave:
+    path: /room/{roomId}/leave
+    controller: App\Controller\RoomController::leaveRoom
+
 show_room:
     path: /room/{roomId}
     controller: App\Controller\RoomController::showRoom

@@ -13,16 +13,26 @@ use App\Repository\RoomRepository;
 class RoomService
 {
     public function __construct(
-        private RoomRepository $roomRepository,
+        private RoomRepository       $roomRepository,
         private RoomPlayerRepository $roomPlayerRepository,
-        private MercureService $mercureService
-    ) {}
+        private MercureService       $mercureService
+    )
+    {
+    }
 
     public function createRoom(User $host): int
     {
         $room = new Room(null, 0, new \DateTime());
         $roomId = $this->roomRepository->store($room);
         $this->addPlayerToRoom($host, $roomId);
+
+        $this->mercureService->publish(
+            topic: "/room-list",
+            data: [
+                'action' => 'createRoom',
+                'roomId' => $roomId,
+            ],
+        );
 
         return $roomId;
     }
@@ -31,7 +41,7 @@ class RoomService
     {
         if (!$room = $this->roomRepository->find($roomId)) {
             // TODO: Переделать?
-            throw new \RuntimeException("Комната с ID {$roomId} не найдена!");
+            throw new \RuntimeException("Комната с номером {$roomId} не найдена!");
         }
 
         if ($roomPlayer = $this->userAlreadyInRoom($player->getId(), $roomId)) {
@@ -45,7 +55,7 @@ class RoomService
 
         $freeSlots = $this->getFreeSlots($room);
         if (empty($freeSlots)) {
-            throw new \RuntimeException("Комната с ID {$roomId} полная!");
+            throw new \RuntimeException("Комната с номером {$roomId} полная!");
         }
 
         $roomPlayer = new RoomPlayer(null, $room, $player, $freeSlots[0], false);
@@ -123,6 +133,53 @@ class RoomService
 
         $room->setStatus($roomStatus);
         $this->roomRepository->store($room);
+    }
+
+    public function leaveRoom(User $user, int $roomId): void
+    {
+        if (!$room = $this->roomRepository->find($roomId)) {
+            throw new \RuntimeException("Комнаты под номером $roomId, из которой вы хотите выйти, не существует");
+        }
+
+        $players = $room->getPlayers();
+        foreach ($players as $player) {
+            if ($player->getPlayer() === $user) {
+                $this->roomPlayerRepository->delete($player);
+                $players->removeElement($player);
+                break;
+            }
+        }
+
+        if ($players->count() === 0) {
+            $this->deleteRoom($room->getId());
+        }
+    }
+
+    public function deleteRoom(int $roomId): void
+    {
+        if (!$room = $this->roomRepository->find($roomId)) {
+            throw new \RuntimeException("Удаляемая комната под номером $roomId не найдена");
+        }
+
+        $this->roomRepository->delete($room);
+        $this->mercureService->publish(
+            topic: "/room-list",
+            data: [
+                'action' => 'deleteRoom',
+                'roomId' => $roomId
+            ]
+        );
+    }
+
+    public function isRoomPlayer(?User $user, $roomId): bool
+    {
+        $room = $this->roomRepository->find($roomId);
+        foreach ($room->getPlayers() as $player) {
+            if ($player->getPlayer() === $user) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
