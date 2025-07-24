@@ -187,8 +187,6 @@ export class RulesPanel {
 
     #drawRulesIcon() {
         const ctx = this.ctx;
-        const icon = new Image;
-        icon.src = '../../images/assets/help.png';
         ctx.drawImage(this.icons.help, this.iconX + this.padding, this.iconY + this.padding, this.iconW - this.padding, this.iconH - this.padding);
     }
 }
