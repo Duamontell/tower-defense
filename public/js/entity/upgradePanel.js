@@ -4,7 +4,7 @@ export class UpgradePanel {
         this.width = 900;
         this.height = 350;
         this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height - 50
+        this.y = canvasHeight - this.height - 70;
         this.visible = false;
         this.closeSize = 36;
         this.closePadding = 16;

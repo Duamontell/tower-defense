@@ -4,7 +4,7 @@ export class EffectPanel {
         this.width = 900;
         this.height = 270;
         this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height - 50;
+        this.y = canvasHeight - this.height - 70;
         this.effects = [];
         this.balance = balance;
         this.visible = false;
