@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Room;
 use App\Entity\RoomPlayer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,8 +27,19 @@ class RoomPlayerRepository extends ServiceEntityRepository
         return $this->findOneBy(['player' => $playerId, 'room' => $roomId]);
     }
 
-    public function countPlayersInRoom(Room $room) : int
+    public function findByPlayerAndStatus(int $playerId, int $status): ?RoomPlayer
     {
-        return $this->count(['room' => $room]);
+        return $this->findOneBy(['player' => $playerId, 'status' => $status]);
+    }
+
+//    public function countPlayersInRoom(Room $room) : int
+//    {
+//        return $this->count(['room' => $room]);
+//    }
+
+    public function delete(RoomPlayer $roomPlayer): void
+    {
+        $this->getEntityManager()->remove($roomPlayer);
+        $this->getEntityManager()->flush();
     }
 }

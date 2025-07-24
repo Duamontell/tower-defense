@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Room;
+use App\Repository\RoomPlayerRepository;
 use App\Repository\RoomRepository;
 use App\Repository\UserRepository;
 use App\Service\MercureService;
@@ -18,12 +19,15 @@ use Symfony\Component\HttpFoundation\Response;
 class RoomController extends AbstractController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private RoomRepository $roomRepository,
-        private RoomService $roomService,
-        private RoomPlayerService $roomPlayerService,
-        private MercureService $mercureService
-    ) {}
+        private UserRepository       $userRepository,
+        private RoomRepository       $roomRepository,
+        private RoomPlayerRepository $roomPlayerRepository,
+        private RoomService          $roomService,
+        private RoomPlayerService    $roomPlayerService,
+        private MercureService       $mercureService
+    )
+    {
+    }
 
     public function roomList(): Response
     {
@@ -35,15 +39,16 @@ class RoomController extends AbstractController
         ]);
     }
 
-    public function showRoom($roomId) : Response
+    public function showRoom($roomId): Response
     {
-        if (!$securityUser = $this->getUser()) {
-            return $this->redirectToRoute('login');
-        }
-
+//        TODO: Запретить просмотр комнаты всем кроме её участников!
+        $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
 
-        $room = $this->roomRepository->findById((int)$roomId);
+        if (!$room = $this->roomRepository->findById((int)$roomId)) {
+            $this->addFlash('error', 'Комната с ID ' . $roomId . ' не найдена');
+            return $this->redirectToRoute('room_list');
+        }
         $players = $room->getPlayers();
 
         return $this->render('room/room.html.twig', [
@@ -54,12 +59,9 @@ class RoomController extends AbstractController
         ]);
     }
 
-    public function createRoom() :Response
+    public function createRoom(): Response
     {
-        if (!$securityUser = $this->getUser()) {
-            return $this->redirectToRoute('login');
-        }
-
+        $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
         $roomId = $this->roomService->createRoom($user);
 
@@ -68,24 +70,48 @@ class RoomController extends AbstractController
 
     public function joinToRoom(int $roomId): Response
     {
-        if (!$securityUser = $this->getUser()) {
-            return $this->redirectToRoute('login');
-        }
-
+        $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
-        $this->roomService->addPlayerToRoom($user, $roomId);
+        if ($userRoom = $this->roomRepository->findByIdAndStatusAndPlayer($user->getId(), ROOM::STATUS_WAITING)) {
+            if ($userRoom !== $roomId) {
+                $leaveUrl = $this->generateUrl('room_leave', ['roomId' => $userRoom->getId()]);
+                $this->addFlash(
+                    'warning',
+                    sprintf(
+                        'Вы уже находитесь в комнате %d. <a href="%s">Выйти из неё?</a>',
+                        $userRoom->getId(),
+                        $leaveUrl
+                    )
+                );
+                return $this->redirectToRoute('room_list');
+            }
+        }
+        try {
+            $this->roomService->addPlayerToRoom($user, $roomId);
+        } catch (\RuntimeException $e) {
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('room_list');
+        }
 
         return $this->redirectToRoute('show_room', ['roomId' => $roomId]);
     }
 
-    public function playerChangeReady(int $roomId, Request $request) :JsonResponse
+    public function leaveRoom(int $roomId): Response
     {
-        if (!$this->getUser()) {
-//            TODO: Добавить проверку на пользователя
-        }
+        $securityUser = $this->getUser();
+        $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
 
+//        TODO
+        $this->roomService->leaveRoom($user, $roomId);
+        $this->addFlash('success', 'Вы вышли из комнаты ' . $roomId);
+
+        return $this->redirectToRoute('room_list');
+    }
+
+    public function playerChangeReady(int $roomId, Request $request): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
-        $playerId = (int) $data['playerId'];
+        $playerId = (int)$data['playerId'];
         $ready = $data['ready'];
 
         $this->roomPlayerService->setReady($playerId, $roomId, $ready);
@@ -93,26 +119,18 @@ class RoomController extends AbstractController
         return $this->json(['playerId' => $playerId, 'isReady' => $ready], Response::HTTP_OK);
     }
 
-    public function checkAllReady(int $roomId) :JsonResponse
+    public function checkAllReady(int $roomId): JsonResponse
     {
-        if (!$this->getUser()) {
-            //  TODO: Добавить проверку на пользователя
-        }
-
         $this->roomService->allPlayerReady($roomId);
 
         return $this->json(['allReady' => true], Response::HTTP_OK);
     }
 
-    public function changeRoomStatus(Request $request) :JsonResponse
+    public function changeRoomStatus(Request $request): JsonResponse
     {
-        if (!$this->getUser()) {
-            return $this->json(['error' => 'Вы не авторизованы'], Response::HTTP_FORBIDDEN);
-        }
-
         $data = json_decode($request->getContent(), true);
-        $roomId = (int) $data['roomId'];
-        $roomStatus = (int) $data['status'];
+        $roomId = (int)$data['roomId'];
+        $roomStatus = (int)$data['status'];
         $this->roomService->changeRoomStatus($roomId, $roomStatus);
 
         return $this->json(['success' => true], Response::HTTP_OK);
