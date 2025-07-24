@@ -13,6 +13,7 @@ export class World {
         this.towerZones = [];
         this.waves = {
             currentWave: 0,
+            waveDuration: lvlCfg.wavesDuration,
             maxWave: lvlCfg.waves,
             userWaves: new Map
         }
