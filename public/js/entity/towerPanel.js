@@ -4,7 +4,7 @@ export class TowerPanel {
         this.width = 1000;
         this.height = 300;
         this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height - 50;
+        this.y = canvasHeight - this.height - 70;
         this.towers = [];
         this.padding = 20;
         this.paddingX = 40;
@@ -83,18 +83,6 @@ export class TowerPanel {
         ctx.restore();
     }
 
-    drawTitle() {
-        const ctx = this.ctx;
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = '24px Arial';
-        ctx.textAlign = 'center';
-
-        const titleX = this.x + this.width / 2;
-        const titleY = this.y + 40;
-
-        ctx.fillText('Покупка башен', titleX, titleY);
-    }
-
     drawTowers() {
         const ctx = this.ctx;
 
@@ -109,7 +97,7 @@ export class TowerPanel {
             ctx.save();
             ctx.globalAlpha = canBuild ? 1 : 0.4;
 
-            tower.draw(
+            tower.drawIcon(
                 ctx,
                 tower.panelPosition.x,
                 tower.panelPosition.y,
@@ -158,7 +146,7 @@ export class TowerPanel {
     }
 
     handleClick(x, y) {
-        if (!this.visible) return null;
+        if (!this.visible) return false;
 
         this.#updatePositions();
 
@@ -185,13 +173,11 @@ export class TowerPanel {
                 y >= ty - halfHeight &&
                 y <= ty + halfHeight
             ) {
-                if (this.onTowerSelect) {
-                    this.onTowerSelect(tower.constructor);
-                }
                 return tower;
             }
         }
-        return null;
+
+        return false;
     }
 
     #updatePositions() {

@@ -208,17 +208,17 @@ export class World {
         });
     }
 
-    draw(ctx) {
-        this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx) });
+    draw(ctx, camera) {
+        this.effects.forEach(effect => { if (!effect.isOnTop) effect.draw(ctx, camera) });
         this.towerZones.forEach(zone => {
             if (zone.occupied && zone.tower) {
-                zone.tower.draw(ctx);
+                zone.tower.draw(ctx, camera);
             }
         });
-        this.bases.forEach(base => base.draw(ctx));
-        this.enemies.forEach(enemy => enemy.draw(ctx));
-        this.projectiles.forEach(projectile => projectile.draw(ctx));
-        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx) });
+        this.bases.forEach(base => base.draw(ctx, camera));
+        this.enemies.forEach(enemy => enemy.draw(ctx, camera));
+        this.projectiles.forEach(projectile => projectile.draw(ctx, camera));
+        this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx, camera) });
 
     }
 
