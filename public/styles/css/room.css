@@ -75,7 +75,7 @@ body {
 
 .player-slot {
     font-size: 20px;
-    color: #bfa76f;
+    color: #4e3c11;
     font-weight: bold;
     margin-right: 8px;
     min-width: 24px;
@@ -89,13 +89,25 @@ body {
     filter: drop-shadow(0 1px 2px #0006);
 }
 
-.player-name {
-    font-size: 20px;
-    color: #5a3e00;
-    font-weight: bold;
-    letter-spacing: 1px;
-    flex: 1;
-    word-break: break-all;
+.player {
+    display: flex;
+    align-items: center;
+    background: #e6c97a;
+    border-radius: 14px;
+    padding: 14px 24px;
+    gap: 16px;
+    border: 2px dashed #dfc998;
+    min-height: 60px;
+    color: #e2c88c;
+    font-style: italic;
+    font-size: 18px;
+    opacity: 1;
+}
+
+.player .player-name {
+    color: #4e3c11;
+    font-weight: normal;
+    font-size: 18px;
 }
 
 .player-status,
@@ -110,6 +122,11 @@ body {
     text-align: center;
     box-shadow: 0 1px 4px #0002;
     border: none;
+}
+
+.player-card .ready-button,
+.player-card .player-status {
+    margin-left: auto;
 }
 
 .player-status {

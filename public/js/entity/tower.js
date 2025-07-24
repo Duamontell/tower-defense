@@ -121,7 +121,7 @@ export class Tower {
                     attackEventData.slowness = this.slowness;
                 }
 
-                publishToMercure('http://localhost:8000/game', attackEventData);
+                //publishToMercure('http://localhost:8000/game', attackEventData);
             }
         }
 

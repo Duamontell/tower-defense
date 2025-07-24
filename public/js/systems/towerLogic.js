@@ -81,7 +81,16 @@ function handleUpgradePanelClick(x, y, upgradePanel, world) {
         if (user.balance >= currentCost) {
             selectedTowerInstance.applyUpgrade(upgradeIndex);
             user.changeBalance(-currentCost);
-            console.log(`Улучшение "${upgrade.name}" применено к башне ${selectedTowerInstance.name}`);
+            if (gameMode === "multiplayer") {
+                const eventData = {
+                    type: 'upgradeTower',
+                    userId: currentUserId,
+                    towerId: selectedTowerInstance.id,
+                    upgradeIndex: upgradeIndex,
+                    newLevel: (selectedTowerInstance.upgradeLevels[upgradeIndex] || 0)
+                };
+                publishToMercure('http://localhost:8000/game', eventData);
+            }
         } else {
             console.log('Недостаточно средств для улучшения');
         }
