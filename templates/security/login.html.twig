@@ -10,7 +10,14 @@
 {% block body %}
 	<div class="login-container">
 		<h1>Вход в аккаунт</h1>
-
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                {# Есть разные типы сообщений: success, error, warning #}
+                <div class="flash-{{ label }}">
+                    {{ message|raw }}
+                </div>
+            {% endfor %}
+        {% endfor %}
 		<form method="post" class="login-form">
 			{% if error %}
 				<div class="alert-message">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
