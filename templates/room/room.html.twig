@@ -1,65 +1,69 @@
 {% extends 'base.html.twig' %}
 {% block title %}
-	Комната
+    Комната
 {% endblock %}
 
 {% block javascripts %}
-	<script>
-		window.roomId = {{ room.id }};
-window.mercureUrl = '{{ mercureUrl }}';
-window.currentUserId = {{ userId }}
-	</script>
-	<script defer src="/js/room/room.js"></script>
+    <script>
+        window.roomId = {{ room.id }};
+        window.mercureUrl = '{{ mercureUrl }}';
+        window.currentUserId = {{ userId }}
+    </script>
+    <script defer src="/js/room/room.js"></script>
 {% endblock %}
 
 {% block stylesheets %}
-	<link rel="stylesheet" href="/styles/css/room.css">
+    <link rel="stylesheet" href="/styles/css/room.css">
 {% endblock %}
 
 {% block body %}
-	<body>
-		<div class="room-container">
-			<div class="room-header">
-				<h1>Комната
-					<span class="room-id">#{{ room.id }}</span>
-				</h1>
-			</div>
-			<div class="room-content" id="players-list">
-				{% for slot in 1..4 %}
-					{% set p = null %}
-					{% for player in players %}
-						{% if player.slot == slot %}
-							{% set p = player %}
-						{% endif %}
-					{% endfor %}
-					{% if p %}
-						<div class="player-card {{ p.isReady ? 'ready' : '' }}{% if p.player.id == userId %} my-card{% endif %}" id="player-{{ p.player.id }}">
-							<span class="player-slot">{{ p.slot }}:</span>
-							<img src="../styles/images/shield.png" alt="shield" class="player-shield">
-							<span class="player-name">{{ p.player.email }}</span>
-							{% if p.player.id == userId %}
-								<button class="ready-button my-button" data-player-id="{{ p.player.id }}" data-ready="{{ p.isReady ? '1' : '0' }}">
-									{{ p.isReady ? 'Готов' : 'Не готов' }}
-								</button>
-							{% else %}
-								<button class="ready-button" id="player-status-{{ p.player.id }}" data-ready="{{ p.isReady ? '1' : '0' }}" disabled>
-									{{ p.isReady ? 'Готов' : 'Не готов' }}
-								</button>
-							{% endif %}
-						</div>
-					{% else %}
-						<div class="player" id="empty-slot-{{ slot }}">
-							<span class="player-slot">{{ slot }}:</span>
-							<span class="player-name">Не занято</span>
-						</div>
-					{% endif %}
-				{% endfor %}
-			</div>
-			<div id="start-countdown" style="display:none; text-align:center; margin-top:20px;">
+    <body>
+    <div class="room-container">
+        <div class="room-header">
+            <h1>Комната
+                <span class="room-id">#{{ room.id }}</span>
+            </h1>
+        </div>
+        <div class="room-content" id="players-list">
+            {% for slot in 1..4 %}
+                {% set p = null %}
+                {% for player in players %}
+                    {% if player.slot == slot %}
+                        {% set p = player %}
+                    {% endif %}
+                {% endfor %}
+                {% if p %}
+                    <div
+                        class="player-card {{ p.isReady ? 'ready' : '' }}{% if p.player.id == userId %} my-card{% endif %}"
+                        id="player-{{ p.player.id }}">
+                        <span class="player-slot">{{ p.slot }}:</span>
+                        <img src="../styles/images/shield.png" alt="shield" class="player-shield">
+                        <span class="player-name">{{ p.player.name }}</span>
+                        {% if p.player.id == userId %}
+                            <button class="ready-button my-button" data-player-id="{{ p.player.id }}"
+                                    data-ready="{{ p.isReady ? '1' : '0' }}">
+                                {{ p.isReady ? 'Готов' : 'Не готов' }}
+                            </button>
+                        {% else %}
+                            <button class="ready-button" id="player-status-{{ p.player.id }}"
+                                    data-ready="{{ p.isReady ? '1' : '0' }}" disabled>
+                                {{ p.isReady ? 'Готов' : 'Не готов' }}
+                            </button>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="player" id="empty-slot-{{ slot }}">
+                        <span class="player-slot">{{ slot }}:</span>
+                        <span class="player-name">Не занято</span>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div id="start-countdown" style="display:none; text-align:center; margin-top:20px;">
 				<span class="countdown-text">Игра начнётся через
 					<span id="count">5</span>
 					секунд...</span>
-			</div>
-		</div>
-	</body>
+        </div>
+    </div>
+    </body>
 {% endblock %}

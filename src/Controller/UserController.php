@@ -36,14 +36,18 @@ class UserController extends AbstractController
         }
 
         $userInfo = $request->request->all();
-        $user = $this->userService->saveUser($userInfo);
+        try {
+            $user = $this->userService->saveUser($userInfo);
+            $securityUser = new SecurityUser($user);
 
-        $securityUser = new SecurityUser($user);
-
-        return $this->userAuthenticatorService->authenticateUser(
-            $securityUser,
-            $this->userAuthenticator,
-            $request
-        );
+            return $this->userAuthenticatorService->authenticateUser(
+                $securityUser,
+                $this->userAuthenticator,
+                $request
+            );
+        } catch (\RuntimeException $e) {
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('registration_page');
+        }
     }
 }

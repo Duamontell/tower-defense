@@ -126,7 +126,7 @@ function gameLoop(timestamp = 0) {
         gameMessage = "Вы победили!";
         world.gameOver = true;
     }
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 

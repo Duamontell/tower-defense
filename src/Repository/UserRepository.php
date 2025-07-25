@@ -27,6 +27,11 @@ class UserRepository extends ServiceEntityRepository
         return $this->getEntityManager()->getRepository(User::class)->find($id);
     }
 
+    public function findByName(string $name): ?User
+    {
+        return $this->getEntityManager()->getRepository(User::class)->findOneBy(['name' => $name]);
+    }
+
     public function findByEmail(string $email): ?User
     {
         return $this->getEntityManager()->getRepository(User::class)->findOneBy(array('email' => $email));

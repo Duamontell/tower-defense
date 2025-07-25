@@ -8,10 +8,12 @@
 >
     <entity name="App\Entity\User" table="user">
         <indexes>
+            <index name="name_idx" columns="name"/>
             <index name="email_idx" columns="email"/>
         </indexes>
 
         <unique-constraints>
+            <unique-constraint name="name_idx" columns="name"/>
             <unique-constraint name="email_idx" columns="email"/>
         </unique-constraints>
 
@@ -20,6 +22,7 @@
             <generator strategy="IDENTITY"/>
         </id>
 
+        <field name="name" column="name" type="string" length="255" nullable="false"/>
         <field name="email" column="email" type="string" length="255" nullable="false"/>
         <field name="password" column="password" type="string" length="255" nullable="false"/>
     </entity>
