@@ -194,12 +194,12 @@
         "baseId": 2,
         "health": 150,
         "position": {
-            "x": 1197,
-            "y": 750
+            "x": 2441,
+            "y": 199
         },
-        "width": 100,
-        "height": 100,
-        "imageSrc": "/images/base/Base.webp"
+        "width": 750,
+        "height": 500,
+        "imageSrc": "/images/base/empty.png"
     },
     "towerZones": [
         {

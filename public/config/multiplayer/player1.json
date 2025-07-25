@@ -230,11 +230,11 @@
         "baseId": 1,
         "health": 150,
         "position": {
-            "x": 100,
-            "y": 450
+            "x": 122,
+            "y": 128
         },
-        "width": 300,
-        "height": 300,
+        "width": 750,
+        "height": 400,
         "imageSrc": "/images/base/Base.webp"
     },
     "towerZones": [
