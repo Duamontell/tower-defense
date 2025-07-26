@@ -1,41 +1,41 @@
 export class EnemiesPanel {
-    constructor(ctx, canvasWidth, canvasHeight, balance, cfg) {
+    constructor(ctx, nativeHeight, nativeWidth, balance, cfg) {
         this.ctx = ctx;
-        this.width = 1000;
-        this.height = 350;
-        this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height;
-        this.baseOwnerId = null;     
+        this.width = nativeWidth * 0.5;
+        this.height = nativeHeight * 0.28;
+        this.x = (nativeWidth - this.width) / 2;
+        this.y = nativeHeight - this.height - nativeHeight * 0.03;
         this.enemies = [];
         this.balance = balance;
         this.visible = false;
-        this.closeSize = 40;
-        this.closePadding = 10;
+        this.closeSize = this.height * 0.16;
+        this.closePadding = this.height * 0.06;
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
         this.cfg = cfg;
-        this.iconX = 1450;
-        this.iconY = 10;
-        this.iconH = 50;
-        this.iconW = 50;
-        this.padding = 5;
+        this.iconW = this.width * 0.07;
+        this.iconH = this.iconW;
+        this.padding = this.width * 0.012;
+        this.iconX = nativeWidth - this.iconW - this.width * 0.03;
+        this.iconY = nativeHeight - this.iconH - this.height * 0.07;
+
+        this.enemyNames = {};
         this.#initialize(cfg);
+
+        if (!this.imgCoin) {
+            this.imgCoin = new Image();
+            this.imgCoin.src = '/images/assets/balance.svg';
+        }
     }
 
     #initialize(cfg) {
-        this.interval = 100;
-        this.eX = this.x + this.interval;
-        this.eY = this.y + 85;
-        this.eH = 100;
-        this.eW = 100;
+        this.enemies = [];
         cfg.forEach(enemy => {
             let icon = new Image();
             icon.src = enemy.icon;
             enemy.icon = icon;
-            this.enemies.push(enemy);   
+            this.enemies.push(enemy);
         });
-        this.imgCoin = new Image;
-        this.imgCoin.src = '/images/assets/balance.svg';
     }
 
     show() {
@@ -48,22 +48,10 @@ export class EnemiesPanel {
 
     draw() {
         if (!this.visible) return;
-        
-        this.show()
         this.drawBackground();
         this.drawTitle();
         this.#drawCloseButton();
         this.drawEnemies();
-    }
-
-        drawTitle() {
-        const ctx = this.ctx;
-        ctx.save();
-        ctx.font = "bold 28px MedievalSharp, serif";
-        ctx.fillStyle = "#7a5c1b";
-        ctx.textAlign = "center";
-        ctx.fillText("Призвать дополнительную волну", this.x + this.width / 2, this.y + 36);
-        ctx.restore();
     }
 
     drawBackground() {
@@ -73,95 +61,116 @@ export class EnemiesPanel {
         ctx.globalAlpha = 0.18;
         ctx.fillStyle = "#000";
         ctx.filter = "blur(6px)";
-        ctx.fillRect(this.x + 6, this.y + 6, this.width, this.height);
+        ctx.fillRect(this.x + this.width * 0.007, this.y + this.height * 0.015, this.width, this.height);
         ctx.filter = "none";
         ctx.globalAlpha = 1;
 
-        ctx.globalAlpha = 0.98;
         ctx.fillStyle = "#fffbe6";
         ctx.strokeStyle = "#bfa76f";
-        ctx.lineWidth = 4;
+        ctx.lineWidth = this.width * 0.005;
         ctx.beginPath();
-        ctx.roundRect(this.x, this.y, this.width, this.height, 24);
+        ctx.roundRect(this.x, this.y, this.width, this.height, this.height * 0.1);
         ctx.fill();
         ctx.stroke();
         ctx.globalAlpha = 1;
         ctx.restore();
     }
 
+    drawTitle() {
+        const ctx = this.ctx;
+        ctx.save();
+        ctx.font = `bold ${this.height * 0.1}px MedievalSharp, serif`;
+        ctx.fillStyle = "#7a5c1b";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText("Выберите волну врагов", this.x + this.width / 2, this.y + this.height * 0.07);
+        ctx.restore();
+    }
+
     drawEnemies() {
         const ctx = this.ctx;
+        const cardW = this.width * 0.22;
+        const cardH = this.height * 0.62;
+        const iconW = cardW * 0.35;
+        const iconH = iconW;
+        const gap = this.width * 0.02;
+        const totalWidth = this.enemies.length * cardW + (this.enemies.length - 1) * gap;
+        const startX = this.x + (this.width - totalWidth) / 2;
+        const y = this.y + this.height * 0.28;
 
-        let x = this.eX;
-        let y = this.eY;
-
-        for (const enemy of this.enemies) {
+        for (let i = 0; i < this.enemies.length; i++) {
+            const enemy = this.enemies[i];
             const canBuy = this.balance() >= enemy.price;
-            ctx.save();
-            ctx.globalAlpha = canBuy ? 1 : 0.4;
 
+            const x = startX + i * (cardW + gap);
+
+            ctx.save();
+            ctx.globalAlpha = canBuy ? 1 : 0.45;
 
             ctx.fillStyle = "#fffbe6";
             ctx.strokeStyle = "#bfa76f";
-            ctx.lineWidth = 2;
+            ctx.lineWidth = this.width * 0.003;
             ctx.beginPath();
-            ctx.roundRect(x - 25, y - 28, this.eW + 50, this.eH + 110, 16);
+            ctx.roundRect(x, y, cardW, cardH, this.height * 0.08);
             ctx.fill();
             ctx.stroke();
 
-            ctx.drawImage(enemy.icon, x, y, this.eW, this.eH);
+            ctx.drawImage(enemy.icon, x + (cardW - iconW) / 2, y + this.height * 0.09, iconW, iconH);
 
-
-            ctx.font = 'bold 18px Arial';
+            ctx.font = `bold ${this.height * 0.07}px Arial`;
             ctx.fillStyle = canBuy ? "#3a2a00" : "#888";
             ctx.textAlign = 'center';
-            ctx.fillText(enemy.name, x + this.eW / 2, y + this.eH + 28);
+            ctx.textBaseline = 'top';
+            ctx.fillText(enemy.name, x + cardW / 2, y + iconH + this.height * 0.14);
 
-            ctx.font = '16px Arial';
+            ctx.font = `${this.height * 0.07}px Arial`;
             ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
             const priceText = enemy.price.toString();
-            const coinSize = 18;
-            const priceY = y + this.eH + 60;
-            const priceX = x + this.eW / 2 + 10;
+            const coinSize = this.height * 0.08;
+            const priceY = y + cardH - this.height * 0.09;
+            const priceX = x + cardW / 2 + coinSize * 0.5;
 
             if (this.imgCoin.complete) {
-                ctx.drawImage(this.imgCoin, priceX - coinSize - 12, priceY - coinSize / 2, coinSize, coinSize);
+                ctx.drawImage(this.imgCoin, priceX - coinSize - this.height * 0.04, priceY - coinSize / 2, coinSize, coinSize);
             }
             ctx.fillStyle = canBuy ? "#3a2a00" : "#bbb";
-            ctx.fillText(priceText, priceX + 8, priceY + 1);
+            ctx.fillText(priceText, priceX + this.height * 0.03, priceY + 1);
 
             ctx.restore();
-
-            x += this.eW + this.interval;
         }
-    } 
-
-    isClickedOnIcon(x, y) {
-        return x >= this.iconX && x <= this.iconX + this.iconW + 2 * this.padding && y >= this.iconY && y <= this.iconY + this.iconH + 2 * this.padding;
     }
 
     handleClick(x, y) {
         if (!this.visible) return null;
 
-        if (
-            x >= this.closeX - this.closeSize / 2 &&
-            x <= this.closeX + this.closeSize / 2 &&
-            y >= this.closeY - this.closeSize / 2 &&
-            y <= this.closeY + this.closeSize / 2
-        ) {
+        const cx = this.closeX;
+        const cy = this.closeY;
+        const r = this.closeSize / 2;
+        if (Math.hypot(x - cx, y - cy) <= r) {
             this.hide();
             return 'close';
         }
 
-        if (x > this.eX && y > this.eY) {
-            x -= this.eX;
-            y -= this.eY;
-            let sector = Math.trunc(x / (this.eW + this.interval));
-            x -= (this.eW + this.interval) * sector;
-            let enemy = this.enemies[sector];
-            if (x <= this.eW && y <= this.eH && enemy && enemy.price <= this.balance()) return enemy;
+        const cardW = this.width * 0.22;
+        const cardH = this.height * 0.62;
+        const gap = this.width * 0.02;
+        const totalWidth = this.enemies.length * cardW + (this.enemies.length - 1) * gap;
+        const startX = this.x + (this.width - totalWidth) / 2;
+        const y0 = this.y + this.height * 0.21;
+
+        for (let i = 0; i < this.enemies.length; i++) {
+            const x0 = startX + i * (cardW + gap);
+            if (
+                x >= x0 && x <= x0 + cardW &&
+                y >= y0 && y <= y0 + cardH
+            ) {
+                const enemy = this.enemies[i];
+                if (this.balance() >= enemy.price) {
+                    return enemy;
+                }
+            }
         }
-      
         return null;
     }
 
@@ -178,10 +187,10 @@ export class EnemiesPanel {
         ctx.fillStyle = "#e6c97a";
         ctx.fill();
         ctx.strokeStyle = "#bfa76f";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = this.width * 0.004;
         ctx.stroke();
 
-        ctx.font = "bold 28px Arial";
+        ctx.font = `bold ${size * 0.8}px Arial`;
         ctx.fillStyle = "#5a3e00";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -189,4 +198,3 @@ export class EnemiesPanel {
         ctx.restore();
     }
 }
-

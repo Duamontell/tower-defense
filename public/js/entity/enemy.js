@@ -24,35 +24,50 @@ export class Enemy {
         this.normalAnimationSpeed = animationSpeed;
     }
 
-    draw(ctx) {
+    draw(ctx, camera) {
         ctx.save();
-        ctx.translate(this.position.x, this.position.y);
+        const { x, y } = camera.worldToScreen(this.position.x, this.position.y);
+        ctx.translate(x, y);
+
         if (this.direction === "right") {
             ctx.scale(-1, 1);
         }
-        ctx.drawImage(this.images[Math.round(this.frame)], -this.width / 2, -this.height, this.width, this.height);
+
+        const width = this.width * camera.scale;
+        const height = this.height * camera.scale;
+
+        ctx.drawImage(
+            this.images[Math.round(this.frame)],
+            -width / 2,
+            -height,
+            width,
+            height
+        );
         ctx.restore();
 
-        this.drawHealthBar(ctx);
+        this.drawHealthBar(ctx, camera);
     }
 
-    drawHealthBar(ctx) {
+    drawHealthBar(ctx, camera) {
         const healthPercent = this.health / this.maxHealth;
-        const barWidth = 100;
-        const barHeight = 7;
-        const x = this.position.x - barWidth / 2;
-        const y = this.position.y - this.height - barHeight - 2;
+        const barWidth = 100 * camera.scale;
+        const barHeight = 7 * camera.scale;
+
+        const { x, y } = camera.worldToScreen(this.position.x, this.position.y);
+
+        const barX = x - barWidth / 2;
+        const barY = y - this.height * camera.scale - barHeight - 2 * camera.scale;
 
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-        ctx.fillRect(x, y, barWidth, barHeight);
+        ctx.fillRect(barX, barY, barWidth, barHeight);
 
         const hue = 120 * healthPercent; // 120° = зеленый, 0° = красный
-        ctx.fillStyle = `hsl(${hue}, 100%, 50%)`; // Hue (оттенок), Saturation (насыщенность) и Lightness (светлота)
-        ctx.fillRect(x, y, barWidth * healthPercent, barHeight);
+        ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+        ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
 
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 1;
-        ctx.strokeRect(x, y, barWidth, barHeight);
+        ctx.strokeRect(barX, barY, barWidth, barHeight);
     }
 
     update(delta) {
