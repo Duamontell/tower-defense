@@ -1,4 +1,5 @@
 import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
+import { FreezeTowerEffect } from './effect.js';
 import { User } from "./user.js";
 import { uuidv4 } from '../systems/generateId.js'
 
@@ -177,10 +178,22 @@ export class World {
             return true
         });
 
-        this.effects.forEach(effect => effect.update(delta, this.enemies));
+        this.effects.forEach(effect => {
+            if (effect instanceof FreezeTowerEffect) {
+                effect.update(delta);
+                if (effect.timeLeft <= 0) {
+                    effect.tower.isFrozen = false;
+                }
+            } else {
+                effect.update(delta, this.enemies);
+            }
+        });
         this.effects = this.effects.filter(effect => {
+            if (effect instanceof FreezeTowerEffect) {
+                return effect.timeLeft > 0;
+            }
             return effect.duration > 0;
-        })
+        });
 
         this.enemies.forEach(enemy => enemy.update(delta));
         this.enemies = this.enemies.filter(enemy => {
@@ -253,7 +266,6 @@ export class World {
         zone.occupied = true;
         zone.tower = tower;
 
-        //return true;
         return { tower, zone };
     }
 }

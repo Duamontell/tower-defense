@@ -1,6 +1,6 @@
 import { ArchersTower, MagicianTower, PoisonousTower, FreezingTower, MortarTower } from '../entity/tower.js';
 import { ArrowProjectile, FireballProjectile, PoisonProjectile, FreezeProjectile, ExplosiveProjectile } from '../entity/projectile.js';
-import { ExplosionEffect, FreezeEffect, PoisonEffect } from '../entity/effect.js';
+import { ExplosionEffect, FreezeEffect, PoisonEffect, FreezeTowerEffect } from '../entity/effect.js';
 import { publishToMercure } from './mercureHandler.js';
 
 export class GameEventHandler {
@@ -204,7 +204,7 @@ export class GameEventHandler {
     }
 
     #handleAddEffect(data) {
-        const { userId, effectType, x, y, damage, slowness, cfg } = data;
+        const { userId, effectType, x, y, damage, slowness, cfg, towerId, duration } = data;
 
         if (userId === window.currentUserId) return;
 
@@ -219,6 +219,15 @@ export class GameEventHandler {
             case 'Bomb':
                 effect = new ExplosionEffect({ x, y }, damage, cfg);
                 break;
+            case 'FreezeTower': {
+                const towerObj = this.world.towers.find(t => t.id === towerId);
+                if (!towerObj) {
+                    return;
+                }
+                towerObj.isFrozen = true;
+                effect = new FreezeTowerEffect(towerObj, duration);
+                break;
+            }
             default:
                 console.warn('Неизвестный тип эффекта:', effectType);
                 return;
