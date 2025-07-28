@@ -14,6 +14,8 @@ import { GameEventHandler } from '../mercure/gameEventHandler.js';
 import { EnemiesPanel } from '../entity/enemiesPanel.js';
 import { onClick, onMouseMove } from "../ui/messageHandlers.js";
 import { changeRoomStatus } from "../api/roomApi.js";
+import { Camera } from '../entity/camera.js';
+import { initCameraControls } from '../systems/cameraController.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -43,6 +45,8 @@ let nativeHeight = canvas.height;
 let gameMessage = "";
 let linkText = "Вернуться в меню?"
 let inLink = false;
+let camera;
+let scaleToFit;
 
 function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
@@ -53,10 +57,7 @@ function getClickCoordinates(canvas, event) {
 
 canvas.addEventListener('click', (event) => {
     const { x, y } = getClickCoordinates(canvas, event);
-    const user = world.players.get(currentUserId);
-    if (user && user.isLose) return;
-    if (world.gameOver) return;
-    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel);
+    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel, camera);
 });
 
 async function loadUsersConfig() {
@@ -134,11 +135,12 @@ function gameLoop(timestamp = 0) {
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    const topLeft = camera.worldToScreen(0, 0);
+    ctx.drawImage(background, topLeft.x, topLeft.y, nativeWidth * camera.scale, nativeHeight * camera.scale);
 
-    drawTowerZones(ctx, world.towerZones, world.players);
+    drawTowerZones(ctx, world.towerZones, world.players, camera);
     world.update(delta);
-    world.draw(ctx);
+    world.draw(ctx, camera);
     towerPanel.draw();
     upgradePanel.draw();
     effectPanel.draw();
@@ -148,7 +150,7 @@ function gameLoop(timestamp = 0) {
     const currentBase = world.bases.find(b => b.ownerId === currentUserId);
     const baseHealth = currentBase.health;
     const baseMaxHealth = currentBase.maxHealth;
-    drawPlayerStatsPanel(ctx, currentUser.balance, baseHealth, baseMaxHealth);
+    drawPlayerStatsPanel(ctx, currentUser.balance, baseHealth, baseMaxHealth, nativeHeight, nativeWidth);
 
     if (gameMode === "singleplayer") {
         const user = world.players.get(currentUserId);
@@ -203,6 +205,10 @@ function drawGameMessage(ctx, message) {
     ctx.restore();
 }
 
+function clampCamera() {
+    camera.clampToBounds(nativeWidth, nativeHeight);
+}
+
 function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     if (gameMode === "singleplayer") {
         lvlCfg = users[0].userCfg;
@@ -212,6 +218,23 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     nativeHeight = lvlCfg.map.height;
     canvas.width = lvlCfg.map.width;
     canvas.height = lvlCfg.map.height;
+    scaleToFit = Math.min(
+        canvas.width / nativeWidth,
+        canvas.height / nativeHeight
+    );
+
+    if (gameMode === "multiplayer") {
+        camera = new Camera(0, 0, canvas.width, canvas.height, scaleToFit);
+    } else {
+        camera = {
+            x: 0,
+            y: 0,
+            scale: 1,
+            worldToScreen: (x, y) => ({ x, y }),
+            screenToWorld: (x, y) => ({ x, y }),
+            clampToBounds: () => { },
+        };
+    }
 
     world = new World(lvlCfg, enemiesCfg, towersCfg);
     users.forEach((user) => {
@@ -226,11 +249,11 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
 
     const getUserBalance = () => world.players.get(currentUserId).balance;
 
-    towerPanel = new TowerPanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
-    upgradePanel = new UpgradePanel(ctx, canvas.width, canvas.height, getUserBalance, () => { });
-    effectPanel = new EffectPanel(ctx, canvas.width, canvas.height, getUserBalance, effectShopCfg);
-    enemiesPanel = new EnemiesPanel(ctx, canvas.width, canvas.height, getUserBalance, enemiesShopCfg);
-    rulesPanel = new RulesPanel(ctx, canvas.width, canvas.height);
+    towerPanel = new TowerPanel(ctx, nativeHeight, nativeWidth, getUserBalance, () => { },);
+    upgradePanel = new UpgradePanel(ctx, nativeHeight, nativeWidth, getUserBalance, () => { });
+    effectPanel = new EffectPanel(ctx, nativeHeight, nativeWidth, getUserBalance, effectShopCfg);
+    enemiesPanel = new EnemiesPanel(ctx, nativeHeight, nativeWidth, getUserBalance, enemiesShopCfg);
+    rulesPanel = new RulesPanel(ctx, nativeHeight, nativeWidth);
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
     const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
@@ -257,9 +280,13 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
         };
         window.mercureEventSource = subscribeToMercure(topic, mercureCallback);
     }
+    camera.clampToBounds(nativeWidth, nativeHeight);
 }
 
 const users = await loadUsersConfig();
 initializeLevel(users, lvlCfg, enemiesCfg, towersCfg);
 initCanvasResizer(canvas, nativeWidth, nativeHeight);
+if (gameMode === "multiplayer") {
+    initCameraControls(canvas, camera, clampCamera, getClickCoordinates, scaleToFit, 2);
+}
 gameLoop();

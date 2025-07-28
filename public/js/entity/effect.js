@@ -41,15 +41,24 @@ export class Effect {
         }
     }
 
-    draw(ctx) {       
+    draw(ctx, camera) {
         ctx.save();
-        ctx.translate(this.position.x, this.position.y);
-        ctx.drawImage(this.images[Math.round(this.frame)], -this.width / 2, -this.height / 2, this.width, this.height);
+        const { x, y } = camera.worldToScreen(this.position.x, this.position.y);
+        ctx.translate(x, y);
+        const width = this.width * camera.scale;
+        const height = this.height * camera.scale;
+        ctx.drawImage(
+            this.images[Math.round(this.frame)],
+            -width / 2,
+            -height / 2,
+            width,
+            height
+        );
         ctx.restore();
     }
 }
 
-export class PoisonEffect extends Effect{
+export class PoisonEffect extends Effect {
     constructor(position, damage, cfg) {
         super(position, cfg.radius, cfg.duration, cfg.animationSpeed, cfg.cooldown);
         cfg.imageSrcs.forEach(imageSrc => {
@@ -63,7 +72,7 @@ export class PoisonEffect extends Effect{
     effect(enemies) {
         enemies.forEach(enemy => {
             enemy.receiveDamage(this.damage);
-            console.log(`${enemy.name} recieved ${this.damage}, health left: ${enemy.health}`);   
+            console.log(`${enemy.name} recieved ${this.damage}, health left: ${enemy.health}`);
         });
     }
 }
@@ -119,13 +128,22 @@ export class ExplosionEffect extends Effect {
         }
 
         this.frame = this.frame + delta * this.animationSpeed;
-        if (this.frame > this.images.length - 1)  this.duration = 0
+        if (this.frame > this.images.length - 1) this.duration = 0
     }
 
-    draw(ctx) {       
+    draw(ctx, camera) {
         ctx.save();
-        ctx.translate(this.position.x, this.position.y);
-        ctx.drawImage(this.images[Math.round(this.frame)], -this.width / 2, -this.height, this.width, this.height);
+        const { x, y } = camera.worldToScreen(this.position.x, this.position.y);
+        const width = this.width * camera.scale;
+        const height = this.height * camera.scale;
+        ctx.translate(x, y);
+        ctx.drawImage(
+            this.images[Math.round(this.frame)],
+            -width / 2,
+            -height,
+            width,
+            height
+        );
         ctx.restore();
     }
 }
