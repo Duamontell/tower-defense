@@ -12,6 +12,8 @@ import { initCanvasResizer } from "../ui/gameView.js";
 import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
 import { GameEventHandler } from '../mercure/gameEventHandler.js';
 import { EnemiesPanel } from '../entity/enemiesPanel.js';
+import { onClick, onMouseMove } from "../ui/messageHandlers.js";
+import { changeRoomStatus } from "../api/roomApi.js";
 import { Camera } from '../entity/camera.js';
 import { initCameraControls } from '../systems/cameraController.js';
 
@@ -23,6 +25,7 @@ const gameMode = window.gameMode || 'singleplayer';
 const currentLevel = window.currentLevel || 1;
 const currentUserId = Number(window.currentUserId);
 const roomConfig = window.roomConfig || {};
+const roomId = window.roomId;
 
 let waveDuration = 0;
 let lastTimestamp = 0;
@@ -40,6 +43,8 @@ let rulesPanel;
 let nativeWidth = canvas.width;
 let nativeHeight = canvas.height;
 let gameMessage = "";
+let linkText = "Вернуться в меню?"
+let inLink = false;
 let camera;
 let scaleToFit;
 
@@ -106,6 +111,7 @@ function gameLoop(timestamp = 0) {
     if (world.gameOver) {
         if (window.mercureEventSource) {
             unsubscribe(window.mercureEventSource);
+            changeRoomStatus(roomId, 2);
         }
         return;
     }
@@ -185,6 +191,17 @@ function drawGameMessage(ctx, message) {
     ctx.font = "48px Arial";
     ctx.textAlign = "center";
     ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+
+    let linkX = canvas.width / 2;
+    let linkY = canvas.height / 2 + 100;
+    ctx.fillText(linkText, linkX, linkY);
+    let linkWidth = ctx.measureText(linkText).width;
+
+    canvas.addEventListener('mousemove', e => {
+        inLink = onMouseMove(e, canvas, linkWidth, linkX, linkY);
+        canvas.style.cursor = inLink ? 'pointer' : 'default';
+    }, false);
+    canvas.addEventListener("click", (e) => onClick(inLink), false)
     ctx.restore();
 }
 
@@ -252,6 +269,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
 
     if (gameMode === "multiplayer") {
         const gameEventHandler = new GameEventHandler(world);
+        // TODO: Сделать топик уникальным для каждой комнаты!
         const topic = 'http://localhost:8000/game'
         const mercureCallback = (data) => {
             try {

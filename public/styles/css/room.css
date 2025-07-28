@@ -99,13 +99,13 @@ body {
     border: 2px dashed #dfc998;
     min-height: 60px;
     color: #e2c88c;
-    font-style: italic;
     font-size: 18px;
     opacity: 1;
 }
 
 .player .player-name {
     color: #4e3c11;
+    font-style: italic;
     font-weight: normal;
     font-size: 18px;
 }
@@ -181,6 +181,11 @@ body {
 .ready-button.my-button:focus-visible {
     transform: translateY(-2px) scale(1.12);
 }
+
+.leave-room-button {
+    margin-left: auto;
+}
+
 
 #start-countdown {
     display: none;
