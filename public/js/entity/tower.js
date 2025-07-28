@@ -1,11 +1,10 @@
-import { towerUpgrades } from './upgrades.js';
+import { towerUpgradesByType } from './upgrades.js';
 import { ArrowProjectile, ExplosiveProjectile, FireballProjectile, FreezeProjectile, PoisonProjectile, Projectile } from './projectile.js';
-import { ExplosionEffect, FreezeEffect, PoisonEffect } from './effect.js';
 import { uuidv4 } from '../systems/generateId.js'
 import { publishToMercure } from '../mercure/mercureHandler.js';
 
 export class Tower {
-    constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, attackCfg) {
+    constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, attackCfg, upgrades) {
         this.id = uuidv4();
         this.ownerId = null;
         this.name = name;
@@ -22,11 +21,10 @@ export class Tower {
             this.isLoaded = true;
         };
         this.image.src = imageSrc;
-        this.upgrades = towerUpgrades.map(upgrade => ({
+        this.upgrades = upgrades.map(upgrade => ({
             ...upgrade,
             applyLevels: upgrade.applyLevels.map(fn => () => fn(this)),
         }));
-
         this.upgradeLevels = new Array(this.upgrades.length).fill(0);
         this.attackCfg = attackCfg;
     }
@@ -152,7 +150,7 @@ export class ArchersTower extends Tower {
     constructor(position, cfg) {
         super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
             cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.cooldown,
-            cfg.archer.imageSrc, cfg.archer.attack);
+            cfg.archer.imageSrc, cfg.archer.attack, towerUpgradesByType.Archers);
     }
 }
 
@@ -161,7 +159,7 @@ export class MagicianTower extends Tower {
     constructor(position, cfg) {
         super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
             cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.cooldown,
-            cfg.magician.imageSrc, cfg.magician.attack);
+            cfg.magician.imageSrc, cfg.magician.attack, towerUpgradesByType.Magicians);
     }
 }
 
@@ -170,7 +168,7 @@ export class PoisonousTower extends Tower {
     constructor(position, cfg) {
         super(cfg.poison.name, cfg.poison.damage, cfg.poison.radius,
             cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.cooldown,
-            cfg.poison.imageSrc, cfg.poison.attack, cfg.poison.effect);
+            cfg.poison.imageSrc, cfg.poison.attack, towerUpgradesByType.Poisonous);
     }
 }
 
@@ -179,7 +177,7 @@ export class FreezingTower extends Tower {
     constructor(position, cfg) {
         super(cfg.freezing.name, cfg.freezing.damage, cfg.freezing.radius,
             cfg.freezing.price, position, cfg.freezing.width, cfg.freezing.height, cfg.freezing.cooldown,
-            cfg.freezing.imageSrc, cfg.freezing.attack);
+            cfg.freezing.imageSrc, cfg.freezing.attack, towerUpgradesByType.Freezing);
         this.slowness = cfg.freezing.slowness;
     }
 }
@@ -189,6 +187,6 @@ export class MortarTower extends Tower {
     constructor(position, cfg) {
         super(cfg.exp.name, cfg.exp.damage, cfg.exp.radius,
             cfg.exp.price, position, cfg.exp.width, cfg.exp.height, cfg.exp.cooldown,
-            cfg.exp.imageSrc, cfg.exp.attack);
+            cfg.exp.imageSrc, cfg.exp.attack, towerUpgradesByType.Mortar);
     }
 }
