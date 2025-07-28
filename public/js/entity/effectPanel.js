@@ -1,25 +1,26 @@
 export class EffectPanel {
-    constructor(ctx, canvasWidth, canvasHeight, balance, cfg) {
+    constructor(ctx, nativeHeight, nativeWidth, balance, cfg) {
         this.ctx = ctx;
-        this.width = 900;
-        this.height = 270;
-        this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height - 50;
+        this.width = nativeWidth * 0.5;
+        this.height = nativeHeight * 0.28;
+        this.x = (nativeWidth - this.width) / 2;
+        this.y = nativeHeight - this.height - nativeHeight * 0.03;
         this.effects = [];
         this.balance = balance;
         this.visible = false;
-        this.closeSize = 36;
-        this.closePadding = 16;
+        this.closeSize = this.height * 0.16;
+        this.closePadding = this.height * 0.06;
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
         this.cfg = cfg;
         this.isWaitingForCoords = false;
         this.choosenEffect = null;
-        this.iconX = 1450;
-        this.iconY = 10;
-        this.iconH = 50;
-        this.iconW = 50;
-        this.padding = 5;
+        this.iconW = this.width * 0.07;
+        this.iconH = this.iconW;
+        this.padding = this.width * 0.012;
+        this.iconX = nativeWidth - this.iconW - this.width * 0.04;
+        this.iconY = nativeHeight - this.iconH - this.height * 0.1;
+
         this.effectNames = {
             'Freezing': 'Замедление',
             'Poison': 'Яд',
@@ -34,13 +35,6 @@ export class EffectPanel {
     }
 
     #initialize(cfg) {
-        this.eX = 350;
-        this.eY = 750;
-        this.eH = 100;
-        this.eW = 100;
-        this.interval = 150;
-        this.textPadding = 30;
-        this.lineH = 20;
         this.effects = [];
         cfg.forEach(effect => {
             let icon = new Image();
@@ -74,7 +68,6 @@ export class EffectPanel {
         this.drawBackground();
         this.drawTitle();
         this.#drawCloseButton();
-        this.drawTitle();
         this.drawEffects();
     }
 
@@ -85,16 +78,15 @@ export class EffectPanel {
         ctx.globalAlpha = 0.18;
         ctx.fillStyle = "#000";
         ctx.filter = "blur(6px)";
-        ctx.fillRect(this.x + 6, this.y + 6, this.width, this.height);
+        ctx.fillRect(this.x + this.width * 0.007, this.y + this.height * 0.015, this.width, this.height);
         ctx.filter = "none";
         ctx.globalAlpha = 1;
 
-        ctx.globalAlpha = 0.98;
         ctx.fillStyle = "#fffbe6";
         ctx.strokeStyle = "#bfa76f";
-        ctx.lineWidth = 4;
+        ctx.lineWidth = this.width * 0.005;
         ctx.beginPath();
-        ctx.roundRect(this.x, this.y, this.width, this.height, 24);
+        ctx.roundRect(this.x, this.y, this.width, this.height, this.height * 0.1);
         ctx.fill();
         ctx.stroke();
         ctx.globalAlpha = 1;
@@ -104,19 +96,24 @@ export class EffectPanel {
     drawTitle() {
         const ctx = this.ctx;
         ctx.save();
-        ctx.font = "bold 28px MedievalSharp, serif";
+        ctx.font = `bold ${this.height * 0.1}px MedievalSharp, serif`;
         ctx.fillStyle = "#7a5c1b";
         ctx.textAlign = "center";
-        ctx.fillText("Выберите эффект", this.x + this.width / 2, this.y + 36);
+        ctx.textBaseline = "top";
+        ctx.fillText("Выберите эффект", this.x + this.width / 2, this.y + this.height * 0.07);
         ctx.restore();
     }
 
     drawEffects() {
         const ctx = this.ctx;
-        const iconW = 70, iconH = 70;
-        const gap = 65;
-        const startX = this.x + 70;
-        const y = this.y + 90;
+        const cardW = this.width * 0.22;
+        const cardH = this.height * 0.62;
+        const iconW = cardW * 0.35;
+        const iconH = iconW;
+        const gap = this.width * 0.02;
+        const totalWidth = this.effects.length * cardW + (this.effects.length - 1) * gap;
+        const startX = this.x + (this.width - totalWidth) / 2;
+        const y = this.y + this.height * 0.28;
 
         for (let i = 0; i < this.effects.length; i++) {
             const effect = this.effects[i];
@@ -124,46 +121,52 @@ export class EffectPanel {
             const effectName = this.effectNames[effectTypeName] || effectTypeName;
             const canBuy = this.balance() >= effect.price;
 
-            const x = startX + i * (iconW + gap);
+            const x = startX + i * (cardW + gap);
 
             ctx.save();
             ctx.globalAlpha = canBuy ? 1 : 0.45;
 
             ctx.fillStyle = "#fffbe6";
             ctx.strokeStyle = "#bfa76f";
-            ctx.lineWidth = 2;
+            ctx.lineWidth = this.width * 0.003;
             ctx.beginPath();
-            ctx.roundRect(x - 25, y - 28, iconW + 50, iconH + 110, 16);
+            ctx.roundRect(x, y, cardW, cardH, this.height * 0.08);
             ctx.fill();
             ctx.stroke();
 
-            ctx.drawImage(effect.icon, x, y, iconW, iconH);
+            ctx.drawImage(effect.icon, x + (cardW - iconW) / 2, y + this.height * 0.09, iconW, iconH);
 
-            ctx.font = 'bold 18px Arial';
+            ctx.font = `bold ${this.height * 0.07}px Arial`;
             ctx.fillStyle = canBuy ? "#3a2a00" : "#888";
             ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(effectName, x + cardW / 2, y + iconH + this.height * 0.14);
 
-            ctx.fillText(effectName, x + iconW / 2, y + iconH + 28);
-
-            ctx.font = '16px Arial';
+            ctx.font = `${this.height * 0.07}px Arial`;
             ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
             const priceText = effect.price.toString();
-            const coinSize = 18;
-            const priceY = y + iconH + 60;
-            const priceX = x + iconW / 2 + 10;
+            const coinSize = this.height * 0.08;
+            const priceY = y + cardH - this.height * 0.09;
+            const priceX = x + cardW / 2 + coinSize * 0.5;
 
             if (this.imgCoin.complete) {
-                ctx.drawImage(this.imgCoin, priceX - coinSize - 12, priceY - coinSize / 2, coinSize, coinSize);
+                ctx.drawImage(this.imgCoin, priceX - coinSize - this.height * 0.04, priceY - coinSize / 2, coinSize, coinSize);
             }
             ctx.fillStyle = canBuy ? "#3a2a00" : "#bbb";
-            ctx.fillText(priceText, priceX + 8, priceY + 1);
+            ctx.fillText(priceText, priceX + this.height * 0.03, priceY + 1);
 
             ctx.restore();
         }
     }
 
     isClickedOnIcon(x, y) {
-        return x >= this.iconX && x <= this.iconX + this.iconW + 2 * this.padding && y >= this.iconY && y <= this.iconY + this.iconH + 2 * this.padding
+        return (
+            x >= this.iconX &&
+            x <= this.iconX + this.iconW + 2 * this.padding &&
+            y >= this.iconY &&
+            y <= this.iconY + this.iconH + 2 * this.padding
+        );
     }
 
     handleClick(x, y) {
@@ -177,15 +180,18 @@ export class EffectPanel {
             return 'close';
         }
 
-        const iconW = 70, iconH = 70, gap = 60;
-        const startX = this.x + 70;
-        const y0 = this.y + 90;
+        const cardW = this.width * 0.22;
+        const cardH = this.height * 0.62;
+        const gap = this.width * 0.04;
+        const totalWidth = this.effects.length * cardW + (this.effects.length - 1) * gap;
+        const startX = this.x + (this.width - totalWidth) / 2;
+        const y0 = this.y + this.height * 0.21;
 
         for (let i = 0; i < this.effects.length; i++) {
-            const x0 = startX + i * (iconW + gap);
+            const x0 = startX + i * (cardW + gap);
             if (
-                x >= x0 - 10 && x <= x0 + iconW + 10 &&
-                y >= y0 - 10 && y <= y0 + iconH + 80
+                x >= x0 && x <= x0 + cardW &&
+                y >= y0 && y <= y0 + cardH
             ) {
                 const effect = this.effects[i];
                 if (this.balance() >= effect.price) {
@@ -209,10 +215,10 @@ export class EffectPanel {
         ctx.fillStyle = "#e6c97a";
         ctx.fill();
         ctx.strokeStyle = "#bfa76f";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = this.width * 0.004;
         ctx.stroke();
 
-        ctx.font = "bold 28px Arial";
+        ctx.font = `bold ${size * 0.8}px Arial`;
         ctx.fillStyle = "#5a3e00";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -222,17 +228,44 @@ export class EffectPanel {
 
     #drawShopIcon() {
         const ctx = this.ctx;
-        ctx.fillStyle = '#00000080';
-        ctx.fillRect(this.iconX, this.iconY, this.iconW + 2 * this.padding, this.iconH + 2 * this.padding);
+        const r = this.iconW / 2 + 10;
+        const cx = this.iconX + r;
+        const cy = this.iconY + r;
 
-        ctx.drawImage(this.icon, this.iconX + this.padding, this.iconY + this.padding, this.iconW - this.padding, this.iconH - this.padding);
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+        ctx.fillStyle = "rgba(255,251,230,0.98)";
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = "#bfa76f";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        if (this.icon.complete) {
+            ctx.drawImage(
+                this.icon,
+                cx - this.iconW / 2,
+                cy - this.iconH / 2,
+                this.iconW,
+                this.iconH
+            );
+        }
+
+        ctx.restore();
     }
 
     $drawCancelChoosing() {
         const ctx = this.ctx;
-        ctx.fillStyle = '#00000080';
+        ctx.save();
+        ctx.globalAlpha = 0.7;
+        ctx.fillStyle = '#fffbe6';
         ctx.fillRect(this.iconX, this.iconY, this.iconW + 2 * this.padding, this.iconH + 2 * this.padding);
+        ctx.globalAlpha = 1;
         ctx.drawImage(this.choosenEffect.icon, this.iconX + this.padding, this.iconY + this.padding, this.iconW, this.iconH);
         ctx.drawImage(this.cross, this.iconX + this.padding, this.iconY + this.padding, this.iconW, this.iconH);
+        ctx.restore();
     }
 }

@@ -1,21 +1,21 @@
 export class TowerPanel {
-    constructor(ctx, canvasWidth, canvasHeight, balance, onTowerSelect) {
+    constructor(ctx, nativeHeight, nativeWidth, balance, onTowerSelect) {
         this.ctx = ctx;
-        this.width = 1000;
-        this.height = 300;
-        this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height - 50;
+        this.width = nativeWidth * 0.72;
+        this.height = nativeHeight * 0.36;
+        this.x = (nativeWidth - this.width) / 2;
+        this.y = nativeHeight - this.height - nativeHeight * 0.025;
         this.towers = [];
-        this.padding = 20;
-        this.paddingX = 40;
-        this.paddingY = 25;
-        this.iconWidth = 150;
-        this.iconHeight = 150;
+        this.padding = this.width * 0.02;
+        this.paddingX = this.width * 0.05;
+        this.paddingY = this.height * 0.17;
+        this.iconWidth = this.width * 0.14;
+        this.iconHeight = this.height * 0.5;
         this.balance = balance;
         this.onTowerSelect = onTowerSelect;
         this.visible = false;
-        this.closeSize = 36;
-        this.closePadding = 16;
+        this.closeSize = this.height * 0.11;
+        this.closePadding = this.height * 0.04;
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
         this.towerNames = {
@@ -47,7 +47,6 @@ export class TowerPanel {
         this.#drawCloseButton();
         this.drawTitle();
         this.drawTowers();
-        this.drawTitle();
     }
 
     drawBackground() {
@@ -57,16 +56,15 @@ export class TowerPanel {
         ctx.globalAlpha = 0.18;
         ctx.fillStyle = "#000";
         ctx.filter = "blur(6px)";
-        ctx.fillRect(this.x + 6, this.y + 6, this.width, this.height);
+        ctx.fillRect(this.x + this.width * 0.006, this.y + this.height * 0.01, this.width, this.height);
         ctx.filter = "none";
         ctx.globalAlpha = 1;
 
-        ctx.globalAlpha = 0.98;
         ctx.fillStyle = "#fffbe6";
         ctx.strokeStyle = "#bfa76f";
         ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.roundRect(this.x, this.y, this.width, this.height, 24);
+        ctx.roundRect(this.x, this.y, this.width, this.height, this.height * 0.07);
         ctx.fill();
         ctx.stroke();
         ctx.globalAlpha = 1;
@@ -76,10 +74,11 @@ export class TowerPanel {
     drawTitle() {
         const ctx = this.ctx;
         ctx.save();
-        ctx.font = "bold 28px MedievalSharp, serif";
+        ctx.font = `bold ${this.height * 0.08}px MedievalSharp, serif`;
         ctx.fillStyle = "#7a5c1b";
         ctx.textAlign = "center";
-        ctx.fillText("Выберите башню", this.x + this.width / 2, this.y + 36);
+        ctx.textBaseline = "top";
+        ctx.fillText("Выберите башню", this.x + this.width / 2, this.y + this.height * 0.07);
         ctx.restore();
     }
 
@@ -97,7 +96,7 @@ export class TowerPanel {
             ctx.save();
             ctx.globalAlpha = canBuild ? 1 : 0.4;
 
-            tower.draw(
+            tower.drawIcon(
                 ctx,
                 tower.panelPosition.x,
                 tower.panelPosition.y,
@@ -111,35 +110,35 @@ export class TowerPanel {
             const towerClassName = tower.constructor.name;
             const towerName = this.towerNames[towerClassName];
 
-            ctx.font = '18px Arial';
+            ctx.font = `bold ${this.height * 0.05}px Arial`;
             ctx.textBaseline = 'bottom';
             ctx.fillText(
                 towerName,
                 tower.panelPosition.x,
-                tower.panelPosition.y + this.iconHeight / 2 + 20
+                tower.panelPosition.y + this.iconHeight / 2 + this.height * 0.06
             );
 
-            ctx.font = '16px Arial';
+            ctx.font = `bold ${this.height * 0.05}px Arial`;
             ctx.textBaseline = 'middle';
 
             const priceText = tower.price.toString();
 
             const priceTextWidth = ctx.measureText(priceText).width;
-            const coinSize = 18;
-            const totalWidth = coinSize + 10 + priceTextWidth;
+            const coinSize = this.height * 0.06;
+            const totalWidth = coinSize + this.width * 0.01 + priceTextWidth;
 
             const priceX = tower.panelPosition.x - totalWidth / 2;
-            const priceY = tower.panelPosition.y + this.iconHeight / 2 + 44;
+            const priceY = tower.panelPosition.y + this.iconHeight / 2 + this.height * 0.15;
 
             if (imgCoin.complete) {
-                ctx.drawImage(imgCoin, priceX, priceY - coinSize / 2 - 3, coinSize, coinSize);
+                ctx.drawImage(imgCoin, priceX, priceY - coinSize / 2 - this.height * 0.01, coinSize, coinSize);
             } else {
                 imgCoin.onload = () => {
-                    ctx.drawImage(imgCoin, priceX, priceY - coinSize / 2 - 3, coinSize, coinSize);
+                    ctx.drawImage(imgCoin, priceX, priceY - coinSize / 2 - this.height * 0.01, coinSize, coinSize);
                 };
             }
 
-            ctx.fillText(priceText, priceX + coinSize + 10, priceY);
+            ctx.fillText(priceText, priceX + coinSize + this.width * 0.015, priceY);
 
             ctx.restore();
         }
@@ -190,7 +189,7 @@ export class TowerPanel {
         const paddingY = this.paddingY || this.padding;
 
         let x = this.x + paddingX + iconW / 2;
-        let y = this.y + iconH / 2 + paddingY + 30;
+        let y = this.y + iconH / 2 + paddingY + this.height * 0.08;
         const rowHeight = iconH + paddingY;
 
         for (const tower of this.towers) {
@@ -223,7 +222,7 @@ export class TowerPanel {
         ctx.lineWidth = 3;
         ctx.stroke();
 
-        ctx.font = "bold 28px Arial";
+        ctx.font = `bold ${size * 0.8}px Arial`;
         ctx.fillStyle = "#5a3e00";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";

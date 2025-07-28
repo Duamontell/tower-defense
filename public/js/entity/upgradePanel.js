@@ -1,20 +1,20 @@
 export class UpgradePanel {
-    constructor(ctx, canvasWidth, canvasHeight, getBalance, onBuyUpgrade) {
+    constructor(ctx, nativeHeight, nativeWidth, getBalance, onBuyUpgrade) {
         this.ctx = ctx;
-        this.width = 900;
-        this.height = 350;
-        this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height - 50
+        this.width = nativeWidth * 0.72;
+        this.height = nativeHeight * 0.36;
+        this.x = (nativeWidth - this.width) / 2;
+        this.y = nativeHeight - this.height - nativeHeight * 0.025;
         this.visible = false;
-        this.closeSize = 36;
-        this.closePadding = 16;
+        this.closeSize = this.height * 0.11;
+        this.closePadding = this.height * 0.04;
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
         this.getBalance = getBalance;
         this.onBuyUpgrade = onBuyUpgrade;
         this.upgradePositions = [];
         this.selectedTower = null;
-        this.iconSize = 40;
+        this.iconSize = this.height * 0.1;
         this.towerNames = {
             'Archers': 'башни лучников',
             'Magicians': 'магической башни',
@@ -60,16 +60,16 @@ export class UpgradePanel {
         ctx.globalAlpha = 0.18;
         ctx.fillStyle = "#000";
         ctx.filter = "blur(6px)";
-        ctx.fillRect(this.x + 6, this.y + 6, this.width, this.height);
+        ctx.fillRect(this.x + this.width * 0.006, this.y + this.height * 0.02, this.width, this.height);
         ctx.filter = "none";
         ctx.globalAlpha = 1;
 
         ctx.globalAlpha = 0.98;
         ctx.fillStyle = "#fffbe6";
         ctx.strokeStyle = "#bfa76f";
-        ctx.lineWidth = 4;
+        ctx.lineWidth = this.height * 0.011;
         ctx.beginPath();
-        ctx.roundRect(this.x, this.y, this.width, this.height, 24);
+        ctx.roundRect(this.x, this.y, this.width, this.height, this.height * 0.08);
         ctx.fill();
         ctx.stroke();
         ctx.globalAlpha = 1;
@@ -79,12 +79,12 @@ export class UpgradePanel {
     drawTitle() {
         const ctx = this.ctx;
         ctx.save();
-        ctx.font = "bold 26px MedievalSharp, serif";
+        ctx.font = `bold ${this.height * 0.07}px MedievalSharp, serif`;
         ctx.fillStyle = "#7a5c1b";
         ctx.textAlign = "center";
 
         const titleX = this.x + this.width / 2;
-        const titleY = this.y + 44;
+        const titleY = this.y + this.height * 0.11;
 
         const towerClassName = this.selectedTower.name;
         const towerName = this.towerNames[towerClassName] || towerClassName;
@@ -111,56 +111,66 @@ export class UpgradePanel {
             ctx.globalAlpha = hasMoney ? 1 : 0.45;
             ctx.fillStyle = "#fffbe6";
             ctx.strokeStyle = "#bfa76f";
-            ctx.lineWidth = 2;
+            ctx.lineWidth = this.height * 0.006;
             ctx.beginPath();
-            ctx.roundRect(pos.x, pos.y, pos.width, pos.height, 12);
+            ctx.roundRect(pos.x, pos.y, pos.width, pos.height, this.height * 0.04);
             ctx.fill();
             ctx.stroke();
             ctx.globalAlpha = 1;
             ctx.restore();
 
-            const paddingLeft = 15;
+            const paddingLeft = pos.height * 0.23;
             if (!upgrade.icon) {
                 upgrade.icon = new Image();
                 upgrade.icon.src = upgrade.iconSrc;
             }
             ctx.save();
             ctx.globalAlpha = hasMoney ? 1 : 0.5;
-            ctx.drawImage(upgrade.icon, pos.x + paddingLeft, pos.y + (pos.height - iconSize) / 2, iconSize, iconSize);
+            ctx.drawImage(
+                upgrade.icon,
+                pos.x + paddingLeft,
+                pos.y + (pos.height - iconSize) / 2,
+                iconSize,
+                iconSize
+            );
             ctx.restore();
 
-            ctx.font = 'bold 18px Arial';
+            ctx.font = `bold ${pos.height * 0.26}px Arial`;
             ctx.fillStyle = hasMoney ? "#3a2a00" : "#888";
             ctx.textAlign = 'left';
-            const nameX = pos.x + paddingLeft + iconSize + 15;
-            const nameY = pos.y + 28;
+            const nameX = pos.x + paddingLeft + iconSize + pos.height * 0.23;
+            const nameY = pos.y + pos.height * 0.43;
             ctx.fillText(upgrade.name, nameX, nameY);
 
-            ctx.font = '16px Arial';
+            ctx.font = `${pos.height * 0.26}px Arial`;
             ctx.fillStyle = hasMoney ? "#4a3a1a" : "#aaa";
             let description = level < maxLevel ? upgrade.descriptions[level] : 'Максимальный уровень улучшения';
-            ctx.fillText(description, nameX, nameY + 22);
+            ctx.fillText(description, nameX, nameY + pos.height * 0.36);
 
-            ctx.font = "14px Arial";
+            ctx.font = `${pos.height * 0.26}px Arial`;
             ctx.fillStyle = hasMoney ? "#7a5c1b" : "#bbb";
             ctx.textAlign = "center";
-            ctx.fillText(`уровень: ${level} / ${maxLevel}`, pos.x + pos.width / 2, pos.y + pos.height / 2);
+            ctx.fillText(
+                `уровень: ${level} / ${maxLevel}`,
+                pos.x + pos.width / 2,
+                pos.y + pos.height * 0.72
+            );
 
-            ctx.font = '16px Arial';
+            ctx.font = `${pos.height * 0.26}px Arial`;
             ctx.textAlign = 'right';
             let costText = level < maxLevel ? `${upgrade.costs[level]}` : '';
-            const coinSize = 18;
-            const costX = pos.x + pos.width - 28;
-            const costY = pos.y + pos.height / 2 - 8;
+            const coinSize = pos.height * 0.28;
+            const costX = pos.x + pos.width - pos.height * 0.5;
+            const costY = pos.y + pos.height * 0.7 - coinSize / 2;
 
             if (level < maxLevel && this.imgCoin.complete) {
                 ctx.save();
                 ctx.globalAlpha = hasMoney ? 1 : 0.5;
-                ctx.drawImage(this.imgCoin, costX - coinSize - 22, costY - 3, coinSize, coinSize);
+                ctx.drawImage(this.imgCoin, costX - coinSize - pos.height * 0.45, costY + 3, coinSize, coinSize);
                 ctx.restore();
             }
             ctx.fillStyle = hasMoney ? "#3a2a00" : "#bbb";
-            ctx.fillText(costText, costX, costY + coinSize / 2);
+            ctx.fillText(costText, costX, costY + coinSize * 0.8);
         });
     }
 
@@ -198,10 +208,10 @@ export class UpgradePanel {
     #updatePositions() {
         this.upgradePositions = [];
 
-        const paddingSide = 24;
-        const gap = 18;
-        const buttonHeight = 65;
-        const headerHeight = 80;
+        const paddingSide = this.width * 0.03;
+        const gap = this.height * 0.045;
+        const buttonHeight = this.height * 0.18;
+        const headerHeight = this.height * 0.22;
 
         if (!this.selectedTower) return;
 
@@ -237,10 +247,10 @@ export class UpgradePanel {
         ctx.fillStyle = "#e6c97a";
         ctx.fill();
         ctx.strokeStyle = "#bfa76f";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = this.height * 0.009;
         ctx.stroke();
 
-        ctx.font = "bold 28px Arial";
+        ctx.font = `bold ${size * 0.8}px Arial`;
         ctx.fillStyle = "#5a3e00";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";

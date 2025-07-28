@@ -1,4 +1,4 @@
-export function drawPlayerStatsPanel(ctx, balance, currentHealth, maxHealth) {
+export function drawPlayerStatsPanel(ctx, balance, currentHealth, maxHealth, mapWidth, mapHeight) {
     if (!drawPlayerStatsPanel.imgCoin) {
         drawPlayerStatsPanel.imgCoin = new Image();
         drawPlayerStatsPanel.imgCoin.src = '/images/assets/balance.svg';
@@ -8,11 +8,11 @@ export function drawPlayerStatsPanel(ctx, balance, currentHealth, maxHealth) {
     ctx.fillStyle = '#FFFFFF';
     ctx.font = '20px Arial';
     ctx.textAlign = 'left';
-    const panelWidth = 180;
-    const panelHeight = 74;
-    const panelX = 10;
-    const panelY = 10;
-    const radius = 14;
+    const panelWidth = mapWidth * 0.25;
+    const panelHeight = mapHeight * 0.07;
+    const panelX = mapWidth * 0.010;
+    const panelY = mapHeight * 0.010;
+    const radius = panelHeight * 0.2;
 
     ctx.save();
     ctx.globalAlpha = 0.18;
@@ -33,24 +33,24 @@ export function drawPlayerStatsPanel(ctx, balance, currentHealth, maxHealth) {
     ctx.globalAlpha = 1;
     ctx.restore();
 
-    const iconSize = 22;
-    const coinX = panelX + 18;
-    const coinY = panelY + 28;
+    const iconSize = panelHeight * 0.25;
+    const coinX = panelX + panelWidth * 0.1;
+    const coinY = panelY + panelHeight * 0.35;
 
     if (imgCoin.complete) {
         ctx.drawImage(imgCoin, coinX, coinY - iconSize / 2, iconSize, iconSize);
     }
 
     ctx.fillStyle = '#3a2a00';
-    ctx.font = 'bold 20px Arial';
+    ctx.font = `bold ${panelHeight * 0.22}px Arial`;
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
     ctx.fillText(balance, coinX + iconSize + 10, coinY);
 
-    const healthBarWidth = panelWidth - 36;
-    const healthBarHeight = 14;
-    const healthBarX = panelX + 18;
-    const healthBarY = panelY + 48;
+    const healthBarWidth = panelWidth * 0.8;
+    const healthBarHeight = panelHeight * 0.2;
+    const healthBarX = panelX + panelWidth * 0.1;
+    const healthBarY = panelY + panelHeight * 0.65;
 
     ctx.save();
     ctx.fillStyle = '#e6c97a';
@@ -68,7 +68,7 @@ export function drawPlayerStatsPanel(ctx, balance, currentHealth, maxHealth) {
     ctx.strokeRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
     ctx.restore();
 
-    ctx.font = 'bold 15px Arial';
+    ctx.font = `bold ${panelHeight * 0.15}px Arial`;
     ctx.fillStyle = '#7a5c1b';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
