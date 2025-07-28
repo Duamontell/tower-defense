@@ -1,3 +1,5 @@
+import { sendReady, checkAllReady, changeRoomStatus, leaveRoom } from "../api/roomApi.js";
+
 const roomId = window.roomId;
 const mercureUrl = window.mercureUrl;
 const currentUserId = window.currentUserId;
@@ -9,21 +11,6 @@ function updateButton(button, isReady) {
     button.classList.toggle('ready', isReady);
 }
 
-function sendReady(roomId, playerId, ready) {
-    fetch(`/room/${roomId}/ready`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({playerId, ready})
-    }).catch(console.error);
-}
-
-function checkAllReady() {
-    fetch(`/room/${roomId}/all-ready`, {
-        credentials: 'include',
-    }).catch(console.error);
-}
-
 document.querySelectorAll('.ready-button').forEach(button => {
     button.addEventListener('click', () => {
         const playerId = button.dataset.playerId;
@@ -31,6 +18,11 @@ document.querySelectorAll('.ready-button').forEach(button => {
         sendReady(roomId, playerId, makeReady);
     });
 });
+
+document.querySelector('.leave-room-button').addEventListener('click', () => {
+    leaveRoom(roomId);
+
+})
 
 function startCountdown() {
     const countdownEl = document.getElementById('start-countdown');
@@ -44,23 +36,13 @@ function startCountdown() {
         countEl.textContent = counter;
         if (counter <= 0) {
             clearInterval(countdownTimer);
-            fetch(`/room/${roomId}/change-status`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({roomId, status: 1})
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Ошибка при обновления статуса');
-                    }
-                    return response.json();
-                })
-                .then(() => {
+            changeRoomStatus(roomId, 1)
+                .then(data => {
+                    console.log('Статус комнаты обновлён', data);
                     window.location.href = `/game/room/${roomId}`;
                 })
-                .catch(error => {
-                    console.error('Error updating room status:', error);
+                .catch(err => {
+                    console.error('Не удалось сменить статус комнаты', err);
                 });
         }
     }, 1000);
@@ -74,6 +56,10 @@ function cancelCountdown() {
     }
 }
 
+function allUnReady() {
+    sendReady(roomId, currentUserId, false);
+}
+
 const url = new URL(mercureUrl);
 url.searchParams.append('topic', `/room/${roomId}`);
 const es = new EventSource(url);
@@ -84,6 +70,13 @@ es.onmessage = ({data}) => {
     switch (msg.action) {
         case 'playerJoin':
             handlePlayerJoin(msg);
+            cancelCountdown();
+            break;
+        case 'leaveRoom':
+            handlePlayerLeave(msg);
+            // TODO: Протестировать!
+            allUnReady();
+            cancelCountdown();
             break;
         case 'ready':
             handleReady(msg);
@@ -110,7 +103,6 @@ function handleReady(msg) {
         }
     }
 
-    // if (msg.player.id === currentUserId) {
     const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
     if (button) {
         updateButton(button, msg.player.isReady);
@@ -118,18 +110,6 @@ function handleReady(msg) {
             checkAllReady();
         }
     }
-
-    // const button = document.querySelector(`#player-${msg.player.id} .ready-button`);
-    // if (button) {
-    //     updateButton(button, msg.player.isReady);
-    //     checkAllReady();
-    // }
-    // } else {
-    // const playerStatus = document.getElementById(`player-status-${msg.player.id}`);
-    // if (playerStatus) {
-    //     playerStatus.textContent = msg.player.isReady ? 'Готов' : 'Не готов';
-    // }
-    // }
 }
 
 function handlePlayerJoin(msg) {
@@ -145,37 +125,27 @@ function handlePlayerJoin(msg) {
             <img src="../styles/images/shield.png" alt="shield" class="player-shield">
             <span class="player-name">${name}</span>
             ${
-                id === window.currentUserId
+            id === window.currentUserId
                 ? `<button class="ready-button my-button" data-player-id="${id}" data-ready="${isReady ? '1' : '0'}">${isReady ? 'Готов' : 'Не готов'}</button>`
                 : `<button class="ready-button" id="player-status-${id}" data-ready="${isReady ? '1' : '0'}" disabled>${isReady ? 'Готов' : 'Не готов'}</button>`
-            }
+        }
         `;
         playerSlot.replaceWith(div);
     }
 }
 
-// немного переписала функцию (выше)
-// function handlePlayerJoin(msg) {
-//     const {id, name, slot, isReady} = msg;
-
-//     if (id === currentUserId) {
-//         return;
-//     }
-
-//     const playerSlot = document.getElementById(`empty-slot-${slot}`);
-//     if (playerSlot) {
-//         playerSlot.id = `player-slot-${slot}`;
-
-//         const playerName = playerSlot.querySelector(".player-name");
-//         if (playerName) {
-//             playerName.textContent = name;
-//         }
-
-//         const playerStatus = document.createElement('span');
-//         console.log(playerStatus);
-//         playerStatus.textContent = isReady ? "Готов" : "Не готов";
-//         playerStatus.classList.add('player-status');
-//         playerStatus.id = `player-status-${id}`;
-//         playerSlot.appendChild(playerStatus);
-//     }
-// }
+function handlePlayerLeave(msg) {
+    const {playerId} = msg;
+    const playerSlot = document.getElementById(`player-${playerId}`);
+    if (playerSlot) {
+        const div = document.createElement('div');
+        div.className = 'player';
+        const slotNumber = playerSlot.children[0].textContent.substring(0,1);
+        div.id = `empty-slot-${slotNumber}`;
+        div.innerHTML = `
+            <span class="player-slot">${slotNumber}</span>
+            <span class="player-name">Не занято</span>
+        `;
+        playerSlot.replaceWith(div);
+    }
+}

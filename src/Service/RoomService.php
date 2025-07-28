@@ -48,11 +48,6 @@ class RoomService
             return $roomPlayer->getId();
         }
 
-        // TODO: Возможно стоит убрать, так как есть проверка свободных слотов дальше
-//        if ($this->roomPlayerRepository->countPlayersInRoom($room) === 4) {
-//            throw new \RuntimeException("Комната с ID {$roomId} полная!");
-//        }
-
         $freeSlots = $this->getFreeSlots($room);
         if (empty($freeSlots)) {
             throw new \RuntimeException("Комната с номером {$roomId} полная!");
@@ -65,7 +60,7 @@ class RoomService
             data: [
                 'action' => 'playerJoin',
                 'id' => $player->getId(),
-                'name' => $player->getEmail(),
+                'name' => $player->getName(),
                 'slot' => $roomPlayer->getSlot(),
                 'isReady' => $roomPlayer->isReady(),
             ],
@@ -138,21 +133,37 @@ class RoomService
     public function leaveRoom(User $user, int $roomId): void
     {
         if (!$room = $this->roomRepository->find($roomId)) {
-            throw new \RuntimeException("Комнаты под номером $roomId, из которой вы хотите выйти, не существует");
+            throw new \RuntimeException("Комнаты под номером $roomId не существует");
         }
 
         $players = $room->getPlayers();
+        $playerFinded = false;
         foreach ($players as $player) {
             if ($player->getPlayer() === $user) {
                 $this->roomPlayerRepository->delete($player);
                 $players->removeElement($player);
+                $playerFinded = true;
+
+                if ($players->count() === 0) {
+                    $this->deleteRoom($room->getId());
+                } else {
+                    $this->mercureService->publish(
+                        topic: "/room/{$roomId}",
+                        data: [
+                            'action' => 'leaveRoom',
+                            'playerId' => $user->getId(),
+                        ]
+                    );
+                }
+
                 break;
             }
         }
 
-        if ($players->count() === 0) {
-            $this->deleteRoom($room->getId());
+        if (!$playerFinded) {
+            throw new \RuntimeException("{$user->getName()} нет в этой комнате!");
         }
+
     }
 
     public function deleteRoom(int $roomId): void

@@ -25,7 +25,7 @@
         "health": 200,
         "damage": 30,
         "reward": 30,
-        "speed": 100,
+        "speed": 300,
         "animationSpeed": 4,
         "imageSrcs": [
             "/images/zombie/walk_zombie/zombie1.webp",
