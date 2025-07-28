@@ -4,7 +4,7 @@ import { uuidv4 } from '../systems/generateId.js'
 import { publishToMercure } from '../mercure/mercureHandler.js';
 
 export class Tower {
-    constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, attackCfg, upgrades) {
+    constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, imageSrcFrozen, attackCfg, upgrades) {
         this.id = uuidv4();
         this.ownerId = null;
         this.name = name;
@@ -17,9 +17,14 @@ export class Tower {
         this.cooldown = cooldown;
         this.timeUntilNextShot = 0;
         this.image = new Image;
+        this.frozenImage = new Image();
         this.image.onload = () => {
             this.isLoaded = true;
         };
+        this.frozenImage.onload = () => {
+            this.isLoaded = true;
+        };
+        this.frozenImage.src = imageSrcFrozen;
         this.image.src = imageSrc;
         this.upgrades = upgrades.map(upgrade => ({
             ...upgrade,
@@ -27,6 +32,7 @@ export class Tower {
         }));
         this.upgradeLevels = new Array(this.upgrades.length).fill(0);
         this.attackCfg = attackCfg;
+        this.isFrozen = false;
     }
 
     applyUpgrade(index) {
@@ -41,6 +47,7 @@ export class Tower {
     }
 
     update(delta, enemies, projectiles, effects) {
+        if (this.isFrozen) return;
         this.timeUntilNextShot -= delta;
 
         if (this.timeUntilNextShot <= 0) {
@@ -69,7 +76,12 @@ export class Tower {
         const drawX = screenPos.x - drawWidth / 2;
         const drawY = screenPos.y - drawHeight + drawHeight / 4;
 
-        ctx.drawImage(this.image, drawX, drawY, drawWidth, drawHeight);
+        if (this.isFrozen && this.frozenImage && this.frozenImage.complete) {
+            ctx.drawImage(this.frozenImage, drawX, drawY, drawWidth, drawHeight);
+        } else if (this.isLoaded) {
+            ctx.drawImage(this.image, drawX, drawY, drawWidth, drawHeight);
+        }
+
         ctx.restore();
     }
 
@@ -150,7 +162,7 @@ export class ArchersTower extends Tower {
     constructor(position, cfg) {
         super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
             cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.cooldown,
-            cfg.archer.imageSrc, cfg.archer.attack, towerUpgradesByType.Archers);
+            cfg.archer.imageSrc, cfg.archer.imageSrcFrozen, cfg.archer.attack, towerUpgradesByType.Archers);
     }
 }
 
@@ -159,7 +171,7 @@ export class MagicianTower extends Tower {
     constructor(position, cfg) {
         super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
             cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.cooldown,
-            cfg.magician.imageSrc, cfg.magician.attack, towerUpgradesByType.Magicians);
+            cfg.magician.imageSrc, cfg.magician.imageSrcFrozen, cfg.magician.attack, towerUpgradesByType.Magicians);
     }
 }
 
@@ -168,7 +180,7 @@ export class PoisonousTower extends Tower {
     constructor(position, cfg) {
         super(cfg.poison.name, cfg.poison.damage, cfg.poison.radius,
             cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.cooldown,
-            cfg.poison.imageSrc, cfg.poison.attack, towerUpgradesByType.Poisonous);
+            cfg.poison.imageSrc, cfg.poison.imageSrcFrozen, cfg.poison.attack, towerUpgradesByType.Poisonous);
     }
 }
 
@@ -177,7 +189,7 @@ export class FreezingTower extends Tower {
     constructor(position, cfg) {
         super(cfg.freezing.name, cfg.freezing.damage, cfg.freezing.radius,
             cfg.freezing.price, position, cfg.freezing.width, cfg.freezing.height, cfg.freezing.cooldown,
-            cfg.freezing.imageSrc, cfg.freezing.attack, towerUpgradesByType.Freezing);
+            cfg.freezing.imageSrc, cfg.freezing.imageSrcFrozen, cfg.freezing.attack, towerUpgradesByType.Freezing);
         this.slowness = cfg.freezing.slowness;
     }
 }
@@ -187,6 +199,6 @@ export class MortarTower extends Tower {
     constructor(position, cfg) {
         super(cfg.exp.name, cfg.exp.damage, cfg.exp.radius,
             cfg.exp.price, position, cfg.exp.width, cfg.exp.height, cfg.exp.cooldown,
-            cfg.exp.imageSrc, cfg.exp.attack, towerUpgradesByType.Mortar);
+            cfg.exp.imageSrc,cfg.exp.imageSrcFrozen, cfg.exp.attack, towerUpgradesByType.Mortar);
     }
 }

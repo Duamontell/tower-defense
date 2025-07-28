@@ -25,6 +25,7 @@ export class EffectPanel {
             'Freezing': 'Замедление',
             'Poison': 'Яд',
             'Bomb': 'Бомба',
+            'FreezeTower': 'Заморозка',
         };
         this.#initialize(cfg);
 
@@ -200,6 +201,15 @@ export class EffectPanel {
             }
         }
         return null;
+    }
+
+    isClickedOnCancel(x, y) {
+        return (
+            x >= this.iconX &&
+            x <= this.iconX + this.iconW + 2 * this.padding &&
+            y >= this.iconY &&
+            y <= this.iconY + this.iconH + 2 * this.padding
+        );
     }
 
     #drawCloseButton() {

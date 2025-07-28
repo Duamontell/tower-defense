@@ -91,6 +91,9 @@ let effectResponse = await fetch('../../config/entity/effectShop.json');
 if (effectResponse.ok) {
     effectShopCfg = await effectResponse.json();
 }
+const filteredEffectShopCfg = effectShopCfg.filter(
+    effect => !effect.modes || effect.modes.includes(gameMode)
+);
 
 let lvlResponse = await fetch(`../../config/multiplayer/level.json`);
 if (lvlResponse.ok) {
@@ -234,7 +237,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
 
     towerPanel = new TowerPanel(ctx, nativeHeight, nativeWidth, getUserBalance, () => { },);
     upgradePanel = new UpgradePanel(ctx, nativeHeight, nativeWidth, getUserBalance, () => { });
-    effectPanel = new EffectPanel(ctx, nativeHeight, nativeWidth, getUserBalance, effectShopCfg);
+    effectPanel = new EffectPanel(ctx, nativeHeight, nativeWidth, getUserBalance, filteredEffectShopCfg);
     enemiesPanel = new EnemiesPanel(ctx, nativeHeight, nativeWidth, getUserBalance, enemiesShopCfg);
     rulesPanel = new RulesPanel(ctx, nativeHeight, nativeWidth);
 

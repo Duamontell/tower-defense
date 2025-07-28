@@ -1,4 +1,4 @@
-import { ExplosionEffect, FreezeEffect, PoisonEffect } from '../entity/effect.js';
+import { ExplosionEffect, FreezeEffect, PoisonEffect, FreezeTowerEffect } from '../entity/effect.js';
 import { publishToMercure } from '../mercure/mercureHandler.js';
 
 let selectedZone = null;
@@ -96,6 +96,13 @@ function handleEffectPanelClick(x, y, effectPanel) {
         return;
     }
 
+    if (effectPanel.isWaitingForCoords && effectPanel.isClickedOnCancel && effectPanel.isClickedOnCancel(x, y)) {
+        effectPanel.isWaitingForCoords = false;
+        effectPanel.choosenEffect = null;
+        effectPanel.hide();
+        return;
+    }
+
     if (result) {
         effectPanel.choosenEffect = result;
         effectPanel.isWaitingForCoords = true;
@@ -135,26 +142,43 @@ function handleEffectCoords(x, y, effectPanel, world) {
                 effectType = 'Bomb';
                 effectData = { damage: choosenEffect.damage, cfg: choosenEffect.cfg };
                 break;
+            case 'FreezeTower': {
+                const zone = world.getZoneByCoordinates(x, y);
+                if (zone && zone.occupied && zone.tower) {
+                    const tower = zone.tower;
+                    if (tower.ownerId === currentUserId) {
+                        return;
+                    }
+                    if (!tower.isFrozen) {
+                        tower.isFrozen = true;
+                        effect = new FreezeTowerEffect(tower, choosenEffect.duration);
+                        effectType = 'FreezeTower';
+                        effectData = { towerId: tower.id, duration: choosenEffect.duration };
+                    }
+                }
+                break;
+            }
         }
 
-        if (effect !== undefined) world.effects.push(effect);
-        user.changeBalance(-choosenEffect.price);
+        if (effect !== undefined) {
+            world.effects.push(effect);
+            user.changeBalance(-choosenEffect.price);
 
-        if (gameMode === "multiplayer" && effectType) {
-            const eventData = {
-                type: 'addEffect',
-                userId: currentUserId,
-                effectType,
-                x, y,
-                ...effectData
-            };
-            publishToMercure('http://localhost:8000/game', eventData);
+            if (gameMode === "multiplayer" && effectType) {
+                const eventData = {
+                    type: 'addEffect',
+                    userId: currentUserId,
+                    effectType,
+                    x, y,
+                    ...effectData
+                };
+                publishToMercure('http://localhost:8000/game', eventData);
+            }
+            effectPanel.isWaitingForCoords = false;
+            effectPanel.choosenEffect = null;
+            effectPanel.hide();
         }
     }
-
-    effectPanel.isWaitingForCoords = false;
-    effectPanel.choosenEffect = null;
-    effectPanel.hide();
 }
 
 function handleEnemiesPanelClick(x, y, enemiesPanel, world) {
@@ -203,6 +227,9 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, rule
     }
 
     if (zone && zone.occupied && zone.tower) {
+        if (zone.tower.isFrozen) {
+            return;
+        }
         selectedTowerInstance = zone.tower;
         upgradePanel.show(selectedTowerInstance);
         selectedZone = null;
@@ -230,6 +257,10 @@ export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, 
     }
     if (effectPanel.visible) {
         if (effectPanel.isWaitingForCoords) {
+            if (effectPanel.isClickedOnCancel && effectPanel.isClickedOnCancel(x, y)) {
+                handleEffectPanelClick(x, y, effectPanel);
+                return true;
+            }
             const worldCoords = camera.screenToWorld(x, y);
             handleEffectCoords(worldCoords.x, worldCoords.y, effectPanel, world);
         } else {

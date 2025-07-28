@@ -90,6 +90,12 @@ export class UpgradePanel {
         const towerName = this.towerNames[towerClassName] || towerClassName;
 
         ctx.fillText(`Улучшения для ${towerName}`, titleX, titleY);
+        if (this.selectedTower.isFrozen) {
+            ctx.font = `bold ${this.height * 0.05}px Arial`;
+            ctx.fillStyle = "#1caaff";
+            ctx.fillText("Башня заморожена!", titleX, titleY + this.height * 0.09);
+        }
+
         ctx.restore();
     }
 
@@ -98,6 +104,7 @@ export class UpgradePanel {
         ctx.textBaseline = 'middle';
 
         const iconSize = this.iconSize;
+        const isFrozen = this.selectedTower.isFrozen;
 
         this.upgradePositions.forEach((pos, i) => {
             const upgrade = this.selectedTower.upgrades[i];
@@ -105,7 +112,7 @@ export class UpgradePanel {
             const maxLevel = upgrade.applyLevels.length;
 
             const isMaxedOut = level >= maxLevel;
-            const hasMoney = !isMaxedOut && this.getBalance() >= upgrade.costs[level];
+            const hasMoney = !isMaxedOut && this.getBalance() >= upgrade.costs[level] && !isFrozen;
 
             ctx.save();
             ctx.globalAlpha = hasMoney ? 1 : 0.45;
@@ -145,6 +152,9 @@ export class UpgradePanel {
             ctx.font = `${pos.height * 0.26}px Arial`;
             ctx.fillStyle = hasMoney ? "#4a3a1a" : "#aaa";
             let description = level < maxLevel ? upgrade.descriptions[level] : 'Максимальный уровень улучшения';
+            if (isFrozen) {
+                description = "Башня заморожена!";
+            }
             ctx.fillText(description, nameX, nameY + pos.height * 0.36);
 
             ctx.font = `${pos.height * 0.26}px Arial`;
@@ -176,6 +186,9 @@ export class UpgradePanel {
 
     handleClick(x, y) {
         if (!this.visible) return null;
+        if (this.selectedTower && this.selectedTower.isFrozen) {
+            return null;
+        }
 
         this.#updatePositions();
 
