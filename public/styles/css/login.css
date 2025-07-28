@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+
+body {
+    min-height: 100vh;
+    font-family: 'MedievalSharp', serif;
+    background: url("../images/background.webp");
+    background-size: 100% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+
+.login-container {
+    background: rgba(30, 25, 10, 0.65);
+    border: 3px solid #bfa76f;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px #000a, 0 0 0 6px #bfa76f33;
+    padding: 40px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 700px;
+}
+
+h1 {
+    font-size: 36px;
+    color: #ffe08a;
+    text-shadow: 0 2px 8px #000, 0 0 16px #bfa76f;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-form {
+    width: 80%;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+label {
+    color: #bfa76f;
+    font-size: 18px;
+    text-shadow: 0 1px 4px #000;
+    margin-bottom: 8px;
+}
+
+input[type="email"],
+input[type="password"] {
+    padding: 12px 15px;
+    background: rgba(230, 201, 122, 0.2);
+    border: 2px solid #bfa76f;
+    border-radius: 8px;
+    color: #ffe08a;
+    font-family: 'MedievalSharp', serif;
+    font-size: 16px;
+}
+
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
+    color: rgba(191, 167, 111, 0.6);
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #ffe08a;
+    background: rgba(230, 201, 122, 0.3);
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #bfa76f;
+}
+
+.remember-me label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.remember-me input[type="checkbox"] {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fadf96;
+    border: 2px solid #bfa76f;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+}
+
+.remember-me input[type="checkbox"]:checked {
+    background-color: #e6c97a;
+}
+
+.remember-me input[type="checkbox"]:checked::after {
+    content: '✓';
+    font-size: 14px;
+    color: #5a3e00;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.remember-me span {
+    color: #bfa76f;
+    font-size: 16px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 18px 0;
+    font-size: 18px;
+    color: #5a3e00;
+    background: #e6c97a;
+    border: none;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-family: 'MedievalSharp', serif;
+    cursor: pointer;
+    transition:
+        color 0.3s,
+        transform 0.15s,
+        box-shadow 0.2s;
+}
+
+button:hover,
+button:focus {
+    background: #fadf96;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.alert-message {
+    background: rgba(175, 54, 54, 0.6);
+    color: #ffcccc;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 2px solid #ff8888;
+    text-align: center;
+}
+
+.user-logged-message {
+    background: rgba(54, 110, 175, 0.6);
+    color: #ccddff;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 2px solid #88aaff;
+    text-align: center;
+}
+
+.user-logged-message a {
+    color: #ffe08a;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.user-logged-message a:hover {
+    color: #fadf96;
+}
+
+.register-link {
+    margin-top: 16px;
+    text-align: center;
+    color: #666;
+    font-size: 15px;
+}
+
+.register-link a {
+    color: #b3a170;
+    text-decoration: underline;
+    margin-left: 5px;
+    transition: color 0.2s;
+}
+
+.register-link a:hover {
+    color: #fadf96;
+}

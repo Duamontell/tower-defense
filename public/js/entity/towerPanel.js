@@ -2,20 +2,29 @@ export class TowerPanel {
     constructor(ctx, canvasWidth, canvasHeight, balance, onTowerSelect) {
         this.ctx = ctx;
         this.width = 1000;
-        this.height = 350;
+        this.height = 300;
         this.x = (canvasWidth - this.width) / 2;
-        this.y = canvasHeight - this.height;
+        this.y = canvasHeight - this.height - 50;
         this.towers = [];
-        this.padding = 10;
+        this.padding = 20;
+        this.paddingX = 40;
+        this.paddingY = 25;
         this.iconWidth = 150;
         this.iconHeight = 150;
         this.balance = balance;
         this.onTowerSelect = onTowerSelect;
         this.visible = false;
-        this.closeSize = 40;
-        this.closePadding = 10;
+        this.closeSize = 36;
+        this.closePadding = 16;
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
+        this.towerNames = {
+            'ArchersTower': 'Башня лучников',
+            'MagicianTower': 'Магическая башня',
+            'PoisonousTower': 'Отравляющая башня',
+            'FreezingTower': 'Замедляющая башня',
+            'MortarTower': 'Мортира',
+        };
     }
 
     addTower(tower) {
@@ -36,17 +45,52 @@ export class TowerPanel {
 
         this.drawBackground();
         this.#drawCloseButton();
+        this.drawTitle();
         this.drawTowers();
+        this.drawTitle();
     }
 
     drawBackground() {
         const ctx = this.ctx;
-        ctx.fillStyle = '#000000B3';
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.save();
+
+        ctx.globalAlpha = 0.18;
+        ctx.fillStyle = "#000";
+        ctx.filter = "blur(6px)";
+        ctx.fillRect(this.x + 6, this.y + 6, this.width, this.height);
+        ctx.filter = "none";
+        ctx.globalAlpha = 1;
+
+        ctx.globalAlpha = 0.98;
+        ctx.fillStyle = "#fffbe6";
+        ctx.strokeStyle = "#bfa76f";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.roundRect(this.x, this.y, this.width, this.height, 24);
+        ctx.fill();
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        ctx.restore();
+    }
+
+    drawTitle() {
+        const ctx = this.ctx;
+        ctx.save();
+        ctx.font = "bold 28px MedievalSharp, serif";
+        ctx.fillStyle = "#7a5c1b";
+        ctx.textAlign = "center";
+        ctx.fillText("Выберите башню", this.x + this.width / 2, this.y + 36);
+        ctx.restore();
     }
 
     drawTowers() {
         const ctx = this.ctx;
+
+        if (!this.imgCoin) {
+            this.imgCoin = new Image();
+            this.imgCoin.src = '/images/assets/balance.svg';
+        }
+        const imgCoin = this.imgCoin;
 
         for (const tower of this.towers) {
             const canBuild = this.balance() >= tower.price;
@@ -61,14 +105,41 @@ export class TowerPanel {
                 this.iconHeight
             );
 
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = '20px Arial';
+            ctx.fillStyle = '#3a2a00';
             ctx.textAlign = 'center';
+
+            const towerClassName = tower.constructor.name;
+            const towerName = this.towerNames[towerClassName];
+
+            ctx.font = '18px Arial';
+            ctx.textBaseline = 'bottom';
             ctx.fillText(
-                tower.price,
+                towerName,
                 tower.panelPosition.x,
                 tower.panelPosition.y + this.iconHeight / 2 + 20
             );
+
+            ctx.font = '16px Arial';
+            ctx.textBaseline = 'middle';
+
+            const priceText = tower.price.toString();
+
+            const priceTextWidth = ctx.measureText(priceText).width;
+            const coinSize = 18;
+            const totalWidth = coinSize + 10 + priceTextWidth;
+
+            const priceX = tower.panelPosition.x - totalWidth / 2;
+            const priceY = tower.panelPosition.y + this.iconHeight / 2 + 44;
+
+            if (imgCoin.complete) {
+                ctx.drawImage(imgCoin, priceX, priceY - coinSize / 2 - 3, coinSize, coinSize);
+            } else {
+                imgCoin.onload = () => {
+                    ctx.drawImage(imgCoin, priceX, priceY - coinSize / 2 - 3, coinSize, coinSize);
+                };
+            }
+
+            ctx.fillText(priceText, priceX + coinSize + 10, priceY);
 
             ctx.restore();
         }
@@ -79,12 +150,10 @@ export class TowerPanel {
 
         this.#updatePositions();
 
-        if (
-            x >= this.closeX - this.closeSize / 2 &&
-            x <= this.closeX + this.closeSize / 2 &&
-            y >= this.closeY - this.closeSize / 2 &&
-            y <= this.closeY + this.closeSize / 2
-        ) {
+        const cx = this.closeX;
+        const cy = this.closeY;
+        const r = this.closeSize / 2;
+        if (Math.hypot(x - cx, y - cy) <= r) {
             this.hide();
             return 'close';
         }
@@ -117,20 +186,21 @@ export class TowerPanel {
         const maxWidth = this.width;
         const iconW = this.iconWidth;
         const iconH = this.iconHeight;
-        const padding = this.padding;
+        const paddingX = this.paddingX || this.padding;
+        const paddingY = this.paddingY || this.padding;
 
-        let x = this.x + padding + iconW / 2;
-        let y = this.y + iconH / 2 + padding;
-        const rowHeight = iconH + padding;
+        let x = this.x + paddingX + iconW / 2;
+        let y = this.y + iconH / 2 + paddingY + 30;
+        const rowHeight = iconH + paddingY;
 
         for (const tower of this.towers) {
             if (x + iconW / 2 > this.x + maxWidth) {
-                x = this.x + padding + iconW / 2;
+                x = this.x + paddingX + iconW / 2;
                 y += rowHeight;
             }
 
             tower.panelPosition = { x: x, y: y };
-            x += iconW + padding;
+            x += iconW + paddingX;
         }
 
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
@@ -142,22 +212,22 @@ export class TowerPanel {
         const size = this.closeSize;
         const x = this.closeX;
         const y = this.closeY;
-        const half = size / 2;
+        const r = size / 2;
 
         ctx.save();
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 3;
-
-        ctx.fillStyle = '#FF0000B3';
-        ctx.fillRect(x - half, y - half, size, size);
-
         ctx.beginPath();
-        ctx.moveTo(x - half + 6, y - half + 6);
-        ctx.lineTo(x + half - 6, y + half - 6);
-        ctx.moveTo(x + half - 6, y - half + 6);
-        ctx.lineTo(x - half + 6, y + half - 6);
+        ctx.arc(x, y, r, 0, 2 * Math.PI);
+        ctx.fillStyle = "#e6c97a";
+        ctx.fill();
+        ctx.strokeStyle = "#bfa76f";
+        ctx.lineWidth = 3;
         ctx.stroke();
 
+        ctx.font = "bold 28px Arial";
+        ctx.fillStyle = "#5a3e00";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("×", x, y);
         ctx.restore();
     }
 }
