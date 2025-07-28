@@ -1,12 +1,6 @@
-import { publishToMercure } from '../mercure/mercureHandler.js';
-import { uuidv4 } from '../systems/generateId.js'
-
 export class Base {
-	constructor(id, health, position, width, height, imageSrc) {
-		this.id = id;
-		this.ownerId = null;
+	constructor(health, position, width, height, imageSrc) {
 		this.health = health;
-		this.maxHealth = health;
 		this.position = position;
 		this.width = width;
 		this.height = height;
@@ -18,35 +12,13 @@ export class Base {
 		this.isDestroyed = false;
 	}
 
-	recieveDamage(damage, isFromServer = false) {
-		if (this.isDestroyed) return;
-
-		this.health -= damage;
-		if (this.health <= 0 && !this.isDestroyed) {
+	recieveDamage(damage) {
+		if (damage >= this.health) {
 			this.health = 0;
 			this.isDestroyed = true;
 			console.log("Base on coordinates", this.position.x, "", this.position.y, " was destroyed");
-			if (gameMode === "multiplayer") {
-				const destroyedEventData = {
-					type: 'baseDestroyed',
-					baseId: this.id,
-					isDestroyed: true,
-					health: 0,
-					userId: this.ownerId,
-				}
-				publishToMercure('http://localhost:8000/game', destroyedEventData);
-				console.log(`[DEBUG] Отправка baseDestroyed: baseId=${this.id}, health=${this.health}, isDestroyed=${this.isDestroyed}, ownerId=${this.ownerId}`);
-			}
 		} else {
-			if (gameMode === "multiplayer" && !isFromServer) {
-				const eventData = {
-					type: 'damageToBase',
-					baseId: this.id,
-					damage: damage,
-					userId: this.ownerId,
-				};
-				publishToMercure('http://localhost:8000/game', eventData);
-			}
+			this.health -= damage;
 		}
 	}
 

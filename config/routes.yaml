@@ -1,3 +1,9 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
 index:
     path: /
     controller: App\Controller\GameController::menu
@@ -6,69 +12,12 @@ menu:
     path: /menu
     controller: App\Controller\GameController::menu
 
-# Пользователь
-registration_page:
-    path: /registration
-    controller: App\Controller\UserController::showRegistrationForm
-
-register_user:
-    path: /register
-    controller: App\Controller\UserController::registerUser
-
-login:
-    path: /login
-    controller: App\Controller\SecurityController::login
-
-logout:
-    path: /logout
-    controller: App\Controller\SecurityController::logout
-
-# Комната
-room_list:
-    path: /room-list
-    controller: App\Controller\RoomController::roomList
-
-room_create:
-    path: /room/create
-    controller: App\Controller\RoomController::createRoom
-
-join_room:
-    path: /room/join/{roomId}
-    controller: App\Controller\RoomController::joinToRoom
-
-room_leave:
-    path: /room/{roomId}/leave
-    controller: App\Controller\RoomController::leaveRoom
-
-show_room:
-    path: /room/{roomId}
-    controller: App\Controller\RoomController::showRoom
-
-change-status-room:
-    path: /room/{roomId}/change-status
-    controller: App\Controller\RoomController::changeRoomStatus
-
-player_ready:
-    path: /room/{roomId}/ready
-    controller: App\Controller\RoomController::playerChangeReady
-
-all_player_ready:
-    path: /room/{roomId}/all-ready
-    controller: App\Controller\RoomController::checkAllReady
-
-# Игра
-select-level:
-    path: /select-level
-    controller: App\Controller\GameController::selectLevel
-
-game-rules:
-    path: /game-rules
-    controller: App\Controller\GameController::gameRules
-
-singleplayer:
-    path: /singleplayer
-    controller: App\Controller\GameController::singleplayer
-
 game:
-    path: /game/room/{roomId}
+    path: /game
     controller: App\Controller\GameController::game
+    methods:
+
+# Тестовый рут
+publsih:
+    path: /publish
+    controller: App\Controller\PublishController:publish

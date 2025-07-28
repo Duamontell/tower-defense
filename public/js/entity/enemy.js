@@ -1,18 +1,12 @@
-import { uuidv4 } from '../systems/generateId.js'
-
 export class Enemy {
     constructor(name, position, width, height, health, damage, reward, speed, animationSpeed, waypoints) {
-        this.id = uuidv4();
-        this.ownerId = null;
         this.name = name;
         this.position = position;
         this.width = width;
         this.height = height;
         this.health = health;
-        this.maxHealth = health;
         this.damage = damage;
         this.reward = reward;
-        this.normalSpeed = speed;
         this.speed = speed;
         this.direction = "left"
         this.waypoints = waypoints;
@@ -21,7 +15,11 @@ export class Enemy {
         this.images = [];
         this.frame = 0;
         this.animationSpeed = animationSpeed;
-        this.normalAnimationSpeed = animationSpeed;
+    }
+
+    doDamage() {
+        Base.recieveDamage(this.damage);
+        this.death();
     }
 
     draw(ctx) {
@@ -32,27 +30,6 @@ export class Enemy {
         }
         ctx.drawImage(this.images[Math.round(this.frame)], -this.width / 2, -this.height, this.width, this.height);
         ctx.restore();
-
-        this.drawHealthBar(ctx);
-    }
-
-    drawHealthBar(ctx) {
-        const healthPercent = this.health / this.maxHealth;
-        const barWidth = 100;
-        const barHeight = 7;
-        const x = this.position.x - barWidth / 2;
-        const y = this.position.y - this.height - barHeight - 2;
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-        ctx.fillRect(x, y, barWidth, barHeight);
-
-        const hue = 120 * healthPercent; // 120° = зеленый, 0° = красный
-        ctx.fillStyle = `hsl(${hue}, 100%, 50%)`; // Hue (оттенок), Saturation (насыщенность) и Lightness (светлота)
-        ctx.fillRect(x, y, barWidth * healthPercent, barHeight);
-
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(x, y, barWidth, barHeight);
     }
 
     update(delta) {
@@ -72,7 +49,7 @@ export class Enemy {
         const angle = Math.atan2(yDistance, xDistance);
 
         const distance = Math.hypot(waypoint.x - this.position.x, waypoint.y - this.position.y);
-        if (distance < 3) {
+        if (distance < 2) {
             this.waypointIndex++;
             return;
         }
@@ -95,10 +72,6 @@ export class Enemy {
             this.position.x = waypoint.x;
             this.position.y = waypoint.y;
         }
-
-        this.speed = this.normalSpeed;
-        this.animationSpeed = this.normalAnimationSpeed;
-
     }
 
     receiveDamage(damage) {
