@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block body %}
-<body>
+    <body>
     <div class="gameContainer">
         <canvas id="gameCanvas"></canvas>
     </div>
@@ -25,12 +25,15 @@
         <audio id='poison' src='../../music/poison.ogg'> </audio>
     </div>
     <script>
-        window.currentLevel = {{ level }};
+        {% if level is defined %}
+            window.currentLevel = {{ level }};
+        {% endif %}
         window.currentUserId = {{ userId }};
         window.gameMode = '{{ gamemode }}';
         {% if roomConfig is defined %}
             window.roomConfig = {{ roomConfig|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }};
+            window.roomId = {{ roomId }};
         {% endif %}
     </script>
-</body>
+    </body>
 {% endblock %}

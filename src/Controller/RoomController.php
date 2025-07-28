@@ -25,7 +25,9 @@ class RoomController extends AbstractController
         private RoomService          $roomService,
         private RoomPlayerService    $roomPlayerService,
         private MercureService       $mercureService
-    ) {}
+    )
+    {
+    }
 
     public function roomList(): Response
     {
@@ -39,10 +41,10 @@ class RoomController extends AbstractController
 
     public function showRoom($roomId): Response
     {
-//        TODO: Переделать условия?
         $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
 
+//        TODO: Переделать условия?
         if (!$room = $this->roomRepository->findById((int)$roomId)) {
             $this->addFlash('error', 'Комната с номером ' . $roomId . ' не найдена');
             return $this->redirectToRoute('room_list');
@@ -70,6 +72,7 @@ class RoomController extends AbstractController
 
     public function createRoom(): Response
     {
+//        TODO: Дублироание кода!
         $securityUser = $this->getUser();
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
         if ($userRoom = $this->roomRepository->findByIdAndStatusAndPlayer($user->getId(), ROOM::STATUS_WAITING)) {
@@ -84,6 +87,7 @@ class RoomController extends AbstractController
             );
             return $this->redirectToRoute('room_list');
         }
+
         $roomId = $this->roomService->createRoom($user);
 
         return $this->redirectToRoute('show_room', ['roomId' => $roomId]);
@@ -137,6 +141,7 @@ class RoomController extends AbstractController
 
     public function playerChangeReady(int $roomId, Request $request): JsonResponse
     {
+//      TODO: Добавить проверку на пользователя
         $data = json_decode($request->getContent(), true);
         $playerId = (int)$data['playerId'];
         $ready = $data['ready'];
@@ -148,6 +153,7 @@ class RoomController extends AbstractController
 
     public function checkAllReady(int $roomId): JsonResponse
     {
+        //      TODO: Добавить проверку на пользователя
         $this->roomService->allPlayerReady($roomId);
 
         return $this->json(['allReady' => true], Response::HTTP_OK);
@@ -155,6 +161,7 @@ class RoomController extends AbstractController
 
     public function changeRoomStatus(Request $request): JsonResponse
     {
+        //      TODO: Добавить проверку на пользователя
         $data = json_decode($request->getContent(), true);
         $roomId = (int)$data['roomId'];
         $roomStatus = (int)$data['status'];

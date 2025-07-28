@@ -9,7 +9,7 @@
         window.mercureUrl = '{{ mercureUrl }}';
         window.currentUserId = {{ userId }}
     </script>
-    <script defer src="/js/room/room.js"></script>
+    <script defer type="module" src="/js/room/room.js"></script>
 {% endblock %}
 
 {% block stylesheets %}
@@ -37,7 +37,7 @@
                         class="player-card {{ p.isReady ? 'ready' : '' }}{% if p.player.id == userId %} my-card{% endif %}"
                         id="player-{{ p.player.id }}">
                         <span class="player-slot">{{ p.slot }}:</span>
-                        <img src="../styles/images/shield.png" alt="shield" class="player-shield">
+                        <img src="/styles/images/shield.png" alt="shield" class="player-shield">
                         <span class="player-name">{{ p.player.name }}</span>
                         {% if p.player.id == userId %}
                             <button class="ready-button my-button" data-player-id="{{ p.player.id }}"
@@ -59,6 +59,7 @@
                 {% endif %}
             {% endfor %}
         </div>
+        <button class="leave-room-button">Выйти</button>
         <div id="start-countdown" style="display:none; text-align:center; margin-top:20px;">
 				<span class="countdown-text">Игра начнётся через
 					<span id="count">5</span>

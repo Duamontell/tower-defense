@@ -71,8 +71,8 @@ class GameController extends AbstractController
 
         return $this->render('game/game.html.twig', [
             'userId' => $user->getId(),
-            'level' => 1,
             'gamemode' => 'multiplayer',
+            'roomId' => $roomId,
             'roomConfig' => [
                 'players' => $playerData,
             ],
