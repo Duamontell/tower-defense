@@ -131,6 +131,8 @@ export class Tower {
             }
         }
 
+        if (this.sound) this.sound.play();
+
         return true;
     }
 
@@ -153,6 +155,7 @@ export class ArchersTower extends Tower {
         super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
             cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.cooldown,
             cfg.archer.imageSrc, cfg.archer.attack);
+    this.sound = document.getElementById('archers');
     }
 }
 
@@ -162,6 +165,7 @@ export class MagicianTower extends Tower {
         super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
             cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.cooldown,
             cfg.magician.imageSrc, cfg.magician.attack);
+        this.sound = document.getElementById('fireball');
     }
 }
 

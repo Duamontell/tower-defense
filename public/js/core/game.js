@@ -4,6 +4,7 @@ import { Base } from '../entity/base.js';
 import { TowerPanel } from '../entity/towerPanel.js';
 import { EffectPanel } from '../entity/effectPanel.js';
 import { RulesPanel } from '../entity/rulesPanel.js';
+import { SoundPanel } from '../entity/soundPanel.js';
 import { drawTowerZones } from '../systems/towerZones.js';
 import { UpgradePanel } from '../entity/upgradePanel.js';
 import { handleClick } from '../systems/towerLogic.js';
@@ -37,6 +38,7 @@ let towerPanel;
 let upgradePanel;
 let enemiesPanel;
 let rulesPanel;
+let soundPanel;
 let nativeWidth = canvas.width;
 let nativeHeight = canvas.height;
 let gameMessage = "";
@@ -52,7 +54,7 @@ function getClickCoordinates(canvas, event) {
 
 canvas.addEventListener('click', (event) => {
     const { x, y } = getClickCoordinates(canvas, event);
-    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel, camera);
+    handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel, camera, soundPanel);
 });
 
 async function loadUsersConfig() {
@@ -140,6 +142,7 @@ function gameLoop(timestamp = 0) {
     effectPanel.draw();
     enemiesPanel.draw();
     rulesPanel.draw();
+    soundPanel.draw();
     const currentUser = world.players.get(currentUserId);
     const currentBase = world.bases.find(b => b.ownerId === currentUserId);
     const baseHealth = currentBase.health;
@@ -237,6 +240,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     effectPanel = new EffectPanel(ctx, nativeHeight, nativeWidth, getUserBalance, effectShopCfg);
     enemiesPanel = new EnemiesPanel(ctx, nativeHeight, nativeWidth, getUserBalance, enemiesShopCfg);
     rulesPanel = new RulesPanel(ctx, nativeHeight, nativeWidth);
+    soundPanel = new SoundPanel(ctx, nativeHeight, nativeWidth);
 
     const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
     const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);

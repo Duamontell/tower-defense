@@ -219,7 +219,7 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, rule
     resetSelections(towerPanel, upgradePanel, enemiesPanel);
 }
 
-export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel, camera) {
+export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel, camera, soundPanel) {
     if (towerPanel.visible) {
         handleTowerPanelClick(x, y, towerPanel, world);
         return true;
@@ -252,6 +252,11 @@ export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, 
     }
     if (rulesPanel.isClickedOnIcon && rulesPanel.isClickedOnIcon(x, y)) {
         rulesPanel.show();
+        return;
+    }
+
+    if (soundPanel.isClickedOnIcon(x, y)) {
+        soundPanel.handleSound();
         return;
     }
 
