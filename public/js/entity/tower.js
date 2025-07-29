@@ -1,9 +1,13 @@
-import { towerUpgrades } from './upgrades.js';
-import { ArrowProjectile, FireballProjectile } from './projectile.js';
+import { towerUpgradesByType } from './upgrades.js';
+import { ArrowProjectile, ExplosiveProjectile, FireballProjectile, FreezeProjectile, PoisonProjectile, Projectile } from './projectile.js';
+import { uuidv4 } from '../systems/generateId.js'
+import { publishToMercure } from '../mercure/mercureHandler.js';
+import { SoundPanel } from './soundPanel.js';
 
 export class Tower {
-    constructor(name, damage, radius, price, position, width, height, attackType, cooldown, imageSrc, attackCfg) {
-        this.id = crypto.randomUUID();
+    constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, imageSrcFrozen, attackCfg, upgrades, soundPanel) {
+        this.id = uuidv4();
+        this.ownerId = null;
         this.name = name;
         this.damage = damage;
         this.radius = radius;
@@ -11,21 +15,28 @@ export class Tower {
         this.position = position;
         this.width = width;
         this.height = height;
-        this.attackType = attackType;
         this.cooldown = cooldown;
         this.timeUntilNextShot = 0;
         this.image = new Image;
+        this.frozenImage = new Image();
         this.image.onload = () => {
             this.isLoaded = true;
         };
+        this.frozenImage.onload = () => {
+            this.isLoaded = true;
+        };
+        this.frozenImage.src = imageSrcFrozen;
         this.image.src = imageSrc;
-        this.upgrades = towerUpgrades.map(upgrade => ({
+        this.upgrades = upgrades.map(upgrade => ({
             ...upgrade,
             applyLevels: upgrade.applyLevels.map(fn => () => fn(this)),
         }));
-
         this.upgradeLevels = new Array(this.upgrades.length).fill(0);
         this.attackCfg = attackCfg;
+        this.isFrozen = false;
+        this.soundPanel = soundPanel;
+        this.isBeingSold = false;
+        this.sellAnimationProgress = 0;
     }
 
     applyUpgrade(index) {
@@ -39,17 +50,25 @@ export class Tower {
         return true;
     }
 
-    update(delta, enemies, projectiles) {
+    update(delta, enemies, projectiles, effects) {
+        if (this.isFrozen) return;
         this.timeUntilNextShot -= delta;
 
         if (this.timeUntilNextShot <= 0) {
-            this.attack(enemies, projectiles);
-            this.timeUntilNextShot = this.cooldown;
+            if (this.attack(enemies, projectiles, effects)) {
+                this.timeUntilNextShot = this.cooldown;
+            }
         }
 
+        if (this.isBeingSold) {
+            this.sellAnimationProgress += delta / 0.8;
+            if (this.sellAnimationProgress > 1) {
+                this.sellAnimationProgress = 1;
+            }
+        }
     }
 
-    draw(ctx, x = null, y = null, width = null, height = null) {
+    draw(ctx, camera, x = null, y = null, width = null, height = null) {
         ctx.save();
 
         if (!this.isLoaded) {
@@ -57,20 +76,34 @@ export class Tower {
             return;
         }
 
-        const drawX = x !== null ? x - (width ?? this.width) / 2 : this.position.x - this.width / 2;
-        const drawY = y !== null ? y - (height ?? this.height) / 2 : this.position.y - this.height + this.height / 4;
-        const drawWidth = width ?? this.width;
-        const drawHeight = height ?? this.height;
+        if (this.isBeingSold) {
+            ctx.globalAlpha = 1 - this.sellAnimationProgress;
+        }
 
-        ctx.drawImage(this.image, drawX, drawY, drawWidth, drawHeight);
+        let worldX = x !== null ? x : this.position.x;
+        let worldY = y !== null ? y : this.position.y;
+
+        const screenPos = camera.worldToScreen(worldX, worldY);
+
+        const drawWidth = (width ?? this.width) * camera.scale;
+        const drawHeight = (height ?? this.height) * camera.scale;
+
+        const drawX = screenPos.x - drawWidth / 2;
+        const drawY = screenPos.y - drawHeight + drawHeight / 4;
+
+        if (this.isFrozen && this.frozenImage && this.frozenImage.complete) {
+            ctx.drawImage(this.frozenImage, drawX, drawY, drawWidth, drawHeight);
+        } else if (this.isLoaded) {
+            ctx.drawImage(this.image, drawX, drawY, drawWidth, drawHeight);
+        }
 
         ctx.restore();
     }
 
-
-    attack(enemies, projectiles) {
+    attack(enemies, projectiles, effects) {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
+            if (enemy.ownerId !== this.ownerId) return false;
 
             const dx = enemy.position.x + (enemy.width / 2) - this.position.x;
             const dy = enemy.position.y + (enemy.height / 2) - this.position.y;
@@ -81,61 +114,122 @@ export class Tower {
 
         if (enemiesInRange.length === 0) return;
 
-        const position = {x: this.position.x, y: this.position.y};
+        const position = { x: this.position.x, y: this.position.y };
+        const nearestEnemy = enemiesInRange[0];
+        const nearestEnemyPos = { x: enemiesInRange[0].position.x, y: enemiesInRange[0].position.y - 50 };
 
-        if (this.attackType === 'single') {
-
-            const nearestEnemy = enemiesInRange[0];
-            let projectile;
-
-            let enemyPosition = {x: nearestEnemy.position.x, y: nearestEnemy.position.y - 100};
-            switch (this.name) {
-                case 'Archers':
-                    projectile = new ArrowProjectile(position, [enemyPosition], nearestEnemy, this.damage, this.attackCfg);
-                    projectiles.push(projectile);
-                    break;
-                case 'Magicians':
-                    projectile = new FireballProjectile(position, [enemyPosition], nearestEnemy, this.damage, this.attackCfg);
-                    projectiles.push(projectile);
-                    break;
-            }
-
-        } else if (this.attackType === 'area') {
-
-            enemiesInRange.forEach(enemy => {
-                enemy.receiveDamage(this.damage);
-                console.log(`[${this.name} Tower] attacked [${enemy.name}] for ${this.damage} damage (area). Enemy health left: ${enemy.health}`);
-                if (!enemy.isAlive()) {
-                    console.log(`[Enemy] ${enemy.name} is dead now`);
-                }
-            });
+        let projectile;
+        switch (this.name) {
+            case 'Archers':
+                projectile = new ArrowProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
+                break;
+            case 'Magicians':
+                projectile = new FireballProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
+                break;
+            case 'Poisonous':
+                projectile = new PoisonProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg, this.soundPanel);
+                break;
+            case 'Freezing':
+                projectile = new FreezeProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.slowness, this.attackCfg, this.soundPanel);
+                break;
+            case 'Mortar':
+                projectile = new ExplosiveProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg, this.soundPanel);
+                break;
         }
+
+        if (projectile !== undefined) {
+            projectiles.push(projectile);
+
+            if (gameMode === "multiplayer") {
+                const attackEventData = {
+                    type: 'towerAttack',
+                    towerId: this.id,
+                    enemyId: nearestEnemy.id,
+                    playerId: this.ownerId
+                };
+
+                if (this.name === 'Freezing' && this.slowness !== undefined) {
+                    attackEventData.slowness = this.slowness;
+                }
+
+                //publishToMercure(topic, attackEventData);
+            }
+        }
+
+        if (this.sound) this.sound.play();
+
+        return true;
+    }
+
+    drawIcon(ctx, x, y, width, height) {
+        ctx.save();
+        if (!this.isLoaded) {
+            ctx.restore();
+            return;
+        }
+        const drawX = x - width / 2;
+        const drawY = y - height / 2;
+        ctx.drawImage(this.image, drawX, drawY, width, height);
+        ctx.restore();
     }
 }
 
 export class ArchersTower extends Tower {
     static price = 10;
-    constructor(position, cfg) {
+    constructor(position, cfg, soundPanel) {
         super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
-            cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.attackType, cfg.archer.cooldown,
-            cfg.archer.imageSrc, cfg.archer.attack);
+            cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.cooldown,
+            cfg.archer.imageSrc, cfg.archer.imageSrcFrozen, cfg.archer.attack, towerUpgradesByType.Archers, soundPanel);
+        this.sound = soundPanel.sounds.find((sound) => sound.id === 'archers' && sound.ended);
+        if (!this.sound) {
+            this.sound = new Audio('../../music/archers.ogg');
+            this.sound.id = 'archers';
+            if (this.sound) soundPanel.add(this.sound);
+        }
+        if (this.sound) this.sound.play();
     }
 }
 
 export class MagicianTower extends Tower {
     static price = 30;
-    constructor(position, cfg) {
+    constructor(position, cfg, soundPanel) {
         super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
-            cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.attackType, cfg.magician.cooldown,
-            cfg.magician.imageSrc, cfg.magician.attack);
+            cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.cooldown,
+            cfg.magician.imageSrc, cfg.magician.imageSrcFrozen, cfg.magician.attack, towerUpgradesByType.Magicians, soundPanel);
+        this.sound = soundPanel.sounds.find((sound) => sound.id === 'fireball' && sound.ended);
+        if (!this.sound) {
+            this.sound = new Audio('../../music/fireball.mp3');
+            this.sound.id = 'fireball';
+            if (this.sound) soundPanel.add(this.sound);
+        }
+        if (this.sound) this.sound.play();
+    }
+}
+
+export class PoisonousTower extends Tower {
+    static price = 50;
+    constructor(position, cfg, soundPanel) {
+        super(cfg.poison.name, cfg.poison.damage, cfg.poison.radius,
+            cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.cooldown,
+            cfg.poison.imageSrc, cfg.poison.imageSrcFrozen, cfg.poison.attack, towerUpgradesByType.Poisonous, soundPanel);
+    }
+}
+
+export class FreezingTower extends Tower {
+    static price = 30;
+    constructor(position, cfg, soundPanel) {
+        super(cfg.freezing.name, cfg.freezing.damage, cfg.freezing.radius,
+            cfg.freezing.price, position, cfg.freezing.width, cfg.freezing.height, cfg.freezing.cooldown,
+            cfg.freezing.imageSrc, cfg.freezing.imageSrcFrozen, cfg.freezing.attack, towerUpgradesByType.Freezing, soundPanel);
+        this.slowness = cfg.freezing.slowness;
     }
 }
 
 export class MortarTower extends Tower {
     static price = 50;
-    constructor(position, cfg) {
-        super(cfg.mortar.name, cfg.mortar.damage, cfg.mortar.radius,
-            cfg.mortar.price, position, cfg.mortar.width, cfg.mortar.height, cfg.mortar.attackType, cfg.mortar.cooldown,
-            cfg.mortar.imageSrc, cfg.mortar.attack);
+    constructor(position, cfg, soundPanel) {
+        super(cfg.exp.name, cfg.exp.damage, cfg.exp.radius,
+            cfg.exp.price, position, cfg.exp.width, cfg.exp.height, cfg.exp.cooldown,
+            cfg.exp.imageSrc, cfg.exp.imageSrcFrozen, cfg.exp.attack, towerUpgradesByType.Mortar, soundPanel);
     }
 }

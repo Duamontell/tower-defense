@@ -3,7 +3,7 @@
 {% block title %}Tower Defense{% endblock %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="/css/game.css">
+    <link rel="stylesheet" href="/styles/css/game.css">
 {% endblock %}
 
 {% block javascripts %}
@@ -11,11 +11,25 @@
 {% endblock %}
 
 {% block body %}
-<body>
+    <body>
     <div class="gameContainer">
         <canvas id="gameCanvas"></canvas>
     </div>
 
-    <script>window.currentLevel = {{ level }};</script>
-</body>
+    <div class="music">
+        <audio id='background' loop src='../../music/background.ogg'> </audio>
+    </div>
+    <script>
+        {% if level is defined %}
+            window.currentLevel = {{ level }};
+        {% endif %}
+        window.currentUserId = {{ userId }};
+        window.gameMode = '{{ gamemode }}';
+        {% if roomConfig is defined %}
+            window.topic = '{{ topic }}';
+            window.roomConfig = {{ roomConfig|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }};
+            window.roomId = {{ roomId }};
+        {% endif %}
+    </script>
+    </body>
 {% endblock %}

@@ -1,0 +1,115 @@
+{
+    "map": {
+        "backgroundImage": "images/map/first_level.webp",
+        "width": 1500,
+        "height": 1000
+    },
+    "startingBalance": 100,
+    "spawnrate": 3,
+    "waypoints": [
+        {
+            "x": 1461,
+            "y": 502
+        },
+        {
+            "x": 178,
+            "y": 502
+        }
+    ],
+    "base": {
+        "health": 200,
+
+        "position": {
+            "x": 100,
+            "y": 450
+        },
+        "width": 300,
+        "height": 300,
+        "imageSrc": "images/base/Base.webp"
+    },
+    "towerZones": [
+        {
+            "id": 1,
+            "topLeft": {
+                "x": 530,
+                "y": 200
+            },
+            "bottomRight": {
+                "x": 660,
+                "y": 330
+            }
+        },
+        {
+            "id": 2,
+            "topLeft": {
+                "x": 1087,
+                "y": 200
+            },
+            "bottomRight": {
+                "x": 1217,
+                "y": 330
+            }
+        },
+        {
+            "id": 3,
+            "topLeft": {
+                "x": 720,
+                "y": 650
+            },
+            "bottomRight": {
+                "x": 850,
+                "y": 780
+            }
+        },
+        {
+            "id": 4,
+            "topLeft": {
+                "x": 300,
+                "y": 650
+            },
+            "bottomRight": {
+                "x": 430,
+                "y": 780
+            }
+        },
+        {
+            "id": 5,
+            "topLeft": {
+                "x": 1350,
+                "y": 650
+            },
+            "bottomRight": {
+                "x": 1480,
+                "y": 780
+            }
+        }
+    ],
+    "countWaves": 3,
+    "wavesDuration": 15,
+    "waves": [
+        {
+            "enemies": {
+                "orcs": 1,
+                "zombies": 0,
+                "goblins": 1
+            },
+            "reward": 100
+        },
+        {
+            "enemies": {
+                "orcs": 1,
+                "zombies": 0,
+                "goblins": 0
+            },
+            "reward": 300
+        },
+                {
+            "enemies": {
+                "orcs": 2,
+                "zombies": 0,
+                "goblins": 0
+            },
+            "reward": 300
+        }
+    ]
+}

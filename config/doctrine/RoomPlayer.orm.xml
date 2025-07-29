@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping
+    xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://doctrine-project.org/schemas/orm/doctrine-mapping
+		https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd"
+>
+    <entity name="App\Entity\RoomPlayer" table="player_in_room">
+        <id name="id" type="integer" column="id">
+            <generator strategy="IDENTITY"/>
+        </id>
+
+        <many-to-one field="room" target-entity="App\Entity\Room" inversed-by="players">
+            <join-column name="room_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
+        </many-to-one>
+
+        <many-to-one field="player" target-entity="App\Entity\User">
+            <join-column name="player_id" referenced-column-name="id" nullable="false"/>
+        </many-to-one>
+
+        <field name="slot" column="slot" type="smallint" nullable="false"/>
+        <field name="isReady" column="is_ready" type="boolean" nullable="false"/>
+        <field name="isReadyInGame" column="is_ready_in_game" type="boolean" nullable="false"/>
+    </entity>
+</doctrine-mapping>
