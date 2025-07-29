@@ -72,3 +72,11 @@ singleplayer:
 game:
     path: /game/room/{roomId}
     controller: App\Controller\GameController::game
+
+game-player-ready:
+    path: /game/room/{roomId}/ready
+    controller: App\Controller\GameController::playerReady
+
+game-players-statuses:
+    path: /game/room/{roomId}/statuses
+    controller: App\Controller\GameController::grabPlayerInGameStatuses

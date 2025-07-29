@@ -13,6 +13,7 @@ class RoomPlayerService
         private MercureService $mercureService
     ) {}
 
+//    TODO: Полностью переделать готовность пользователя для игры
     public function setReady(int $playerId, int $roomId, bool $ready): void
     {
         if (!$entry = $this->roomPlayerRepository->findOneByPlayerAndRoom($playerId, $roomId)) {
@@ -32,6 +33,24 @@ class RoomPlayerService
                     'isReady' => $ready,
                 ],
             ],
+        );
+    }
+
+    public function setReadyInGame(int $playerId, int $roomId, bool $ready): void
+    {
+        if (!$entry = $this->roomPlayerRepository->findOneByPlayerAndRoom($playerId, $roomId)) {
+            throw new \RuntimeException("Игрок не в комнате");
+        }
+
+        $entry->setIsReadyInGame($ready);
+        $this->roomPlayerRepository->store($entry);
+
+        $this->mercureService->publish(
+            topic: "/game/room/{$roomId}/ready",
+            data: [
+                'id' => $entry->getPlayer()->getId(),
+                'isReady' => $ready,
+            ]
         );
     }
 }

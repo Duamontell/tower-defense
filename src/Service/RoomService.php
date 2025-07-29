@@ -53,7 +53,7 @@ class RoomService
             throw new \RuntimeException("Комната с номером {$roomId} полная!");
         }
 
-        $roomPlayer = new RoomPlayer(null, $room, $player, $freeSlots[0], false);
+        $roomPlayer = new RoomPlayer(null, $room, $player, $freeSlots[0], false, false);
 
         $this->mercureService->publish(
             topic: "/room/{$roomId}",
@@ -191,6 +191,23 @@ class RoomService
             }
         }
         return false;
+    }
+
+    public function grabPlayerInGameStatuses(int $roomId)
+    {
+        if (!$room = $this->roomRepository->find($roomId)) {
+            throw new \RuntimeException("Комнаты под номером $roomId не существует");
+        }
+
+        $players = $room->getPlayers();
+        $playerStatuses = [];
+        foreach ($players as $player) {
+            $playerStatuses[] = [
+                'id' => $player->getPlayer()->getId(),
+                'isReady' => $player->isReadyInGame()
+            ];
+        }
+        return $playerStatuses;
     }
 
 }
