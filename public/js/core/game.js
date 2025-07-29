@@ -261,12 +261,13 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     enemiesPanel = new EnemiesPanel(ctx, nativeHeight, nativeWidth, getUserBalance, enemiesShopCfg);
     rulesPanel = new RulesPanel(ctx, nativeHeight, nativeWidth);
     soundPanel = new SoundPanel(ctx, nativeHeight, nativeWidth);
+    world.soundPanel = soundPanel;
 
-    const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
-    const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
-    const poisonousTower = new PoisonousTower({ x: 0, y: 0 }, towersCfg);
-    const freezingTower = new FreezingTower({ x: 0, y: 0 }, towersCfg);
-    const mortarTower = new MortarTower({ x: 0, y: 0 }, towersCfg);
+    const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg, soundPanel);
+    const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg, soundPanel);
+    const poisonousTower = new PoisonousTower({ x: 0, y: 0 }, towersCfg, soundPanel);
+    const freezingTower = new FreezingTower({ x: 0, y: 0 }, towersCfg, soundPanel);
+    const mortarTower = new MortarTower({ x: 0, y: 0 }, towersCfg, soundPanel);
 
     towerPanel.addTower(archerTower);
     towerPanel.addTower(magicianTower);

@@ -59,7 +59,7 @@ export class Effect {
 }
 
 export class PoisonEffect extends Effect {
-    constructor(position, damage, cfg) {
+    constructor(position, damage, cfg, soundPanel) {
         super(position, cfg.radius, cfg.duration, cfg.animationSpeed, cfg.cooldown);
         cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();
@@ -67,8 +67,14 @@ export class PoisonEffect extends Effect {
             this.images.push(frame);
         });
         this.damage = damage;
-        this.sound = document.getElementById('poison');
+        this.sound = soundPanel.sounds.find((sound) => sound.id === 'poison' && sound.ended);
+        if (!this.sound) {
+            this.sound = new Audio('../../music/poison.ogg');
+            this.sound.id = 'poison';
+            if (this.sound) soundPanel.add(this.sound);
+        } 
         if (this.sound) this.sound.play();
+
     }
 
     effect(enemies) {
@@ -80,7 +86,7 @@ export class PoisonEffect extends Effect {
 }
 
 export class FreezeEffect extends Effect {
-    constructor(position, slowness, cfg) {
+    constructor(position, slowness, cfg, soundPanel) {
         super(position, cfg.radius, cfg.duration, cfg.animationSpeed, cfg.cooldown);
         cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();
@@ -88,7 +94,12 @@ export class FreezeEffect extends Effect {
             this.images.push(frame);
         });
         this.slowness = slowness;
-        this.sound = document.getElementById('freeze');
+        this.sound = soundPanel.sounds.find((sound) => sound.id === 'freeze' && sound.ended);
+        if (!this.sound) {
+            this.sound = new Audio('../../music/freeze.ogg');
+            this.sound.id = 'freeze';
+            if (this.sound) soundPanel.add(this.sound);
+        } 
         if (this.sound) this.sound.play();
     }
 
@@ -101,7 +112,7 @@ export class FreezeEffect extends Effect {
 }
 
 export class ExplosionEffect extends Effect {
-    constructor(position, damage, cfg) {
+    constructor(position, damage, cfg, soundPanel) {
         super(position, cfg.radius, cfg.duration, cfg.animationSpeed, cfg.cooldown);
         cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();
@@ -111,7 +122,13 @@ export class ExplosionEffect extends Effect {
         this.damage = damage;
         this.done = false;
         this.isOnTop = true;
-        this.sound = document.getElementById('explosion');
+
+        this.sound = soundPanel.sounds.find((sound) => sound.id === 'explosion' && sound.ended);
+        if (!this.sound) {
+            this.sound = new Audio('../../music/explosion.mp3');
+            this.sound.id = 'explosion';
+            if (this.sound) soundPanel.add(this.sound);
+        } 
         if (this.sound) this.sound.play();
     }
 
