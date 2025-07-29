@@ -55,7 +55,6 @@ class GameController extends AbstractController
 
     public function game(int $roomId): Response
     {
-        //      Можно сделать подписку(topic) на имя комнаты: topic=/game/room=$roomId
         if (!$securityUser = $this->getUser()) {
             return $this->redirectToRoute('login');
         }
@@ -65,14 +64,24 @@ class GameController extends AbstractController
         $room = $this->roomRepository->findById($roomId);
         $players = $room->getPlayers();
         $playerData = [];
+        $isPlayerRoom = false;
         foreach ($players as $player) {
+            if ($player->getPlayer()->getId() === $user->getId()) {
+                $isPlayerRoom = true;
+            }
             $playerData[] = [
                 'userId' => $player->getPlayer()->getId(),
                 'config' => $player->getSlot(),
             ];
         }
 
+        if (!$isPlayerRoom) {
+            $this->addFlash('error', 'Вы не участник игры');
+            return $this->redirectToRoute('room_list');
+        }
+
         return $this->render('game/game.html.twig', [
+            'topic' => "/game/room/$roomId",
             'userId' => $user->getId(),
             'gamemode' => 'multiplayer',
             'roomId' => $roomId,

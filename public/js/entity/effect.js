@@ -72,7 +72,7 @@ export class PoisonEffect extends Effect {
             this.sound = new Audio('../../music/poison.ogg');
             this.sound.id = 'poison';
             if (this.sound) soundPanel.add(this.sound);
-        } 
+        }
         if (this.sound) this.sound.play();
 
     }
@@ -99,7 +99,7 @@ export class FreezeEffect extends Effect {
             this.sound = new Audio('../../music/freeze.ogg');
             this.sound.id = 'freeze';
             if (this.sound) soundPanel.add(this.sound);
-        } 
+        }
         if (this.sound) this.sound.play();
     }
 
@@ -128,7 +128,7 @@ export class ExplosionEffect extends Effect {
             this.sound = new Audio('../../music/explosion.mp3');
             this.sound.id = 'explosion';
             if (this.sound) soundPanel.add(this.sound);
-        } 
+        }
         if (this.sound) this.sound.play();
     }
 

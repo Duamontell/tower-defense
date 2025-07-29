@@ -69,7 +69,7 @@ singleplayer:
     path: /singleplayer
     controller: App\Controller\GameController::singleplayer
 
-game:
+multiplayer:
     path: /game/room/{roomId}
     controller: App\Controller\GameController::game
 

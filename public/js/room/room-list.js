@@ -36,6 +36,12 @@ function handleCreateRoom(msg) {
     roomRow.id = "room-" + roomId;
     const roomName = document.createElement('span');
     roomName.textContent = "Комната " + roomId;
+
+    const actionBlock = document.createElement('div');
+    actionBlock.classList.add('room-actions');
+    const playerCount = document.createElement('span');
+    playerCount.id = "room-players-count-" + roomId;
+    playerCount.textContent = "1/4";
     const joinButton = document.createElement('button');
     joinButton.classList.add('join-room-button');
     joinButton.dataset.roomId = roomId;
@@ -43,9 +49,11 @@ function handleCreateRoom(msg) {
     joinButton.addEventListener('click', () => {
         location.href = `/room/join/${roomId}`
     });
+    actionBlock.appendChild(playerCount);
+    actionBlock.appendChild(joinButton);
 
     roomRow.appendChild(roomName);
-    roomRow.appendChild(joinButton);
+    roomRow.appendChild(actionBlock);
     roomsList.appendChild(roomRow);
 }
 

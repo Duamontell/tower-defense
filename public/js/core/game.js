@@ -26,7 +26,9 @@ const background = new Image();
 const gameMode = window.gameMode || 'singleplayer';
 const currentLevel = window.currentLevel || 1;
 const currentUserId = Number(window.currentUserId);
+const topic = window.topic;
 const roomConfig = window.roomConfig || {};
+
 
 let readyManager = null;
 if (gameMode === 'multiplayer') {
@@ -263,7 +265,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     if (gameMode === "multiplayer") {
         const gameEventHandler = new GameEventHandler(world);
         // TODO: Сделать топик уникальным для каждой комнаты!
-        const topic = '/game'
+        // const topic = 'http://localhost:8000/game'
         const mercureCallback = (data) => {
             try {
                 gameEventHandler.handleEvent(data);

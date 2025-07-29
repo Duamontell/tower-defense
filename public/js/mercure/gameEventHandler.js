@@ -193,7 +193,7 @@ export class GameEventHandler {
                     type: 'playerIsWin',
                     winnerId: alivePlayers[0].id,
                 }
-                publishToMercure('http://localhost:8000/game', winEventData);
+                publishToMercure(topic, winEventData);
             }
         }
     }

@@ -47,7 +47,7 @@ function handleTowerPanelClick(x, y, towerPanel, world) {
                         zoneId: zone.id,
                         name: TowerClass.name
                     };
-                    publishToMercure('http://localhost:8000/game', eventData);
+                    publishToMercure(topic, eventData);
                 }
             }
         }
@@ -79,7 +79,7 @@ function handleUpgradePanelClick(x, y, upgradePanel, world) {
                     upgradeIndex: upgradeIndex,
                     newLevel: (selectedTowerInstance.upgradeLevels[upgradeIndex] || 0)
                 };
-                publishToMercure('http://localhost:8000/game', eventData);
+                publishToMercure(topic, eventData);
             }
         } else {
             console.log('Недостаточно средств для улучшения');
@@ -172,7 +172,7 @@ function handleEffectCoords(x, y, effectPanel, world, soundPanel) {
                     x, y,
                     ...effectData
                 };
-                publishToMercure('http://localhost:8000/game', eventData);
+                publishToMercure(topic, eventData);
             }
             effectPanel.isWaitingForCoords = false;
             effectPanel.choosenEffect = null;
@@ -201,7 +201,7 @@ function handleEnemiesPanelClick(x, y, enemiesPanel, world) {
                 targetUserId: enemiesPanel.baseOwnerId,
                 enemies: result.enemies
             };
-            publishToMercure('http://localhost:8000/game', eventData);
+            publishToMercure(topic, eventData);
         }
     }
 
