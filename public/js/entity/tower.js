@@ -167,13 +167,9 @@ export class ArchersTower extends Tower {
         super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
             cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.cooldown,
             cfg.archer.imageSrc, cfg.archer.imageSrcFrozen, cfg.archer.attack, towerUpgradesByType.Archers, soundPanel);
-        this.sound = soundPanel.sounds.find((sound) => sound.id === 'archers' && sound.ended);
-        if (!this.sound) {
-            this.sound = new Audio('../../music/archers.ogg');
-            this.sound.id = 'archers';
-            if (this.sound) soundPanel.add(this.sound);
-        } 
-        if (this.sound) this.sound.play();
+        this.sound = new Audio('../../music/archers.ogg');
+        this.sound.id = 'archers';
+        soundPanel.add(this.sound);
     }
 }
 
@@ -183,13 +179,9 @@ export class MagicianTower extends Tower {
         super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
             cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.cooldown,
             cfg.magician.imageSrc, cfg.magician.imageSrcFrozen, cfg.magician.attack, towerUpgradesByType.Magicians, soundPanel);
-        this.sound = soundPanel.sounds.find((sound) => sound.id === 'fireball' && sound.ended);
-        if (!this.sound) {
-            this.sound = new Audio('../../music/fireball.mp3');
-            this.sound.id = 'fireball';
-            if (this.sound) soundPanel.add(this.sound);
-        } 
-        if (this.sound) this.sound.play();
+        this.sound = new Audio('../../music/fireball.mp3');
+        this.sound.id = 'fireball';
+        soundPanel.add(this.sound);
     }
 }
 
