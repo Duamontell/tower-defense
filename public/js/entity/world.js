@@ -169,6 +169,20 @@ export class World {
             return true
         });
 
+        for (let i = this.towers.length - 1; i >= 0; i--) {
+            const tower = this.towers[i];
+            if (tower.isBeingSold && tower.sellAnimationProgress >= 1) {
+                const zone = this.towerZones.find(z => z.tower === tower);
+                if (zone) {
+                    zone.occupied = false;
+                    zone.tower = null;
+                }
+                this.towers.splice(i, 1);
+                const user = this.players.get(tower.ownerId);
+                if (user) user.removeTowerId(tower.id);
+            }
+        }
+
         this.projectiles.forEach(projectile => projectile.update(delta));
         this.projectiles = this.projectiles.filter(projectile => {
             if (projectile.reachedEnd) {

@@ -26,7 +26,9 @@ const background = new Image();
 const gameMode = window.gameMode || 'singleplayer';
 const currentLevel = window.currentLevel || 1;
 const currentUserId = Number(window.currentUserId);
+const topic = window.topic;
 const roomConfig = window.roomConfig || {};
+
 
 let readyManager = null;
 if (gameMode === 'multiplayer') {
@@ -66,8 +68,20 @@ function getClickCoordinates(canvas, event) {
 
 canvas.addEventListener('click', (event) => {
     const { x, y } = getClickCoordinates(canvas, event);
+    const user = world.players.get(currentUserId);
+    if (user && user.isLose) return;
+    if (world.gameOver) return;
     handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel, camera, soundPanel);
 });
+
+function closeAllPanels() {
+    if (towerPanel) towerPanel.hide();
+    if (upgradePanel) upgradePanel.hide();
+    if (effectPanel) effectPanel.hide();
+    if (enemiesPanel) enemiesPanel.hide();
+    if (rulesPanel) rulesPanel.hide();
+    if (soundPanel) soundPanel.hide();
+}
 
 async function loadUsersConfig() {
     const users = [];
@@ -143,6 +157,7 @@ function gameLoop(timestamp = 0) {
         !world.gameOver
     ) {
         gameMessage = "Вы победили!";
+        closeAllPanels();
         world.gameOver = true;
     }
 
@@ -171,6 +186,7 @@ function gameLoop(timestamp = 0) {
 
         if ((user.isLose || (base && base.isDestroyed)) && !world.gameOver) {
             gameMessage = "Вы проиграли!";
+            closeAllPanels();
             world.gameOver = true;
         }
     }
@@ -179,10 +195,14 @@ function gameLoop(timestamp = 0) {
         const base = world.bases.find(b => b.ownerId === currentUserId);
 
         if ((currentUser.isLose || (base && base.isDestroyed)) && !world.gameOver) {
+            closeAllPanels();
             gameMessage = "Вы проиграли!";
-            world.gameOver = true;
+
         } else if (world.isWinEvent && world.winnerId === currentUserId && !world.gameOver) {
+            closeAllPanels();
             gameMessage = "Вы победили!";
+        }
+        if (world.isWinEvent) {
             world.gameOver = true;
         }
     }
@@ -263,7 +283,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     if (gameMode === "multiplayer") {
         const gameEventHandler = new GameEventHandler(world);
         // TODO: Сделать топик уникальным для каждой комнаты!
-        const topic = '/game'
+        // const topic = 'http://localhost:8000/game'
         const mercureCallback = (data) => {
             try {
                 gameEventHandler.handleEvent(data);

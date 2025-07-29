@@ -34,7 +34,7 @@ export class Base {
 					health: 0,
 					userId: this.ownerId,
 				}
-				publishToMercure('http://localhost:8000/game', destroyedEventData);
+				publishToMercure(topic, destroyedEventData);
 				console.log(`[DEBUG] Отправка baseDestroyed: baseId=${this.id}, health=${this.health}, isDestroyed=${this.isDestroyed}, ownerId=${this.ownerId}`);
 			}
 		} else {
@@ -45,7 +45,7 @@ export class Base {
 					damage: damage,
 					userId: this.ownerId,
 				};
-				publishToMercure('http://localhost:8000/game', eventData);
+				publishToMercure(topic, eventData);
 			}
 		}
 	}

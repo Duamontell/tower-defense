@@ -26,6 +26,7 @@
         window.currentUserId = {{ userId }};
         window.gameMode = '{{ gamemode }}';
         {% if roomConfig is defined %}
+            window.topic = '{{ topic }}';
             window.roomConfig = {{ roomConfig|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }};
             window.roomId = {{ roomId }};
         {% endif %}

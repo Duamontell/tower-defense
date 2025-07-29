@@ -40,9 +40,7 @@
 						<span>Комната
 							{{ room.id }}</span>
                         <div class="room-actions">
-						    <span id="room-players-count-{{ room.id }}">
-						        {{ playersCount }}/4
-						    </span>
+						    <span id="room-players-count-{{ room.id }}">{{ playersCount }}/4</span>
                             <button class="join-room-button" data-room-id="{{ room.id }}"> Войти</button>
                         </div>
                     </li>

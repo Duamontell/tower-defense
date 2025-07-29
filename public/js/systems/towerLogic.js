@@ -47,7 +47,7 @@ function handleTowerPanelClick(x, y, towerPanel, world) {
                         zoneId: zone.id,
                         name: TowerClass.name
                     };
-                    publishToMercure('http://localhost:8000/game', eventData);
+                    publishToMercure(topic, eventData);
                 }
             }
         }
@@ -57,33 +57,77 @@ function handleTowerPanelClick(x, y, towerPanel, world) {
 function handleUpgradePanelClick(x, y, upgradePanel, world) {
     const user = world.players.get(currentUserId);
     const result = upgradePanel.handleClick(x, y);
+
     if (result === 'close') {
         upgradePanel.hide();
         return;
     }
 
-    if (typeof result === 'number' && selectedTowerInstance) {
-        const upgradeIndex = result;
-        const upgrade = selectedTowerInstance.upgrades[upgradeIndex];
-        const level = selectedTowerInstance.upgradeLevels[upgradeIndex] || 0;
-        const currentCost = upgrade.costs[level];
+    if (result === 'sell') {
+        sellSelectedTower(user, world, upgradePanel);
+        return;
+    }
 
-        if (user.balance >= currentCost) {
-            selectedTowerInstance.applyUpgrade(upgradeIndex);
-            user.changeBalance(-currentCost);
-            if (gameMode === "multiplayer") {
-                const eventData = {
-                    type: 'upgradeTower',
-                    userId: currentUserId,
-                    towerId: selectedTowerInstance.id,
-                    upgradeIndex: upgradeIndex,
-                    newLevel: (selectedTowerInstance.upgradeLevels[upgradeIndex] || 0)
-                };
-                publishToMercure('http://localhost:8000/game', eventData);
-            }
-        } else {
-            console.log('Недостаточно средств для улучшения');
+    if (typeof result === 'number') {
+        upgradeSelectedTower(user, result, upgradePanel, world);
+    }
+}
+
+function sellSelectedTower(user, world, upgradePanel) {
+    if (!selectedTowerInstance) return;
+    const tower = selectedTowerInstance;
+    const towerId = tower.id;
+    const zone = world.towerZones.find(z => z.tower === tower);
+    if (!zone) return;
+
+    let basePrice = tower.constructor.price;
+    let upgradesCost = 0;
+    for (let i = 0; i < tower.upgrades.length; i++) {
+        const level = tower.upgradeLevels[i] || 0;
+        for (let l = 0; l < level; l++) {
+            upgradesCost += tower.upgrades[i].costs[l];
         }
+    }
+    const refund = Math.floor((basePrice + upgradesCost) / 2);
+    user.changeBalance(refund);
+
+    tower.isBeingSold = true;
+    tower.sellAnimationProgress = 0;
+
+    upgradePanel.hide();
+    selectedTowerInstance = null;
+
+    if (gameMode === "multiplayer") {
+        const eventData = {
+            type: 'sellTower',
+            userId: currentUserId,
+            towerId: towerId,
+        };
+        publishToMercure('http://localhost:8000/game', eventData);
+    }
+}
+
+function upgradeSelectedTower(user, upgradeIndex, upgradePanel, world) {
+    if (!selectedTowerInstance) return;
+    const upgrade = selectedTowerInstance.upgrades[upgradeIndex];
+    const level = selectedTowerInstance.upgradeLevels[upgradeIndex] || 0;
+    const currentCost = upgrade.costs[level];
+
+    if (user.balance >= currentCost) {
+        selectedTowerInstance.applyUpgrade(upgradeIndex);
+        user.changeBalance(-currentCost);
+        if (gameMode === "multiplayer") {
+            const eventData = {
+                type: 'upgradeTower',
+                userId: currentUserId,
+                towerId: selectedTowerInstance.id,
+                upgradeIndex: upgradeIndex,
+                newLevel: (selectedTowerInstance.upgradeLevels[upgradeIndex] || 0)
+            };
+            publishToMercure('http://localhost:8000/game', eventData);
+        }
+    } else {
+        console.log('Недостаточно средств для улучшения');
     }
 }
 
@@ -172,7 +216,7 @@ function handleEffectCoords(x, y, effectPanel, world, soundPanel) {
                     x, y,
                     ...effectData
                 };
-                publishToMercure('http://localhost:8000/game', eventData);
+                publishToMercure(topic, eventData);
             }
             effectPanel.isWaitingForCoords = false;
             effectPanel.choosenEffect = null;
@@ -201,7 +245,7 @@ function handleEnemiesPanelClick(x, y, enemiesPanel, world) {
                 targetUserId: enemiesPanel.baseOwnerId,
                 enemies: result.enemies
             };
-            publishToMercure('http://localhost:8000/game', eventData);
+            publishToMercure(topic, eventData);
         }
     }
 

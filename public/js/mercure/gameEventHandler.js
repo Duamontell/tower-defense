@@ -37,6 +37,9 @@ export class GameEventHandler {
             case 'upgradeTower':
                 this.#handleUpgradeTower(data);
                 break;
+            case 'sellTower':
+                this.#handleSellTower(data);
+                break;
             default:
                 console.warn('Неизвестный тип события:', data.type);
         }
@@ -63,13 +66,13 @@ export class GameEventHandler {
 
         const TowerClass = TOWER_CLASSES[name];
         if (!TowerClass) {
-            console.error(`Ошибка: неизвестный тип башни '${name}'`);
+            //console.error(`Ошибка: неизвестный тип башни '${name}'`);
             return;
         }
 
         const zone = this.world.towerZones.find(z => z.id === zoneId);
         if (!zone) {
-            console.warn(`Зона с id ${zoneId} не найдена. Невозможно установить координаты башни.`);
+            //console.warn(`Зона с id ${zoneId} не найдена. Невозможно установить координаты башни.`);
             return;
         }
 
@@ -89,10 +92,10 @@ export class GameEventHandler {
         if (player) {
             player.addTowerId(tower.id);
         } else {
-            console.warn(`Пользователь ${userId} не найден при добавлении башни.`);
+            //console.warn(`Пользователь ${userId} не найден при добавлении башни.`);
         }
 
-        console.log(`Башня "${name}" добавлена для пользователя ${userId} в зоне ${zoneId} с позицией (${towerPos.x}, ${towerPos.y}).`);
+        //console.log(`Башня "${name}" добавлена для пользователя ${userId} в зоне ${zoneId} с позицией (${towerPos.x}, ${towerPos.y}).`);
     }
 
     #handleTowerAttack(data) {
@@ -104,13 +107,13 @@ export class GameEventHandler {
 
         const tower = this.world.towers.find(t => t.id === towerId);
         if (!tower) {
-            console.warn(`Башня с id ${towerId} не найдена.`);
+            //console.warn(`Башня с id ${towerId} не найдена.`);
             return;
         }
 
         const enemy = this.world.enemies.find(e => e.id === enemyId);
         if (!enemy) {
-            console.warn(`Враг с id ${enemyId} не найден.`);
+            //console.warn(`Враг с id ${enemyId} не найден.`);
             return;
         }
 
@@ -136,13 +139,13 @@ export class GameEventHandler {
                 projectile = new FreezeProjectile(startPos, [targetPos], enemy, tower.damage, freezeSlowness, tower.attackCfg);
                 break;
             default:
-                console.warn(`Неизвестный тип башни для атаки: ${tower.name}`);
+                //console.warn(`Неизвестный тип башни для атаки: ${tower.name}`);
                 return;
         }
 
         if (projectile) {
             this.world.projectiles.push(projectile);
-            console.log(`Башня ${tower.id} (${tower.name}) создала снаряд для врага ${enemy.id}.`);
+            //console.log(`Башня ${tower.id} (${tower.name}) создала снаряд для врага ${enemy.id}.`);
         }
     }
 
@@ -155,16 +158,16 @@ export class GameEventHandler {
 
         const base = this.world.bases.find(b => b.id === baseId);
         if (!base) {
-            console.warn(`База с id ${baseId} не найдена.`);
+            //console.warn(`База с id ${baseId} не найдена.`);
             return;
         }
         if (base.isDestroyed) {
-            console.warn(`База ${baseId} уже уничтожена. Игнорируем урон.`);
+            //console.warn(`База ${baseId} уже уничтожена. Игнорируем урон.`);
             return;
         }
 
         base.recieveDamage(damage, true);
-        console.log(`База ${baseId} получила ${damage} урона.`);
+        //console.log(`База ${baseId} получила ${damage} урона.`);
     }
 
     #handleBaseDestroyed(data) {
@@ -172,7 +175,7 @@ export class GameEventHandler {
 
         const base = this.world.bases.find(b => b.id === baseId);
         if (!base) {
-            console.warn(`База с id ${baseId} не найдена.`);
+            //console.warn(`База с id ${baseId} не найдена.`);
             return;
         }
         base.health = health;
@@ -193,7 +196,7 @@ export class GameEventHandler {
                     type: 'playerIsWin',
                     winnerId: alivePlayers[0].id,
                 }
-                publishToMercure('http://localhost:8000/game', winEventData);
+                publishToMercure(topic, winEventData);
             }
         }
     }
@@ -219,7 +222,7 @@ export class GameEventHandler {
             case 'Bomb':
                 effect = new ExplosionEffect({ x, y }, damage, cfg);
                 break;
-            case 'FreezeTower': {
+            case 'FreezeTower':
                 const towerObj = this.world.towers.find(t => t.id === towerId);
                 if (!towerObj) {
                     return;
@@ -227,9 +230,8 @@ export class GameEventHandler {
                 towerObj.isFrozen = true;
                 effect = new FreezeTowerEffect(towerObj, duration);
                 break;
-            }
             default:
-                console.warn('Неизвестный тип эффекта:', effectType);
+                //console.warn('Неизвестный тип эффекта:', effectType);
                 return;
         }
         if (effect) {
@@ -252,7 +254,7 @@ export class GameEventHandler {
 
         const tower = this.world.towers.find(t => t.id === towerId);
         if (!tower) {
-            console.warn(`Башня с id ${towerId} не найдена для апгрейда`);
+            //console.warn(`Башня с id ${towerId} не найдена для апгрейда`);
             return;
         }
 
@@ -262,5 +264,16 @@ export class GameEventHandler {
                 tower.upgradeLevels[upgradeIndex] = newLevel;
             }
         }
+    }
+
+    #handleSellTower(data) {
+        const { userId, towerId } = data;
+        if (userId === window.currentUserId) return;
+
+        const tower = this.world.towers.find(t => t.id === towerId);
+        if (!tower) return;
+
+        tower.isBeingSold = true;
+        tower.sellAnimationProgress = 0;
     }
 }

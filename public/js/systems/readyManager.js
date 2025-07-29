@@ -21,10 +21,8 @@ export class ReadyManager {
     }
 
     subscribe() {
-        console.log("ПОДПИСЫВАЕМСЯ");
         const topic = `/game/room/${roomId}/ready`;
         this.eventSource = subscribeToMercure(topic, msg => {
-            console.log(msg);
             const { id, isReady } = msg;
 
             if (isReady) {
@@ -37,12 +35,9 @@ export class ReadyManager {
                 this.localReady = isReady;
             }
 
-            console.log(this.playersReady.size, this.totalPlayers, this.resolveWait);
             if (this.playersReady.size === this.totalPlayers && this.resolveWait) {
                 this.resolveWait();
             }
-
-            console.log(this.playersReady);
         });
     }
 
