@@ -17,13 +17,7 @@ export class SoundPanel {
             off: this.loadIcon('../../images/assets/speakers_off.png')
         };
 
-        this.sounds = [
-            this.getSound('background'),
-            this.getSound('fireball'),
-            this.getSound('archers'),
-            this.getSound('freeze'),
-            this.getSound('explosion')
-        ];
+        this.sounds = [this.getSound('background')];
 
         this.sounds.forEach(sound => {
             sound.volume = 0;
@@ -79,37 +73,40 @@ export class SoundPanel {
         ctx.restore();
     }
 
+    add(sound) {
+        (this.isMuted) ? sound.volume = 0 : this.handleVolume(sound);
+        this.sounds.push(sound);
+    }
+
     handleSound() {
         this.isMuted = !this.isMuted;
-        this.sounds.forEach(sound => {
-            if (!this.isMuted) {
-                switch (sound.id) {
-                    case 'background': 
-                        sound.volume = 0.5;
-                        sound.play();
-                        break;
-                    case 'archers':
-                        sound.volume = 1;
-                        break;
-                    case 'fireball':
-                        sound.volume = 1;
-                        break;
-                    case 'explosion': 
-                        sound.volume = 0.3;
-                        break;
-                    case 'freeze':
-                        sound.volume = 0.7;
-                        break;
-                    case 'poison':
-                        sound.volume = 1;
-                        break;
-                    default:
-                        sound.volume = 1;
-                }
-            } else {
-                sound.volume = 0
-            }
-        });
+        this.sounds.forEach(sound => (this.isMuted) ? sound.volume = 0 : this.handleVolume(sound));
+        if (this.sounds[0].paused) this.sounds[0].play();
+    }
+
+    handleVolume(sound) {
+        switch (sound.id) {
+            case 'background':
+                sound.volume = 0.5;
+                break;
+            case 'archers':
+                sound.volume = 1;
+                break;
+            case 'fireball':
+                sound.volume = 1;
+                break;
+            case 'explosion': 
+                sound.volume = 0.3;
+                break;
+            case 'freeze':
+                sound.volume = 0.7;
+                break;
+            case 'poison':
+                sound.volume = 1;
+                break;
+            default:
+                sound.volume = 1;
+        }
     }
 
     isClickedOnIcon(x, y) {

@@ -117,7 +117,7 @@ function handleRulesPanelClick(x, y, rulesPanel) {
     }
 }
 
-function handleEffectCoords(x, y, effectPanel, world) {
+function handleEffectCoords(x, y, effectPanel, world, soundPanel) {
     const user = world.players.get(currentUserId);
     const choosenEffect = effectPanel.choosenEffect;
 
@@ -128,17 +128,17 @@ function handleEffectCoords(x, y, effectPanel, world) {
 
         switch (choosenEffect.name) {
             case 'Poison':
-                effect = new PoisonEffect({ x: x, y: y }, choosenEffect.damage, choosenEffect.cfg);
+                effect = new PoisonEffect({ x: x, y: y }, choosenEffect.damage, choosenEffect.cfg, soundPanel);
                 effectType = 'Poison';
                 effectData = { damage: choosenEffect.damage, cfg: choosenEffect.cfg };
                 break;
             case 'Freezing':
-                effect = new FreezeEffect({ x: x, y: y }, choosenEffect.slowness, choosenEffect.cfg);
+                effect = new FreezeEffect({ x: x, y: y }, choosenEffect.slowness, choosenEffect.cfg, soundPanel);
                 effectType = 'Freezing';
                 effectData = { slowness: choosenEffect.slowness, cfg: choosenEffect.cfg };
                 break;
             case 'Bomb':
-                effect = new ExplosionEffect({ x: x, y: y }, choosenEffect.damage, choosenEffect.cfg);
+                effect = new ExplosionEffect({ x: x, y: y }, choosenEffect.damage, choosenEffect.cfg, soundPanel);
                 effectType = 'Bomb';
                 effectData = { damage: choosenEffect.damage, cfg: choosenEffect.cfg };
                 break;
@@ -262,7 +262,7 @@ export function handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, 
                 return true;
             }
             const worldCoords = camera.screenToWorld(x, y);
-            handleEffectCoords(worldCoords.x, worldCoords.y, effectPanel, world);
+            handleEffectCoords(worldCoords.x, worldCoords.y, effectPanel, world, soundPanel);
         } else {
             handleEffectPanelClick(x, y, effectPanel);
         }

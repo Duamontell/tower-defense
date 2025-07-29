@@ -2,7 +2,7 @@ import { ExplosionEffect, FreezeEffect, PoisonEffect } from "./effect.js";
 
 export class Projectile {
 
-    constructor(name, position, width, height, damage, speed, animationSpeed, waypoints, enemy) {
+    constructor(name, position, width, height, damage, speed, animationSpeed, waypoints, enemy, soundPanel) {
         this.name = name;
         this.position = position;
         this.width = width;
@@ -18,6 +18,7 @@ export class Projectile {
         this.reachedEnd = false;
         this.enemy = enemy;
         this.angle = this.#calcAngle();
+        this.soundPanel = soundPanel;
     }
 
     draw(ctx, camera) {
@@ -108,7 +109,7 @@ export class FireballProjectile extends Projectile {
 }
 
 export class PoisonProjectile extends Projectile {
-    constructor(position, waypoints, enemy, damage, cfg) {
+    constructor(position, waypoints, enemy, damage, cfg, soundPanel) {
         super(cfg.name, position, cfg.width, cfg.height, damage, cfg.speed, cfg.animationSpeed, waypoints, enemy);
         cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();
@@ -116,16 +117,17 @@ export class PoisonProjectile extends Projectile {
             this.images.push(frame);
         });
         this.effect = cfg.effect;
+        this.soundPanel = soundPanel;
     }
 
     doDamage(effects) {
-        const effect = new PoisonEffect(this.position, this.damage, this.effect);
+        const effect = new PoisonEffect(this.position, this.damage, this.effect, this.soundPanel);
         effects.push(effect);
     }
 }
 
 export class FreezeProjectile extends Projectile {
-    constructor(position, waypoints, enemy, damage, slowness, cfg) {
+    constructor(position, waypoints, enemy, damage, slowness, cfg, soundPanel) {
         super(cfg.name, position, cfg.width, cfg.height, damage, cfg.speed, cfg.animationSpeed, waypoints, enemy);
         cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();
@@ -133,17 +135,18 @@ export class FreezeProjectile extends Projectile {
             this.images.push(frame);
         });
         this.effect = cfg.effect;
-        this.slowness = slowness
+        this.slowness = slowness;
+        this.soundPanel = soundPanel;
     }
 
     doDamage(effects) {
-        const effect = new FreezeEffect(this.position, this.slowness, this.effect);
+        const effect = new FreezeEffect(this.position, this.slowness, this.effect, this.soundPanel);
         effects.push(effect);
     }
 }
 
 export class ExplosiveProjectile extends Projectile {
-    constructor(position, waypoints, enemy, damage, cfg) {
+    constructor(position, waypoints, enemy, damage, cfg, soundPanel) {
         super(cfg.name, position, cfg.width, cfg.height, damage, cfg.speed, cfg.animationSpeed, waypoints, enemy);
         cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();
@@ -151,10 +154,11 @@ export class ExplosiveProjectile extends Projectile {
             this.images.push(frame);
         });
         this.effect = cfg.effect;
+        this.soundPanel = soundPanel;
     }
 
     doDamage(effects) {
-        const effect = new ExplosionEffect(this.position, this.damage, this.effect);
+        const effect = new ExplosionEffect(this.position, this.damage, this.effect, this.soundPanel);
         effects.push(effect);
     }
 }

@@ -2,9 +2,10 @@ import { towerUpgradesByType } from './upgrades.js';
 import { ArrowProjectile, ExplosiveProjectile, FireballProjectile, FreezeProjectile, PoisonProjectile, Projectile } from './projectile.js';
 import { uuidv4 } from '../systems/generateId.js'
 import { publishToMercure } from '../mercure/mercureHandler.js';
+import { SoundPanel } from './soundPanel.js';
 
 export class Tower {
-    constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, imageSrcFrozen, attackCfg, upgrades) {
+    constructor(name, damage, radius, price, position, width, height, cooldown, imageSrc, imageSrcFrozen, attackCfg, upgrades, soundPanel) {
         this.id = uuidv4();
         this.ownerId = null;
         this.name = name;
@@ -33,6 +34,7 @@ export class Tower {
         this.upgradeLevels = new Array(this.upgrades.length).fill(0);
         this.attackCfg = attackCfg;
         this.isFrozen = false;
+        this.soundPanel = soundPanel;
     }
 
     applyUpgrade(index) {
@@ -112,13 +114,13 @@ export class Tower {
                 projectile = new FireballProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
                 break;
             case 'Poisonous':
-                projectile = new PoisonProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
+                projectile = new PoisonProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg, this.soundPanel);
                 break;
             case 'Freezing':
-                projectile = new FreezeProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.slowness, this.attackCfg);
+                projectile = new FreezeProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.slowness, this.attackCfg, this.soundPanel);
                 break;
             case 'Mortar':
-                projectile = new ExplosiveProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg);
+                projectile = new ExplosiveProjectile(position, [nearestEnemyPos], nearestEnemy, this.damage, this.attackCfg, this.soundPanel);
                 break;
         }
 
@@ -161,48 +163,52 @@ export class Tower {
 
 export class ArchersTower extends Tower {
     static price = 10;
-    constructor(position, cfg) {
+    constructor(position, cfg, soundPanel) {
         super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
             cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.cooldown,
-            cfg.archer.imageSrc, cfg.archer.imageSrcFrozen, cfg.archer.attack, towerUpgradesByType.Archers);
-        this.sound = document.getElementById('archers');
+            cfg.archer.imageSrc, cfg.archer.imageSrcFrozen, cfg.archer.attack, towerUpgradesByType.Archers, soundPanel);
+        this.sound = new Audio('../../music/archers.ogg');
+        this.sound.id = 'archers';
+        soundPanel.add(this.sound);
     }
 }
 
 export class MagicianTower extends Tower {
     static price = 30;
-    constructor(position, cfg) {
+    constructor(position, cfg, soundPanel) {
         super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
             cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.cooldown,
-            cfg.magician.imageSrc, cfg.magician.imageSrcFrozen, cfg.magician.attack, towerUpgradesByType.Magicians);
-        this.sound = document.getElementById('fireball');
+            cfg.magician.imageSrc, cfg.magician.imageSrcFrozen, cfg.magician.attack, towerUpgradesByType.Magicians, soundPanel);
+        this.sound = new Audio('../../music/fireball.mp3');
+        this.sound.id = 'fireball';
+        soundPanel.add(this.sound);
     }
 }
 
 export class PoisonousTower extends Tower {
     static price = 50;
-    constructor(position, cfg) {
+    constructor(position, cfg, soundPanel) {
         super(cfg.poison.name, cfg.poison.damage, cfg.poison.radius,
             cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.cooldown,
-            cfg.poison.imageSrc, cfg.poison.imageSrcFrozen, cfg.poison.attack, towerUpgradesByType.Poisonous);
+            cfg.poison.imageSrc, cfg.poison.imageSrcFrozen, cfg.poison.attack, towerUpgradesByType.Poisonous, soundPanel);
     }
 }
 
 export class FreezingTower extends Tower {
     static price = 30;
-    constructor(position, cfg) {
+    constructor(position, cfg, soundPanel) {
         super(cfg.freezing.name, cfg.freezing.damage, cfg.freezing.radius,
             cfg.freezing.price, position, cfg.freezing.width, cfg.freezing.height, cfg.freezing.cooldown,
-            cfg.freezing.imageSrc, cfg.freezing.imageSrcFrozen, cfg.freezing.attack, towerUpgradesByType.Freezing);
+            cfg.freezing.imageSrc, cfg.freezing.imageSrcFrozen, cfg.freezing.attack, towerUpgradesByType.Freezing, soundPanel);
         this.slowness = cfg.freezing.slowness;
     }
 }
 
 export class MortarTower extends Tower {
     static price = 50;
-    constructor(position, cfg) {
+    constructor(position, cfg, soundPanel) {
         super(cfg.exp.name, cfg.exp.damage, cfg.exp.radius,
             cfg.exp.price, position, cfg.exp.width, cfg.exp.height, cfg.exp.cooldown,
-            cfg.exp.imageSrc, cfg.exp.imageSrcFrozen, cfg.exp.attack, towerUpgradesByType.Mortar);
+            cfg.exp.imageSrc, cfg.exp.imageSrcFrozen, cfg.exp.attack, towerUpgradesByType.Mortar, soundPanel);
     }
 }

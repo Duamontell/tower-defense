@@ -259,7 +259,7 @@ export class World {
 
         const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
         const centerY = (zone.topLeft.y + zone.bottomRight.y) / 2;
-        const tower = new TowerClass({ x: centerX, y: centerY }, this.towersCfg);
+        const tower = new TowerClass({ x: centerX, y: centerY }, this.towersCfg, this.soundPanel);
         this.addTower(tower, currentUserId);
 
 
