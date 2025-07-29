@@ -214,13 +214,13 @@ export class GameEventHandler {
         let effect;
         switch (effectType) {
             case 'Poison':
-                effect = new PoisonEffect({ x, y }, damage, cfg);
+                effect = new PoisonEffect({ x, y }, damage, cfg, this.world.soundPanel);
                 break;
             case 'Freezing':
-                effect = new FreezeEffect({ x, y }, slowness, cfg);
+                effect = new FreezeEffect({ x, y }, slowness, cfg, this.world.soundPanel);
                 break;
             case 'Bomb':
-                effect = new ExplosionEffect({ x, y }, damage, cfg);
+                effect = new ExplosionEffect({ x, y }, damage, cfg, this.world.soundPanel);
                 break;
             case 'FreezeTower':
                 const towerObj = this.world.towers.find(t => t.id === towerId);
