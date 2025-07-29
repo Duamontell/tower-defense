@@ -12,7 +12,11 @@
             "imageSrcs": [
                 "../../images/effects/poison/poison1.webp"
             ],
-            "animationSpeed": 5
+            "animationSpeed": 5,
+            "modes": [
+                "singleplayer",
+                "multiplayer"
+            ]
         }
     },
     {
@@ -28,7 +32,11 @@
             "imageSrcs": [
                 "../../images/effects/ice/ice1.png"
             ],
-            "animationSpeed": 5
+            "animationSpeed": 5,
+            "modes": [
+                "singleplayer",
+                "multiplayer"
+            ]
         }
     },
     {
@@ -55,7 +63,20 @@
                 "../../images/effects/explosion/exp11.png",
                 "../../images/effects/explosion/exp12.png"
             ],
-            "animationSpeed": 5
+            "animationSpeed": 5,
+            "modes": [
+                "singleplayer",
+                "multiplayer"
+            ]
         }
+    },
+    {
+        "name": "FreezeTower",
+        "icon": "../../images/assets/freezingIcon.svg",
+        "price": 40,
+        "duration": 10,
+        "modes": [
+            "multiplayer"
+        ]
     }
 ]
