@@ -35,6 +35,8 @@ export class Tower {
         this.attackCfg = attackCfg;
         this.isFrozen = false;
         this.soundPanel = soundPanel;
+        this.isBeingSold = false;
+        this.sellAnimationProgress = 0;
     }
 
     applyUpgrade(index) {
@@ -57,6 +59,13 @@ export class Tower {
                 this.timeUntilNextShot = this.cooldown;
             }
         }
+
+        if (this.isBeingSold) {
+            this.sellAnimationProgress += delta / 0.8;
+            if (this.sellAnimationProgress > 1) {
+                this.sellAnimationProgress = 1;
+            }
+        }
     }
 
     draw(ctx, camera, x = null, y = null, width = null, height = null) {
@@ -65,6 +74,10 @@ export class Tower {
         if (!this.isLoaded) {
             ctx.restore();
             return;
+        }
+
+        if (this.isBeingSold) {
+            ctx.globalAlpha = 1 - this.sellAnimationProgress;
         }
 
         let worldX = x !== null ? x : this.position.x;
