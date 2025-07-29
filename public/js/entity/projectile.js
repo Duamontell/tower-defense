@@ -119,7 +119,6 @@ export class PoisonProjectile extends Projectile {
     }
 
     doDamage(effects) {
-        console.log(this.effect);
         const effect = new PoisonEffect(this.position, this.damage, this.effect);
         effects.push(effect);
     }

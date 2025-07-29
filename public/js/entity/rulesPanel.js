@@ -2,7 +2,7 @@ export class RulesPanel {
     constructor(ctx, nativeHeight, nativeWidth) {
         this.ctx = ctx;
         this.width = nativeWidth * 0.6;
-        this.height = nativeHeight * 0.9;
+        this.height = nativeHeight * 0.95;
         this.x = (nativeWidth - this.width) / 2;
         this.y = (nativeHeight - this.height) / 2;
         this.visible = false;
@@ -19,12 +19,13 @@ export class RulesPanel {
             help: this.loadIcon('../../images/assets/help.png'),
             archer: this.loadIcon('/images/tower/TowerArchers.webp'),
             magic: this.loadIcon('../../images/tower/TowerMagicians.webp'),
-            poison: this.loadIcon('/images/tower/poison1.webp'),
-            slow: this.loadIcon('/images/tower/freezing1.webp'),
+            poison: this.loadIcon('/images/tower/TowerPoison.webp'),
+            slow: this.loadIcon('/images/tower/TowerFreezing.webp'),
             mine: this.loadIcon('/images/tower/MortarTower.webp'),
             freeze: this.loadIcon('/images/projectiles/freeze/freeze1.png'),
             poisonEff: this.loadIcon('/images/projectiles/poison/poison1.png'),
-            bomb: this.loadIcon('/images/projectiles/bomb/bomb8.png')
+            bomb: this.loadIcon('/images/projectiles/bomb/bomb8.png'),
+            freezingTower: this.loadIcon('/images/assets/freezingIcon.svg')
         };
     }
 
@@ -61,7 +62,7 @@ export class RulesPanel {
         ctx.stroke();
         ctx.globalAlpha = 1;
 
-        ctx.font = `bold ${this.height * 0.03}px MedievalSharp, serif`;
+        ctx.font = `bold ${this.height * 0.025}px MedievalSharp, serif`;
         ctx.fillStyle = "#7a5c1b";
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
@@ -74,7 +75,7 @@ export class RulesPanel {
         ctx.strokeStyle = "#bfa76f";
         ctx.lineWidth = this.width * 0.004;
         ctx.stroke();
-        ctx.font = `bold ${this.closeSize * 0.8}px Arial`;
+        ctx.font = `bold ${this.closeSize * 0.75}px Arial`;
         ctx.fillStyle = "#5a3e00";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -83,14 +84,14 @@ export class RulesPanel {
         ctx.textAlign = "left";
         let tx = this.x + this.width * 0.04;
         let ty = this.y + this.height * 0.09;
-        let lh = this.height * 0.035;
+        let lh = this.height * 0.03;
 
         // Как играть
-        ctx.font = `bold ${this.height * 0.025}px Arial`;
+        ctx.font = `bold ${this.height * 0.02}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Как играть:", tx, ty);
         ty += lh;
-        ctx.font = `${this.height * 0.02}px Arial`;
+        ctx.font = `${this.height * 0.015}px Arial`;
         ctx.fillText("Как поставить башню: кликните на зону на карте → выберите башню.", tx, ty);
         ty += lh;
         ctx.fillText("Как улучшить башню: кликните на башню → выберите улучшение.", tx, ty);
@@ -98,10 +99,12 @@ export class RulesPanel {
         ctx.fillText("Как купить эффект: кликните на корзинку → выберите эффект → выберите место на карте.", tx, ty);
         ty += lh;
         ctx.fillText("Как направить врагов на соперника: кликните на крепость соперника → выберите волну врагов.", tx, ty);
+        ty += lh;
+        ctx.fillText("Как заморозить башню соперника: кликните на корзинку → выберите заморозку → выберите башню соперника.", tx, ty);
         ty += lh * 1.2;
 
         // Типы башен
-        ctx.font = `bold ${this.height * 0.025}px Arial`;
+        ctx.font = `bold ${this.height * 0.02}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Типы башен:", tx, ty);
         ty += lh;
@@ -119,54 +122,55 @@ export class RulesPanel {
             if (t.icon.complete) {
                 ctx.drawImage(t.icon, bx, by - iconSize / 2, iconSize, iconSize);
             }
-            ctx.font = `${this.height * 0.02}px Arial`;
+            ctx.font = `${this.height * 0.015}px Arial`;
             ctx.fillStyle = "#3a2a00";
             ctx.fillText(t.text, bx + iconSize + this.width * 0.012, by);
-            by += lh * 1.2;
+            by += lh * 1.4;
         });
         ty = by + lh * 0.5;
 
         // Улучшения башен
-        ctx.font = `bold ${this.height * 0.025}px Arial`;
+        ctx.font = `bold ${this.height * 0.02}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Улучшения башен:", tx, ty);
         ty += lh;
-        ctx.font = `${this.height * 0.02}px Arial`;
+        ctx.font = `${this.height * 0.015}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Каждая башня может быть улучшена за монеты.", tx, ty);
         ty += lh;
         ctx.fillText("Улучшения увеличивают урон, радиус действия, скорость стрельбы.", tx, ty);
-        ty += lh * 1.5;
+        ty += lh * 1.3;
 
         // Эффекты
-        ctx.font = `bold ${this.height * 0.025}px Arial`;
+        ctx.font = `bold ${this.height * 0.02}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Эффекты:", tx, ty);
         ty += lh;
         const effectIconSize = this.height * 0.032;
-        by = ty;
+        by = ty * 1.01;
         const effects = [
             { icon: this.icons.freeze, text: "Замедление — замедляет врагов." },
             { icon: this.icons.poisonEff, text: "Яд — наносит урон ядом." },
-            { icon: this.icons.bomb, text: "Бомба — наносит урон взрывом." }
+            { icon: this.icons.bomb, text: "Бомба — наносит урон взрывом." },
+            { icon: this.icons.freezingTower, text: "Заморозка - замораживает башню соперника." }
         ];
         effects.forEach(e => {
             if (e.icon.complete) {
                 ctx.drawImage(e.icon, bx, by - effectIconSize / 2, effectIconSize, effectIconSize);
             }
-            ctx.font = `${this.height * 0.019}px Arial`;
+            ctx.font = `${this.height * 0.015}px Arial`;
             ctx.fillStyle = "#3a2a00";
             ctx.fillText(e.text, bx + effectIconSize + this.width * 0.012, by);
-            by += lh;
+            by += lh * 1.4;
         });
-        ty = by + lh * 0.5;
+        ty = by + lh * 0.2;
 
         // Ресурсы
-        ctx.font = `bold ${this.height * 0.027}px Arial`;
+        ctx.font = `bold ${this.height * 0.02}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Ресурсы:", tx, ty);
         ty += lh;
-        ctx.font = `${this.height * 0.021}px Arial`;
+        ctx.font = `${this.height * 0.015}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("За уничтожение врагов вы будете получать денежное вознаграждение.", tx, ty);
         ty += lh;
@@ -174,11 +178,11 @@ export class RulesPanel {
         ty += lh * 1.2;
 
         // Дополнительные волны врагов
-        ctx.font = `bold ${this.height * 0.025}px Arial`;
+        ctx.font = `bold ${this.height * 0.02}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Дополнительные волны врагов:", tx, ty);
         ty += lh;
-        ctx.font = `${this.height * 0.02}px Arial`;
+        ctx.font = `${this.height * 0.015}px Arial`;
         ctx.fillStyle = "#3a2a00";
         ctx.fillText("Вы можете покупать и отправлять дополнительные волны врагов на соперников за монеты.", tx, ty);
 

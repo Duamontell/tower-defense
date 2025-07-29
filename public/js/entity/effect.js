@@ -67,6 +67,8 @@ export class PoisonEffect extends Effect {
             this.images.push(frame);
         });
         this.damage = damage;
+        this.sound = document.getElementById('poison');
+        if (this.sound) this.sound.play();
     }
 
     effect(enemies) {
@@ -85,7 +87,9 @@ export class FreezeEffect extends Effect {
             frame.src = imageSrc;
             this.images.push(frame);
         });
-        this.slowness = slowness
+        this.slowness = slowness;
+        this.sound = document.getElementById('freeze');
+        if (this.sound) this.sound.play();
     }
 
     effect(enemies) {
@@ -107,6 +111,8 @@ export class ExplosionEffect extends Effect {
         this.damage = damage;
         this.done = false;
         this.isOnTop = true;
+        this.sound = document.getElementById('explosion');
+        if (this.sound) this.sound.play();
     }
 
     update(delta, enemies) {
@@ -145,5 +151,46 @@ export class ExplosionEffect extends Effect {
             height
         );
         ctx.restore();
+    }
+}
+
+export class FreezeTowerEffect {
+    constructor(tower, duration) {
+        this.tower = tower;
+        this.duration = duration;
+        this.timeLeft = duration;
+        this.isOnTop = true;
+    }
+
+    update(delta) {
+        this.timeLeft -= delta;
+        if (this.timeLeft <= 0) {
+            this.tower.isFrozen = false;
+        }
+    }
+
+    draw(ctx, camera) {
+        const { x, y } = camera.worldToScreen(this.tower.position.x, this.tower.position.y);
+        const baseR = this.tower.width * camera.scale * 0.7;
+        const now = performance.now();
+
+        const snowflakes = 18;
+        for (let i = 0; i < snowflakes; i++) {
+            const t = now / 800 + i;
+            const angle = t + i * Math.PI * 2 / snowflakes;
+            const spiralR = baseR * (0.5 + 0.5 * Math.sin(t + i));
+            const sx = x + Math.cos(angle) * spiralR;
+            const sy = y - this.tower.height * camera.scale * 0.2 + Math.sin(angle) * spiralR * 0.7;
+
+            ctx.save();
+            ctx.globalAlpha = 0.7 + 0.3 * Math.sin(t + i);
+            ctx.beginPath();
+            ctx.arc(sx, sy, 5 + 2 * Math.sin(t + i), 0, 2 * Math.PI);
+            ctx.fillStyle = "#e0f7ff";
+            ctx.shadowColor = "#fff";
+            ctx.shadowBlur = 8;
+            ctx.fill();
+            ctx.restore();
+        }
     }
 }

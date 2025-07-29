@@ -8,6 +8,7 @@
         "height": 300,
         "cooldown": 2,
         "imageSrc": "../../images/tower/TowerArchers.webp",
+        "imageSrcFrozen": "../../images/tower/TowerArchersFrozen.webp",
         "attack": {
             "name": "Arrow",
             "width": 120,
@@ -26,6 +27,7 @@
         "height": 300,
         "cooldown": 2,
         "imageSrc": "../../images/tower/TowerMagicians.webp",
+        "imageSrcFrozen": "../../images/tower/TowerMagiciansFrozen.webp",
         "attack": {
             "name": "Fireball",
             "width": 128,
@@ -50,7 +52,8 @@
         "width": 300,
         "height": 300,
         "cooldown": 6,
-        "imageSrc": "../../images/tower/poison1.webp",
+        "imageSrc": "../../images/tower/TowerPoison.webp",
+        "imageSrcFrozen": "../../images/tower/TowerPoisonFrozen.webp",
         "attack": {
             "name": "Poison",
             "width": 48,
@@ -87,7 +90,8 @@
         "width": 350,
         "height": 350,
         "cooldown": 10,
-        "imageSrc": "../../images/tower/freezing1.webp",
+        "imageSrc": "../../images/tower/TowerFreezing.webp",
+        "imageSrcFrozen": "../../images/tower/TowerFreezingFrozen.webp",
         "attack": {
             "name": "Freezing",
             "width": 48,
@@ -124,6 +128,7 @@
         "height": 300,
         "cooldown": 5,
         "imageSrc": "../../images/tower/MortarTower.webp",
+        "imageSrcFrozen": "../../images/tower/MortarTowerFrozen.webp",
         "attack": {
             "name": "Explosion",
             "width": 100,
