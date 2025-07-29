@@ -49,6 +49,7 @@ export class UpgradePanel {
         this.drawTitle();
         this.#drawCloseButton();
         this.drawUpgradeButtons();
+        this.drawSellButton();
 
         ctx.restore();
     }
@@ -88,13 +89,7 @@ export class UpgradePanel {
 
         const towerClassName = this.selectedTower.name;
         const towerName = this.towerNames[towerClassName] || towerClassName;
-
         ctx.fillText(`Улучшения для ${towerName}`, titleX, titleY);
-        if (this.selectedTower.isFrozen) {
-            ctx.font = `bold ${this.height * 0.05}px Arial`;
-            ctx.fillStyle = "#1caaff";
-            ctx.fillText("Башня заморожена!", titleX, titleY + this.height * 0.09);
-        }
 
         ctx.restore();
     }
@@ -184,6 +179,28 @@ export class UpgradePanel {
         });
     }
 
+    drawSellButton() {
+        if (!this.selectedTower) return;
+        const ctx = this.ctx;
+        const btn = this.sellButton;
+        ctx.save();
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "#e6c97a";
+        ctx.strokeStyle = "#bfa76f";
+        ctx.lineWidth = this.height * 0.006;
+        ctx.beginPath();
+        ctx.roundRect(btn.x, btn.y, btn.width, btn.height, this.height * 0.04);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = `bold ${btn.height * 0.5}px Arial`;
+        ctx.fillStyle = "#7a5c1b";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("Продать башню", btn.x + btn.width / 2, btn.y + btn.height / 2);
+        ctx.restore();
+    }
+
     handleClick(x, y) {
         if (!this.visible) return null;
         if (this.selectedTower && this.selectedTower.isFrozen) {
@@ -191,6 +208,14 @@ export class UpgradePanel {
         }
 
         this.#updatePositions();
+
+        const btn = this.sellButton;
+        if (
+            x >= btn.x && x <= btn.x + btn.width &&
+            y >= btn.y && y <= btn.y + btn.height
+        ) {
+            return 'sell';
+        }
 
         const cx = this.closeX;
         const cy = this.closeY;
@@ -245,6 +270,13 @@ export class UpgradePanel {
 
         this.closeX = this.x + this.width - this.closePadding - this.closeSize / 2;
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
+
+        this.sellButton = {
+            x: this.x + this.width * 0.35,
+            y: this.y + this.height - this.height * 0.12,
+            width: this.width * 0.3,
+            height: this.height * 0.1
+        }
     }
 
     #drawCloseButton() {
