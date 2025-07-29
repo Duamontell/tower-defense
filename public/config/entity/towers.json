@@ -28,8 +28,8 @@
         "imageSrc": "../../images/tower/TowerMagicians.webp",
         "attack": {
             "name": "Fireball",
-            "width": 256,
-            "height": 128,
+            "width": 128,
+            "height": 68,
             "imageSrcs": [
                 "../../images/projectiles/fireball/FB1.png",
                 "../../images/projectiles/fireball/FB2.png",
@@ -37,7 +37,7 @@
                 "../../images/projectiles/fireball/FB4.png",
                 "../../images/projectiles/fireball/FB5.png"
             ],
-            "speed": 350,
+            "speed": 500,
             "animationSpeed": 15
         }
 

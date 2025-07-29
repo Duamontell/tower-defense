@@ -21,5 +21,6 @@
 
         <field name="slot" column="slot" type="smallint" nullable="false"/>
         <field name="isReady" column="is_ready" type="boolean" nullable="false"/>
+        <field name="isReadyInGame" column="is_ready_in_game" type="boolean" nullable="false"/>
     </entity>
 </doctrine-mapping>

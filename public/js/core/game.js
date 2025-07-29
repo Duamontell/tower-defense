@@ -12,10 +12,11 @@ import { initCanvasResizer } from "../ui/gameView.js";
 import { subscribeToMercure, unsubscribe } from '../mercure/mercureHandler.js';
 import { GameEventHandler } from '../mercure/gameEventHandler.js';
 import { EnemiesPanel } from '../entity/enemiesPanel.js';
-import { onClick, onMouseMove } from "../ui/messageHandlers.js";
+import { drawGameMessage, drawHyperGameMessage } from "../ui/message.js";
 import { changeRoomStatus } from "../api/roomApi.js";
 import { Camera } from '../entity/camera.js';
 import { initCameraControls } from '../systems/cameraController.js';
+import { ReadyManager } from "../systems/readyManager.js";
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -25,6 +26,13 @@ const gameMode = window.gameMode || 'singleplayer';
 const currentLevel = window.currentLevel || 1;
 const currentUserId = Number(window.currentUserId);
 const roomConfig = window.roomConfig || {};
+
+let readyManager = null;
+if (gameMode === 'multiplayer') {
+    readyManager = new ReadyManager(roomConfig.players?.length || 1);
+    readyManager.subscribe();
+}
+
 const roomId = window.roomId;
 
 let waveDuration = 0;
@@ -44,7 +52,6 @@ let nativeWidth = canvas.width;
 let nativeHeight = canvas.height;
 let gameMessage = "";
 let linkText = "Вернуться в меню?"
-let inLink = false;
 let camera;
 let scaleToFit;
 
@@ -52,11 +59,11 @@ function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
-    return { x, y };
+    return {x, y};
 }
 
 canvas.addEventListener('click', (event) => {
-    const { x, y } = getClickCoordinates(canvas, event);
+    const {x, y} = getClickCoordinates(canvas, event);
     handleClick(x, y, world, towerPanel, upgradePanel, effectPanel, rulesPanel, enemiesPanel, camera);
 });
 
@@ -66,14 +73,14 @@ async function loadUsersConfig() {
         let lvlResponse = await fetch(`../../config/singleplayer/level${currentLevel}.json`);
         if (lvlResponse.ok) {
             lvlCfg = await lvlResponse.json();
-            users.push({ userId: currentUserId, userCfg: lvlCfg });
+            users.push({userId: currentUserId, userCfg: lvlCfg});
         }
     } else {
         for (const player of roomConfig.players) {
             let userResponse = await fetch(`../../config/multiplayer/player${player.config}.json`);
             if (userResponse.ok) {
                 const userCfg = await userResponse.json();
-                users.push({ userId: player.userId, userCfg: userCfg });
+                users.push({userId: player.userId, userCfg: userCfg});
             } else {
                 console.warn(`Player ${player.config} not found`);
             }
@@ -175,34 +182,11 @@ function gameLoop(timestamp = 0) {
     }
 
     if (gameMessage) {
-        drawGameMessage(ctx, gameMessage);
+        drawGameMessage(canvas, ctx, gameMessage);
+        drawHyperGameMessage(canvas, ctx, linkText);
     }
 
     requestAnimationFrame(gameLoop);
-}
-
-function drawGameMessage(ctx, message) {
-    ctx.save();
-    ctx.globalAlpha = 0.5;
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = "#fff";
-    ctx.font = "48px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText(message, canvas.width / 2, canvas.height / 2);
-
-    let linkX = canvas.width / 2;
-    let linkY = canvas.height / 2 + 100;
-    ctx.fillText(linkText, linkX, linkY);
-    let linkWidth = ctx.measureText(linkText).width;
-
-    canvas.addEventListener('mousemove', e => {
-        inLink = onMouseMove(e, canvas, linkWidth, linkX, linkY);
-        canvas.style.cursor = inLink ? 'pointer' : 'default';
-    }, false);
-    canvas.addEventListener("click", (e) => onClick(inLink), false)
-    ctx.restore();
 }
 
 function clampCamera() {
@@ -230,9 +214,10 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
             x: 0,
             y: 0,
             scale: 1,
-            worldToScreen: (x, y) => ({ x, y }),
-            screenToWorld: (x, y) => ({ x, y }),
-            clampToBounds: () => { },
+            worldToScreen: (x, y) => ({x, y}),
+            screenToWorld: (x, y) => ({x, y}),
+            clampToBounds: () => {
+            },
         };
     }
 
@@ -249,17 +234,19 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
 
     const getUserBalance = () => world.players.get(currentUserId).balance;
 
-    towerPanel = new TowerPanel(ctx, nativeHeight, nativeWidth, getUserBalance, () => { },);
-    upgradePanel = new UpgradePanel(ctx, nativeHeight, nativeWidth, getUserBalance, () => { });
+    towerPanel = new TowerPanel(ctx, nativeHeight, nativeWidth, getUserBalance, () => {
+    },);
+    upgradePanel = new UpgradePanel(ctx, nativeHeight, nativeWidth, getUserBalance, () => {
+    });
     effectPanel = new EffectPanel(ctx, nativeHeight, nativeWidth, getUserBalance, effectShopCfg);
     enemiesPanel = new EnemiesPanel(ctx, nativeHeight, nativeWidth, getUserBalance, enemiesShopCfg);
     rulesPanel = new RulesPanel(ctx, nativeHeight, nativeWidth);
 
-    const archerTower = new ArchersTower({ x: 0, y: 0 }, towersCfg);
-    const magicianTower = new MagicianTower({ x: 0, y: 0 }, towersCfg);
-    const poisonousTower = new PoisonousTower({ x: 0, y: 0 }, towersCfg);
-    const freezingTower = new FreezingTower({ x: 0, y: 0 }, towersCfg);
-    const mortarTower = new MortarTower({ x: 0, y: 0 }, towersCfg);
+    const archerTower = new ArchersTower({x: 0, y: 0}, towersCfg);
+    const magicianTower = new MagicianTower({x: 0, y: 0}, towersCfg);
+    const poisonousTower = new PoisonousTower({x: 0, y: 0}, towersCfg);
+    const freezingTower = new FreezingTower({x: 0, y: 0}, towersCfg);
+    const mortarTower = new MortarTower({x: 0, y: 0}, towersCfg);
 
     towerPanel.addTower(archerTower);
     towerPanel.addTower(magicianTower);
@@ -270,7 +257,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     if (gameMode === "multiplayer") {
         const gameEventHandler = new GameEventHandler(world);
         // TODO: Сделать топик уникальным для каждой комнаты!
-        const topic = 'http://localhost:8000/game'
+        const topic = '/game'
         const mercureCallback = (data) => {
             try {
                 gameEventHandler.handleEvent(data);
@@ -286,7 +273,18 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
 const users = await loadUsersConfig();
 initializeLevel(users, lvlCfg, enemiesCfg, towersCfg);
 initCanvasResizer(canvas, nativeWidth, nativeHeight);
+
+// При частых сбоях вернуть назад!
+let prepareMultiplayer = Promise.resolve();
 if (gameMode === "multiplayer") {
     initCameraControls(canvas, camera, clampCamera, getClickCoordinates, scaleToFit, 2);
+    prepareMultiplayer = (async () => {
+        drawGameMessage(canvas, ctx, "Ожидание других игроков");
+        await readyManager.waitForAllReady();
+        readyManager.cleanup();
+    })();
 }
+
+await prepareMultiplayer;
 gameLoop();
+

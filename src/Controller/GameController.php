@@ -6,7 +6,10 @@ namespace App\Controller;
 
 use App\Repository\RoomRepository;
 use App\Repository\UserRepository;
+use App\Service\RoomPlayerService;
+use App\Service\RoomService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,7 +17,7 @@ class GameController extends AbstractController
 {
     public function __construct(
         private RoomRepository $roomRepository,
-        private UserRepository $userRepository
+        private UserRepository $userRepository, private readonly RoomService $roomService, private readonly RoomPlayerService $roomPlayerService
     ) {
     }
 
@@ -77,5 +80,21 @@ class GameController extends AbstractController
                 'players' => $playerData,
             ],
         ]);
+    }
+
+    public function playerReady(int $roomId, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $playerId = (int)$data['playerId'];
+        $ready = $data['isReady'];
+        $this->roomPlayerService->setReadyInGame($playerId, $roomId, $ready);
+
+        return $this->json(['success' => true]);
+    }
+
+    public function grabPlayerInGameStatuses(int $roomId): JsonResponse
+    {
+        $playerStatuses = $this->roomService->grabPlayerInGameStatuses($roomId);
+        return $this->json($playerStatuses, Response::HTTP_OK);
     }
 }
