@@ -103,7 +103,7 @@ function sellSelectedTower(user, world, upgradePanel) {
             userId: currentUserId,
             towerId: towerId,
         };
-        publishToMercure('http://localhost:8000/game', eventData);
+        publishToMercure(topic, eventData);
     }
 }
 
@@ -124,7 +124,7 @@ function upgradeSelectedTower(user, upgradeIndex, upgradePanel, world) {
                 upgradeIndex: upgradeIndex,
                 newLevel: (selectedTowerInstance.upgradeLevels[upgradeIndex] || 0)
             };
-            publishToMercure('http://localhost:8000/game', eventData);
+            publishToMercure(topic, eventData);
         }
     } else {
         console.log('Недостаточно средств для улучшения');
