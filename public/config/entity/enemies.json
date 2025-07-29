@@ -1,5 +1,5 @@
 {
-    "orc" : {
+    "orc": {
         "name": "Orc",
         "width": 150,
         "height": 150,
@@ -18,7 +18,7 @@
             "/images/orc/walk_orc/orc7.webp"
         ]
     },
-    "zombie" :{
+    "zombie": {
         "name": "Zombie",
         "width": 100,
         "height": 200,
@@ -36,17 +36,23 @@
             "/images/zombie/walk_zombie/zombie6.webp"
         ]
     },
-    "goblin" :{
+    "goblin": {
         "name": "Goblin",
-        "width": 100,
-        "height": 200,
-        "health": 300,
-        "damage": 50,
+        "width": 200,
+        "height": 270,
+        "health": 3000,
+        "damage": 100,
         "reward": 50,
-        "speed": 100,
-        "animationSpeed": 4,
+        "speed": 40,
+        "animationSpeed": 7,
         "imageSrcs": [
-
+            "/images/goblin/walk_goblin/goblin1.webp",
+            "/images/goblin/walk_goblin/goblin2.webp",
+            "/images/goblin/walk_goblin/goblin3.webp",
+            "/images/goblin/walk_goblin/goblin4.webp",
+            "/images/goblin/walk_goblin/goblin5.webp",
+            "/images/goblin/walk_goblin/goblin6.webp",
+            "/images/goblin/walk_goblin/goblin7.webp"
         ]
     }
 }

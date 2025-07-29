@@ -9,7 +9,8 @@ class RoomPlayer
         private Room $room,
         private User $player,
         private int $slot,
-        private bool $isReady
+        private bool $isReady,
+        private bool $isReadyInGame
     ) {}
 
     public function getId(): ?int
@@ -37,6 +38,11 @@ class RoomPlayer
         return $this->isReady;
     }
 
+    public function isReadyInGame(): bool
+    {
+        return $this->isReadyInGame;
+    }
+
     public function setId(int $id): void
     {
         $this->id = $id;
@@ -60,5 +66,10 @@ class RoomPlayer
     public function setIsReady(bool $isReady): void
     {
         $this->isReady = $isReady;
+    }
+
+    public function setIsReadyInGame(bool $isReadyInGame): void
+    {
+        $this->isReadyInGame = $isReadyInGame;
     }
 }
