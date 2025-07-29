@@ -91,7 +91,7 @@
             "enemies": {
                 "orcs": 1,
                 "zombies": 0,
-                "goblins": 0
+                "goblins": 1
             },
             "reward": 100
         },
