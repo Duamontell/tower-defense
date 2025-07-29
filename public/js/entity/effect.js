@@ -67,6 +67,8 @@ export class PoisonEffect extends Effect {
             this.images.push(frame);
         });
         this.damage = damage;
+        this.sound = document.getElementById('poison');
+        if (this.sound) this.sound.play();
     }
 
     effect(enemies) {
@@ -85,7 +87,9 @@ export class FreezeEffect extends Effect {
             frame.src = imageSrc;
             this.images.push(frame);
         });
-        this.slowness = slowness
+        this.slowness = slowness;
+        this.sound = document.getElementById('freeze');
+        if (this.sound) this.sound.play();
     }
 
     effect(enemies) {
@@ -107,6 +111,8 @@ export class ExplosionEffect extends Effect {
         this.damage = damage;
         this.done = false;
         this.isOnTop = true;
+        this.sound = document.getElementById('explosion');
+        if (this.sound) this.sound.play();
     }
 
     update(delta, enemies) {
