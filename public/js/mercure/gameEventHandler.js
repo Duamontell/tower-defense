@@ -78,7 +78,7 @@ export class GameEventHandler {
             y: (zone.topLeft.y + zone.bottomRight.y) / 2,
         };
 
-        const tower = new TowerClass(towerPos, this.world.towersCfg);
+        const tower = new TowerClass(towerPos, this.world.towersCfg, this.world.sounds);
         tower.id = towerId;
         this.world.addTower(tower, userId);
 
