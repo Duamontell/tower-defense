@@ -141,10 +141,10 @@ function gameLoop(timestamp = 0) {
         }
         return;
     }
-    const delta = (timestamp - lastTimestamp) / 1000;
+    let delta = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
-
     waveDuration -= delta;
+    if (delta >= 0.017) delta = splitedUpdate(world, delta);
 
     if (waveDuration <= 0 && world.waves.currentWave < world.waves.maxWave) {
         world.summonWaves(world.waves.currentWave);
@@ -217,6 +217,14 @@ function gameLoop(timestamp = 0) {
 
 function clampCamera() {
     camera.clampToBounds(nativeWidth, nativeHeight);
+}
+
+function splitedUpdate(world, delta) {
+    while (delta > 0.0167) {
+        world.update(0.0167);
+        delta -= 0.0167;
+    }
+    return delta;
 }
 
 function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
