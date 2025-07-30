@@ -63,6 +63,7 @@ function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
+    console.log(x, y);
     return {x, y};
 }
 
@@ -212,6 +213,11 @@ function gameLoop(timestamp = 0) {
         drawHyperGameMessage(canvas, ctx, linkText);
     }
 
+    drawPath(currentUserId);
+    drawPath(5);
+    drawPath(6);
+    // drawPath(7);
+
     requestAnimationFrame(gameLoop);
 }
 
@@ -310,6 +316,35 @@ if (gameMode === "multiplayer") {
         readyManager.cleanup();
     })();
 }
+
+function drawPath(userId) {
+    world.players.get(userId).waypoints.forEach(waypoint => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = 'black';
+        ctx.arc(waypoint.x, waypoint.y, 7, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+    })
+}
+
+function legnthCount(waypoints) {
+    let prevWaypoint = waypoints[0];
+    let distance = 0
+    waypoints.forEach(waypoint => {
+        const xDistance = waypoint.x - prevWaypoint.x;
+        const yDistance = waypoint.y - prevWaypoint.y;
+        distance += Math.hypot(xDistance, yDistance);
+        prevWaypoint = waypoint;
+    })
+    console.log(distance);
+}
+
+legnthCount(world.players.get(4).waypoints)
+legnthCount(world.players.get(5).waypoints)
+legnthCount(world.players.get(6).waypoints)
+legnthCount(world.players.get(7).waypoints)
 
 await prepareMultiplayer;
 gameLoop();

@@ -1,5 +1,5 @@
 {
-    "startingBalance": 100,
+    "startingBalance": 50,
     "waypoints": [
         {
             "x": 1472,
@@ -220,10 +220,6 @@
         {
             "x": 453,
             "y": 388
-        },
-        {
-            "x": 361,
-            "y": 362
         }
     ],
     "base": {

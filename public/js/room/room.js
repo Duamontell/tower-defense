@@ -149,3 +149,9 @@ function handlePlayerLeave(msg) {
         playerSlot.replaceWith(div);
     }
 }
+
+window.addEventListener('beforeunload', function () {
+    if (es !== null) {
+        es.close();
+    }
+})
