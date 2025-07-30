@@ -3,7 +3,7 @@
     "waypoints": [
         {
             "x": 1472,
-            "y": 998
+            "y": 1008
         },
         {
             "x": 1606,
@@ -194,22 +194,22 @@
         "baseId": 2,
         "health": 150,
         "position": {
-            "x": 2441,
-            "y": 199
+            "x": 2667,
+            "y": 329
         },
-        "width": 750,
-        "height": 500,
+        "width": 450,
+        "height": 210,
         "imageSrc": "/images/base/empty.png"
     },
     "towerZones": [
         {
             "id": 6,
             "topLeft": {
-                "x": 1600,
+                "x": 1615,
                 "y": 677
             },
             "bottomRight": {
-                "x": 1700,
+                "x": 1715,
                 "y": 777
             }
         },

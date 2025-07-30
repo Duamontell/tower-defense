@@ -213,10 +213,10 @@ function gameLoop(timestamp = 0) {
         drawHyperGameMessage(canvas, ctx, linkText);
     }
 
+    drawPath(14);
+    drawPath(15);
     drawPath(currentUserId);
-    drawPath(5);
-    drawPath(6);
-    // drawPath(7);
+    drawPath(16);
 
     requestAnimationFrame(gameLoop);
 }
@@ -257,7 +257,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     users.forEach((user) => {
         const data = user.userCfg;
         world.addUser(user.userId, data);
-        world.addBase(new Base(data.base.id, data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
+        world.addBase(new Base(data.base.baseId, data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
         world.addTowerZones(data.towerZones, user.userId);
         world.waves.userWaves.set(user.userId, lvlCfg.waves);
     })
@@ -341,10 +341,10 @@ function legnthCount(waypoints) {
     console.log(distance);
 }
 
-legnthCount(world.players.get(4).waypoints)
-legnthCount(world.players.get(5).waypoints)
-legnthCount(world.players.get(6).waypoints)
-legnthCount(world.players.get(7).waypoints)
+legnthCount(world.players.get(14).waypoints)
+legnthCount(world.players.get(15).waypoints)
+legnthCount(world.players.get(9).waypoints)
+legnthCount(world.players.get(16).waypoints)
 
 await prepareMultiplayer;
 gameLoop();
