@@ -64,3 +64,9 @@ function handleDeleteRoom(msg) {
     const roomRow = document.getElementById(roomRowId);
     roomRow.remove();
 }
+
+window.addEventListener('beforeunload', function () {
+    if (es !== null) {
+        es.close();
+    }
+})
