@@ -144,7 +144,7 @@ function gameLoop(timestamp = 0) {
     let delta = (timestamp - lastTimestamp) / 1000;
     lastTimestamp = timestamp;
     waveDuration -= delta;
-    if (delta >= 0.017) delta = splitedUpdate(world, delta);
+    if (delta >= 0.03) delta = splitedUpdate(world, delta);
 
     if (waveDuration <= 0 && world.waves.currentWave < world.waves.maxWave) {
         world.summonWaves(world.waves.currentWave);

@@ -122,7 +122,7 @@ export class World {
         const { orcs, zombies, goblins } = enemies;
         const waypoints = user.waypoints;
 
-        let delay = 0;
+        let delay = 1;
 
         for (let i = 0; i < orcs; i++) {
             setTimeout(() => {
