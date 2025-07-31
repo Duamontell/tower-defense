@@ -289,7 +289,7 @@
         }
     ],
     "base": {
-        "health": 150,
+        "health": 20,
         "position": {
             "x": 1197,
             "y": 750
@@ -349,8 +349,8 @@
     "waves": [
         {
             "enemies": {
-                "orcs": 0,
-                "zombies": 2,
+                "orcs": 1,
+                "zombies": 1,
                 "goblins": 0
             },
             "duration": 10,
@@ -358,8 +358,8 @@
         },
         {
             "enemies": {
-                "orcs": 2,
-                "zombies": 1,
+                "orcs": 3,
+                "zombies": 2,
                 "goblins": 0
             },
             "duration": 20,
@@ -367,9 +367,9 @@
         },
         {
             "enemies": {
-                "orcs": 5,
-                "zombies": 5,
-                "goblins": 0
+                "orcs": 0,
+                "zombies": 0,
+                "goblins": 1
             },
             "duration": 15,
             "reward": 500

@@ -161,6 +161,9 @@ function gameLoop(timestamp = 0) {
         gameMessage = "Вы победили!";
         closeAllPanels();
         world.gameOver = true;
+    } else if (gameMessage === 'multiplayer' && world.waves.currentWave >= world.waves.maxWave) {
+        world.summonWaves(world.waves.currentWave);
+        waveDuration = world.waves.waveDuration;
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -285,9 +288,9 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     const mortarTower = new MortarTower({ x: 0, y: 0 }, towersCfg, soundPanel);
 
     towerPanel.addTower(archerTower);
-    towerPanel.addTower(magicianTower);
     towerPanel.addTower(poisonousTower);
     towerPanel.addTower(freezingTower);
+    towerPanel.addTower(magicianTower);
     towerPanel.addTower(mortarTower);
 
     if (gameMode === "multiplayer") {

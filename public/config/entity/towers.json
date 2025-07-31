@@ -1,11 +1,11 @@
 {
     "archer": {
         "name": "Archers",
-        "damage": 50,
+        "damage": 100,
         "radius": 350,
-        "price": 10,
-        "width": 300,
-        "height": 300,
+        "price": 25,
+        "width": 200,
+        "height": 200,
         "cooldown": 2,
         "imageSrc": "../../images/tower/TowerArchers.webp",
         "imageSrcFrozen": "../../images/tower/TowerArchersFrozen.webp",
@@ -18,40 +18,14 @@
             "animationSpeed": 3
         }
     },
-    "magician" : {
-        "name": "Magicians",
-        "damage": 100,
-        "radius": 300,
-        "price": 30,
-        "width": 300,
-        "height": 300,
-        "cooldown": 2,
-        "imageSrc": "../../images/tower/TowerMagicians.webp",
-        "imageSrcFrozen": "../../images/tower/TowerMagiciansFrozen.webp",
-        "attack": {
-            "name": "Fireball",
-            "width": 128,
-            "height": 68,
-            "imageSrcs": [
-                "../../images/projectiles/fireball/FB1.png",
-                "../../images/projectiles/fireball/FB2.png",
-                "../../images/projectiles/fireball/FB3.png",
-                "../../images/projectiles/fireball/FB4.png",
-                "../../images/projectiles/fireball/FB5.png"
-            ],
-            "speed": 500,
-            "animationSpeed": 15
-        }
-
-    },
     "poison" : {
         "name": "Poisonous",
-        "damage": 10,
+        "damage": 20,
         "radius": 500,
-        "price": 50,
-        "width": 300,
-        "height": 300,
-        "cooldown": 6,
+        "price": 40,
+        "width": 200,
+        "height": 200,
+        "cooldown": 5,
         "imageSrc": "../../images/tower/TowerPoison.webp",
         "imageSrcFrozen": "../../images/tower/TowerPoisonFrozen.webp",
         "attack": {
@@ -71,9 +45,9 @@
             "speed": 350,
             "animationSpeed": 15,
             "effect": {
-                "duration": 3,
+                "duration": 3.5,
                 "cooldown": 0.5,
-                "radius": 200,
+                "radius": 220,
                 "imageSrcs": [
                     "../../images/effects/poison/poison1.webp"
                 ],
@@ -86,9 +60,9 @@
         "damage": 0,
         "slowness": 0.5,
         "radius": 500,
-        "price": 50,
-        "width": 350,
-        "height": 350,
+        "price": 60,
+        "width": 250,
+        "height": 250,
         "cooldown": 10,
         "imageSrc": "../../images/tower/TowerFreezing.webp",
         "imageSrcFrozen": "../../images/tower/TowerFreezingFrozen.webp",
@@ -109,7 +83,7 @@
             "speed": 350,
             "animationSpeed": 15,
             "effect": {
-                "duration": 5,
+                "duration": 6,
                 "cooldown": 0,
                 "radius": 200,
                 "imageSrcs": [
@@ -119,14 +93,40 @@
             }
         }
     },
-    "exp" : {
-        "name": "Mortar",
+    "magician" : {
+        "name": "Magicians",
         "damage": 500,
         "radius": 500,
-        "price": 50,
-        "width": 300,
-        "height": 300,
-        "cooldown": 5,
+        "price": 90,
+        "width": 200,
+        "height": 200,
+        "cooldown": 4,
+        "imageSrc": "../../images/tower/TowerMagicians.webp",
+        "imageSrcFrozen": "../../images/tower/TowerMagiciansFrozen.webp",
+        "attack": {
+            "name": "Fireball",
+            "width": 128,
+            "height": 68,
+            "imageSrcs": [
+                "../../images/projectiles/fireball/FB1.png",
+                "../../images/projectiles/fireball/FB2.png",
+                "../../images/projectiles/fireball/FB3.png",
+                "../../images/projectiles/fireball/FB4.png",
+                "../../images/projectiles/fireball/FB5.png"
+            ],
+            "speed": 500,
+            "animationSpeed": 15
+        }
+
+    },
+    "exp" : {
+        "name": "Mortar",
+        "damage": 550,
+        "radius": 350,
+        "price": 150,
+        "width": 200,
+        "height": 200,
+        "cooldown": 8,
         "imageSrc": "../../images/tower/MortarTower.webp",
         "imageSrcFrozen": "../../images/tower/MortarTowerFrozen.webp",
         "attack": {

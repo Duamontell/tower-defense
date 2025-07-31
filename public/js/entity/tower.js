@@ -37,6 +37,7 @@ export class Tower {
         this.soundPanel = soundPanel;
         this.isBeingSold = false;
         this.sellAnimationProgress = 0;
+        console.log(this.price)
     }
 
     applyUpgrade(index) {
@@ -175,7 +176,7 @@ export class Tower {
 }
 
 export class ArchersTower extends Tower {
-    static price = 10;
+    static price = 25;
     constructor(position, cfg, soundPanel) {
         super(cfg.archer.name, cfg.archer.damage, cfg.archer.radius,
             cfg.archer.price, position, cfg.archer.width, cfg.archer.height, cfg.archer.cooldown,
@@ -190,7 +191,7 @@ export class ArchersTower extends Tower {
 }
 
 export class MagicianTower extends Tower {
-    static price = 30;
+    static price = 90;
     constructor(position, cfg, soundPanel) {
         super(cfg.magician.name, cfg.magician.damage, cfg.magician.radius,
             cfg.magician.price, position, cfg.magician.width, cfg.magician.height, cfg.magician.cooldown,
@@ -205,7 +206,7 @@ export class MagicianTower extends Tower {
 }
 
 export class PoisonousTower extends Tower {
-    static price = 50;
+    static price = 40;
     constructor(position, cfg, soundPanel) {
         super(cfg.poison.name, cfg.poison.damage, cfg.poison.radius,
             cfg.poison.price, position, cfg.poison.width, cfg.poison.height, cfg.poison.cooldown,
@@ -214,7 +215,7 @@ export class PoisonousTower extends Tower {
 }
 
 export class FreezingTower extends Tower {
-    static price = 30;
+    static price = 60;
     constructor(position, cfg, soundPanel) {
         super(cfg.freezing.name, cfg.freezing.damage, cfg.freezing.radius,
             cfg.freezing.price, position, cfg.freezing.width, cfg.freezing.height, cfg.freezing.cooldown,
@@ -224,7 +225,7 @@ export class FreezingTower extends Tower {
 }
 
 export class MortarTower extends Tower {
-    static price = 50;
+    static price = 150;
     constructor(position, cfg, soundPanel) {
         super(cfg.exp.name, cfg.exp.damage, cfg.exp.radius,
             cfg.exp.price, position, cfg.exp.width, cfg.exp.height, cfg.exp.cooldown,

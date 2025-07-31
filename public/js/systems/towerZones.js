@@ -8,8 +8,8 @@ function drawTowerZones(ctx, towerZones, players, camera) {
             const centerX = (zone.topLeft.x + zone.bottomRight.x) / 2;
             const centerY = (zone.topLeft.y + zone.bottomRight.y) / 2;
             const { x, y } = camera.worldToScreen(centerX, centerY);
-            const markerWidth = 130 * camera.scale;
-            const markerHeight = 130 * camera.scale;
+            const markerWidth = 100 * camera.scale;
+            const markerHeight = 100 * camera.scale;
 
             ctx.drawImage(
                 towerZoneMarker,

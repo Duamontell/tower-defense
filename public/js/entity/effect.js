@@ -80,7 +80,6 @@ export class PoisonEffect extends Effect {
     effect(enemies) {
         enemies.forEach(enemy => {
             enemy.receiveDamage(this.damage);
-            console.log(`${enemy.name} recieved ${this.damage}, health left: ${enemy.health}`);
         });
     }
 }

@@ -144,7 +144,7 @@
     ],
     "base": {
         "baseId": 3,
-        "health": 150,
+        "health": 20,
         "position": {
             "x": 2629,
             "y": 1605

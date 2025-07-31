@@ -20,13 +20,13 @@
             "/images/portal/portal7.png"
         ]
     },
-    "spawnrate": 3,
-    "countWaves": 3,
-    "wavesDuration": 15,
+    "spawnrate": 1,
+    "countWaves": 8,
+    "wavesDuration": 20,
     "waves": [
         {
             "enemies": {
-                "orcs": 0,
+                "orcs": 2,
                 "zombies": 2,
                 "goblins": 0
             },
@@ -35,8 +35,8 @@
         },
         {
             "enemies": {
-                "orcs": 2,
-                "zombies": 1,
+                "orcs": 4,
+                "zombies": 4,
                 "goblins": 0
             },
             "duration": 20,
@@ -46,10 +46,55 @@
             "enemies": {
                 "orcs": 5,
                 "zombies": 5,
-                "goblins": 0
+                "goblins": 1
             },
             "duration": 15,
             "reward": 500
-        }
+        },
+        {
+            "enemies": {
+                "orcs": 8,
+                "zombies": 8,
+                "goblins": 0
+            },
+            "duration": 10,
+            "reward": 100
+        },
+        {
+            "enemies": {
+                "orcs": 8,
+                "zombies": 10,
+                "goblins": 0
+            },
+            "duration": 20,
+            "reward": 300
+        },
+        {
+            "enemies": {
+                "orcs": 8,
+                "zombies": 10,
+                "goblins": 0
+            },
+            "duration": 20,
+            "reward": 300
+        },
+        {
+            "enemies": {
+                "orcs": 8,
+                "zombies": 8,
+                "goblins": 1
+            },
+            "duration": 20,
+            "reward": 300
+        },
+        {
+            "enemies": {
+                "orcs": 10,
+                "zombies": 10,
+                "goblins": 2
+            },
+            "duration": 20,
+            "reward": 300
+        }        
     ]
 }
