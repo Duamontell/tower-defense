@@ -182,7 +182,7 @@ export class EffectPanel {
             return 'close';
         }
 
-        const cardW = this.width * 0.22;
+        const cardW = this.width * 0.17;
         const cardH = this.height * 0.62;
         const gap = this.width * 0.04;
         const totalWidth = this.effects.length * cardW + (this.effects.length - 1) * gap;
