@@ -1,4 +1,4 @@
-import { ExplosionEffect, FreezeEffect, PoisonEffect, FreezeTowerEffect } from '../entity/effect.js';
+import { ExplosionEffect, FreezeEffect, PoisonEffect, FreezeTowerEffect, SpeedEffect } from '../entity/effect.js';
 import { publishToMercure } from '../mercure/mercureHandler.js';
 
 let selectedZone = null;
@@ -186,6 +186,10 @@ function handleEffectCoords(x, y, effectPanel, world, soundPanel) {
                 effectType = 'Bomb';
                 effectData = { damage: choosenEffect.damage, cfg: choosenEffect.cfg };
                 break;
+            case 'SpeedBoost':
+                effect = new SpeedEffect({ x: x, y: y }, choosenEffect.boost, choosenEffect.cfg);
+                effectType = 'Speed';
+                effectData = { boost: choosenEffect.boost, cfg: choosenEffect.cfg };
             case 'FreezeTower': {
                 const zone = world.getZoneByCoordinates(x, y);
                 if (zone && zone.occupied && zone.tower) {

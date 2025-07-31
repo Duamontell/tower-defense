@@ -230,3 +230,22 @@ export class PortalEffect extends Effect{
         }
     }
 }
+
+export class SpeedEffect extends Effect {
+        constructor(position, boost, cfg) {
+        super(position, cfg.radius, cfg.duration, cfg.animationSpeed, cfg.cooldown);
+        cfg.imageSrcs.forEach(imageSrc => {
+            let frame = new Image();
+            frame.src = imageSrc;
+            this.images.push(frame);
+        });
+        this.boost = boost;
+    }
+
+    effect(enemies) {
+        enemies.forEach(enemy => {
+            enemy.speed *= this.boost;
+            enemy.animationSpeed *= this.boost;
+        })
+    }
+}

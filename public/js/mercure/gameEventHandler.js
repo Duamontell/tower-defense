@@ -1,6 +1,6 @@
 import { ArchersTower, MagicianTower, PoisonousTower, FreezingTower, MortarTower } from '../entity/tower.js';
 import { ArrowProjectile, FireballProjectile, PoisonProjectile, FreezeProjectile, ExplosiveProjectile } from '../entity/projectile.js';
-import { ExplosionEffect, FreezeEffect, PoisonEffect, FreezeTowerEffect } from '../entity/effect.js';
+import { SpeedEffect, ExplosionEffect, FreezeEffect, PoisonEffect, FreezeTowerEffect } from '../entity/effect.js';
 import { publishToMercure } from './mercureHandler.js';
 
 export class GameEventHandler {
@@ -221,6 +221,9 @@ export class GameEventHandler {
                 break;
             case 'Bomb':
                 effect = new ExplosionEffect({ x, y }, damage, cfg, this.world.soundPanel);
+                break;
+            case 'Speed':
+                effect = new SpeedEffect({x, y}, slowness, cfg);
                 break;
             case 'FreezeTower':
                 const towerObj = this.world.towers.find(t => t.id === towerId);

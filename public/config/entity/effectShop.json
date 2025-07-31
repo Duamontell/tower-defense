@@ -5,6 +5,10 @@
         "description": "Отрпвляющее зелье. \n Наносит переодический \n урон каждому, \n кто в него наступил ",
         "price": 5,
         "damage": 20,
+        "modes": [
+            "singleplayer",
+            "multiplayer"
+        ],
         "cfg": {
             "duration": 3,
             "cooldown": 0.5,
@@ -12,11 +16,7 @@
             "imageSrcs": [
                 "../../images/effects/poison/poison1.webp"
             ],
-            "animationSpeed": 5,
-            "modes": [
-                "singleplayer",
-                "multiplayer"
-            ]
+            "animationSpeed": 5
         }
     },
     {
@@ -25,6 +25,10 @@
         "description": "Замораживающее зелье. \n Останавливает всех, \n кто угодил в зону \n его действия",
         "price": 10,
         "slowness": 0.1,
+        "modes": [
+                "singleplayer",
+                "multiplayer"
+            ],
         "cfg": {
             "duration": 5,
             "cooldown": 0,
@@ -32,11 +36,27 @@
             "imageSrcs": [
                 "../../images/effects/ice/ice1.png"
             ],
-            "animationSpeed": 5,
-            "modes": [
-                "singleplayer",
-                "multiplayer"
-            ]
+            "animationSpeed": 5
+
+        }
+    },
+    {
+        "name": "SpeedBoost",
+        "icon": "../../images/projectiles/speed/speed.png",
+        "description": "Ускоряющее зелье. \n Увеличивает скорость всех, \n кто угодил в зону \n его действия",
+        "price": 10,
+        "boost": 2,
+        "modes": [
+            "multiplayer"
+        ],
+        "cfg": {
+            "duration": 5,
+            "cooldown": 0,
+            "radius": 200,
+            "imageSrcs": [
+                "../../images/effects/speed/speed.png"
+            ],
+            "animationSpeed": 5
         }
     },
     {
@@ -45,6 +65,10 @@
         "description": "Бомба. \n Наносит колоссальный \n урон по площади",
         "price": 25,
         "damage": 150,
+        "modes": [
+            "singleplayer",
+            "multiplayer"
+        ],
         "cfg": {
             "duration": 3,
             "cooldown": 0.5,
@@ -63,11 +87,8 @@
                 "../../images/effects/explosion/exp11.png",
                 "../../images/effects/explosion/exp12.png"
             ],
-            "animationSpeed": 5,
-            "modes": [
-                "singleplayer",
-                "multiplayer"
-            ]
+            "animationSpeed": 5
+
         }
     },
     {
