@@ -42,6 +42,9 @@ class GameController extends AbstractController
             return $this->redirectToRoute('login');
         }
         $level = (int) $request->get('level');
+        if ($level > 2) {
+            return $this->redirectToRoute('select-level');
+        }
 
         $user = $this->userRepository->findByEmail($securityUser->getUserIdentifier());
 
