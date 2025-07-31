@@ -19,7 +19,7 @@ export class UpgradePanel {
             'Archers': 'башни лучников',
             'Magicians': 'магической башни',
             'Poisonous': 'отравляющей башни',
-            'Freezing': 'замедляющей башни',
+            'Freezing': 'замораживающей башни',
             'Mortar': 'мортиры',
         };
         if (!this.imgCoin) {
