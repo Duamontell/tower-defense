@@ -20,7 +20,7 @@ export class TowerPanel {
         this.closeY = this.y + this.closePadding + this.closeSize / 2;
         this.towerNames = {
             'ArchersTower': 'Башня лучников',
-            'MagicianTower': 'Магическая башня',
+            'MagicianTower': 'Морозная башня',
             'PoisonousTower': 'Отравляющая башня',
             'FreezingTower': 'Замораживающая башня',
             'MortarTower': 'Мортира',
