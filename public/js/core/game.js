@@ -18,6 +18,7 @@ import { changeRoomStatus } from "../api/roomApi.js";
 import { Camera } from '../entity/camera.js';
 import { initCameraControls } from '../systems/cameraController.js';
 import { ReadyManager } from "../systems/readyManager.js";
+import { PortalEffect } from '../entity/effect.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -290,6 +291,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     towerPanel.addTower(mortarTower);
 
     if (gameMode === "multiplayer") {
+        world.effects.push(new PortalEffect(lvlCfg.portal));
         const gameEventHandler = new GameEventHandler(world);
         // TODO: Сделать топик уникальным для каждой комнаты!
         // const topic = 'http://localhost:8000/game'

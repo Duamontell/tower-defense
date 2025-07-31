@@ -184,6 +184,20 @@ body {
 
 .leave-room-button {
     margin-left: auto;
+    font-size: 16px;
+    font-family: inherit;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 7px 22px;
+    min-width: 110px;
+    text-align: center;
+    box-shadow: 0 1px 4px #0002;
+    border: none;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    outline: none;
+    display: inline-block;
+    background: red;
 }
 
 
