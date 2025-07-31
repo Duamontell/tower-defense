@@ -1,9 +1,9 @@
 {
-    "startingBalance": 100,
+    "startingBalance": 50,
     "waypoints": [
         {
-            "x": 1472,
-            "y": 998
+            "x": 1471,
+            "y": 1008
         },
         {
             "x": 1347,
@@ -218,24 +218,20 @@
             "y": 410
         },
         {
-            "x": 453,
-            "y": 388
-        },
-        {
-            "x": 361,
-            "y": 362
+            "x": 465,
+            "y": 387
         }
     ],
     "base": {
         "baseId": 1,
         "health": 150,
         "position": {
-            "x": 122,
-            "y": 128
+            "x": 330,
+            "y": 260
         },
-        "width": 750,
-        "height": 400,
-        "imageSrc": "/images/base/Base.webp"
+        "width": 400,
+        "height": 210,
+        "imageSrc": "/images/base/empty.png"
     },
     "towerZones": [
         {

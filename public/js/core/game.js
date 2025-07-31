@@ -64,6 +64,7 @@ function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
+    console.log(x, y);
     return {x, y};
 }
 
@@ -260,7 +261,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     users.forEach((user) => {
         const data = user.userCfg;
         world.addUser(user.userId, data);
-        world.addBase(new Base(data.base.id, data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
+        world.addBase(new Base(data.base.baseId, data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
         world.addTowerZones(data.towerZones, user.userId);
         world.waves.userWaves.set(user.userId, lvlCfg.waves);
     })
