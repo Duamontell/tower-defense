@@ -72,7 +72,7 @@ export class World {
             const currentWave = userWaveConfigs[wave];
             if (!currentWave) return;
 
-            let delay = 0;
+            let delay = 1;
             const { orcs, zombies, goblins } = currentWave.enemies;
             const waypoints = user.waypoints;
 
