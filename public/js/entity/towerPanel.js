@@ -22,7 +22,7 @@ export class TowerPanel {
             'ArchersTower': 'Башня лучников',
             'MagicianTower': 'Магическая башня',
             'PoisonousTower': 'Отравляющая башня',
-            'FreezingTower': 'Замедляющая башня',
+            'FreezingTower': 'Замораживающая башня',
             'MortarTower': 'Мортира',
         };
     }
