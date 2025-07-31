@@ -22,7 +22,7 @@
     },
     "spawnrate": 1,
     "countWaves": 8,
-    "wavesDuration": 20,
+    "wavesDuration": 5,
     "waves": [
         {
             "enemies": {
