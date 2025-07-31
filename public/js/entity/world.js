@@ -1,7 +1,7 @@
 import { GoblinEnemy, OrcEnemy, ZombieEnemy } from './enemy.js';
 import { FreezeTowerEffect } from './effect.js';
 import { User } from "./user.js";
-import { uuidv4 } from '../systems/generateId.js'
+import { uuidv4 } from '../systems/generateId.js';
 
 export class World {
     constructor(lvlCfg, enemiesCfg, towersCfg) {
@@ -227,7 +227,7 @@ export class World {
                 return false;
             }
             if (!enemy.isAlive()) {
-                if (this.players.get(currentUserId).changeBalance) {
+                if (this.players.get(currentUserId).changeBalance && currentUserId === enemy.ownerId) {
                     this.players.get(currentUserId).changeBalance(enemy.reward);
                 }
                 return false;
