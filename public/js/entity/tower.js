@@ -186,7 +186,6 @@ export class ArchersTower extends Tower {
             this.sound.id = 'archers';
             if (this.sound) soundPanel.add(this.sound);
         }
-        if (this.sound) this.sound.play();
     }
 }
 
@@ -202,7 +201,6 @@ export class MagicianTower extends Tower {
             this.sound.id = 'fireball';
             if (this.sound) soundPanel.add(this.sound);
         }
-        if (this.sound) this.sound.play();
     }
 }
 
