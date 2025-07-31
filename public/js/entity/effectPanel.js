@@ -26,6 +26,7 @@ export class EffectPanel {
             'Poison': 'Яд',
             'Bomb': 'Бомба',
             'FreezeTower': 'Заморозка',
+            'SpeedBoost': 'Ускорение'
         };
         this.#initialize(cfg);
 
@@ -107,7 +108,7 @@ export class EffectPanel {
 
     drawEffects() {
         const ctx = this.ctx;
-        const cardW = this.width * 0.22;
+        const cardW = this.width * 0.17;
         const cardH = this.height * 0.62;
         const iconW = cardW * 0.35;
         const iconH = iconW;
