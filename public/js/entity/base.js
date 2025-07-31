@@ -25,7 +25,6 @@ export class Base {
 		if (this.health <= 0 && !this.isDestroyed) {
 			this.health = 0;
 			this.isDestroyed = true;
-			console.log("Base on coordinates", this.position.x, "", this.position.y, " was destroyed");
 			if (gameMode === "multiplayer") {
 				const destroyedEventData = {
 					type: 'baseDestroyed',

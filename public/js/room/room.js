@@ -38,7 +38,6 @@ function startCountdown() {
             clearInterval(countdownTimer);
             changeRoomStatus(roomId, 1)
                 .then(data => {
-                    console.log('Статус комнаты обновлён', data);
                     window.location.href = `/game/room/${roomId}`;
                 })
                 .catch(err => {
@@ -74,7 +73,6 @@ es.onmessage = ({data}) => {
             break;
         case 'leaveRoom':
             handlePlayerLeave(msg);
-            // TODO: Протестировать!
             allUnReady();
             cancelCountdown();
             break;

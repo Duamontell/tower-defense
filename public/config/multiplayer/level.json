@@ -5,18 +5,19 @@
         "height": 2000
     },
     "portal": {
-        "position": {"x": 600, "y": 600},
+        "position": {"x": 1470, "y": 970},
         "duration": 1,
+        "radius": 150,
         "animationSpeed": 7,
         "cooldown": 3,
         "imageSrcs": [
-            "../../images/portal/portal1.png",
-            "../../images/portal/portal2.png",
-            "../../images/portal/portal3.png",
-            "../../images/portal/portal4.png",
-            "../../images/portal/portal5.png",
-            "../../images/portal/portal6.png",
-            "../../images/portal/portal7.png"
+            "/images/portal/portal1.png",
+            "/images/portal/portal2.png",
+            "/images/portal/portal3.png",
+            "/images/portal/portal4.png",
+            "/images/portal/portal5.png",
+            "/images/portal/portal6.png",
+            "/images/portal/portal7.png"
         ]
     },
     "spawnrate": 3,

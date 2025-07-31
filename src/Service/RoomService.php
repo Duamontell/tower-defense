@@ -106,13 +106,19 @@ class RoomService
 
     private function checkAllPlayerReady(Room $room): bool
     {
+        $playerCount = 0;
         foreach ($room->getPlayers() as $playerInRoom) {
+            $playerCount++;
             if (!$playerInRoom->isReady()) {
                 return false;
             }
         }
 
+        if ($playerCount <= 1) {
+            return false;
+        }
         return true;
+
     }
 
     private function userAlreadyInRoom(int $userId, int $roomId): ?RoomPlayer

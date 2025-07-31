@@ -167,7 +167,6 @@ export class GameEventHandler {
         }
 
         base.recieveDamage(damage, true);
-        //console.log(`База ${baseId} получила ${damage} урона.`);
     }
 
     #handleBaseDestroyed(data) {
@@ -207,7 +206,7 @@ export class GameEventHandler {
     }
 
     #handleAddEffect(data) {
-        const { userId, effectType, x, y, damage, slowness, cfg, towerId, duration } = data;
+        const { userId, effectType, x, y, damage, slowness, cfg, towerId, duration, boost } = data;
 
         if (userId === window.currentUserId) return;
 
@@ -223,7 +222,7 @@ export class GameEventHandler {
                 effect = new ExplosionEffect({ x, y }, damage, cfg, this.world.soundPanel);
                 break;
             case 'Speed':
-                effect = new SpeedEffect({x, y}, slowness, cfg);
+                effect = new SpeedEffect({x, y}, boost, cfg);
                 break;
             case 'FreezeTower':
                 const towerObj = this.world.towers.find(t => t.id === towerId);
