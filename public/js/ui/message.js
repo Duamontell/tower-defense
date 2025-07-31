@@ -34,7 +34,7 @@ export function drawHyperGameMessage(canvas, ctx, linkText) {
 export function onMouseMove(event, canvas, linkWidth, linkX, linkY) {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
-    const y = (event.clientY - rect.top) * (canvas.height / rect.height);
+    const y = (event.clientY - rect.top) * (canvas.height / rect.height) - 25;
     const linkHeight = 48;
 
     return (

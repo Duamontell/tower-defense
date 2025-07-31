@@ -193,13 +193,17 @@ body {
     text-align: center;
     box-shadow: 0 1px 4px #0002;
     border: none;
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     cursor: pointer;
     outline: none;
     display: inline-block;
-    background: red;
+    background: #e6c97a;
+    transition: transform 0.18s cubic-bezier(.4, 1.3, .5, 1);
 }
 
+.leave-room-button:hover,
+.leave-room-button:focus-visible {
+    transform: translate(-2px) scale(1.12);
+}
 
 #start-countdown {
     display: none;
