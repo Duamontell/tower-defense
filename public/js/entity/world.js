@@ -245,7 +245,7 @@ export class World {
         });
         if (gameMode === "singleplayer") {
             this.bases.forEach(base => base.draw(ctx, camera));
-        };
+        }
         this.enemies.forEach(enemy => enemy.draw(ctx, camera));
         this.projectiles.forEach(projectile => projectile.draw(ctx, camera));
         this.effects.forEach(effect => { if (effect.isOnTop) effect.draw(ctx, camera) });

@@ -87,7 +87,7 @@ export class Enemy {
         const angle = Math.atan2(yDistance, xDistance);
 
         const distance = Math.hypot(waypoint.x - this.position.x, waypoint.y - this.position.y);
-        if (distance < 3) {
+        if (distance < 4) {
             this.waypointIndex++;
             return;
         }

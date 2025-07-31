@@ -63,6 +63,7 @@ function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
+    console.log(x, y);
     return {x, y};
 }
 
@@ -212,6 +213,11 @@ function gameLoop(timestamp = 0) {
         drawHyperGameMessage(canvas, ctx, linkText);
     }
 
+    drawPath(14);
+    drawPath(15);
+    drawPath(currentUserId);
+    drawPath(16);
+
     requestAnimationFrame(gameLoop);
 }
 
@@ -259,7 +265,7 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     users.forEach((user) => {
         const data = user.userCfg;
         world.addUser(user.userId, data);
-        world.addBase(new Base(data.base.id, data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
+        world.addBase(new Base(data.base.baseId, data.base.health, data.base.position, data.base.width, data.base.height, data.base.imageSrc), user.userId);
         world.addTowerZones(data.towerZones, user.userId);
         world.waves.userWaves.set(user.userId, lvlCfg.waves);
     })
@@ -318,6 +324,35 @@ if (gameMode === "multiplayer") {
         readyManager.cleanup();
     })();
 }
+
+function drawPath(userId) {
+    world.players.get(userId).waypoints.forEach(waypoint => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = 'black';
+        ctx.arc(waypoint.x, waypoint.y, 7, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+    })
+}
+
+function legnthCount(waypoints) {
+    let prevWaypoint = waypoints[0];
+    let distance = 0
+    waypoints.forEach(waypoint => {
+        const xDistance = waypoint.x - prevWaypoint.x;
+        const yDistance = waypoint.y - prevWaypoint.y;
+        distance += Math.hypot(xDistance, yDistance);
+        prevWaypoint = waypoint;
+    })
+    console.log(distance);
+}
+
+legnthCount(world.players.get(14).waypoints)
+legnthCount(world.players.get(15).waypoints)
+legnthCount(world.players.get(9).waypoints)
+legnthCount(world.players.get(16).waypoints)
 
 await prepareMultiplayer;
 gameLoop();

@@ -35,7 +35,6 @@ export class Base {
 					userId: this.ownerId,
 				}
 				publishToMercure(topic, destroyedEventData);
-				console.log(`[DEBUG] Отправка baseDestroyed: baseId=${this.id}, health=${this.health}, isDestroyed=${this.isDestroyed}, ownerId=${this.ownerId}`);
 			}
 		} else {
 			if (gameMode === "multiplayer" && !isFromServer) {
