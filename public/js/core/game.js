@@ -183,7 +183,7 @@ function gameLoop(timestamp = 0) {
     const currentBase = world.bases.find(b => b.ownerId === currentUserId);
     const baseHealth = currentBase.health;
     const baseMaxHealth = currentBase.maxHealth;
-    drawPlayerStatsPanel(ctx, currentUser.balance, baseHealth, baseMaxHealth, nativeHeight, nativeWidth);
+    drawPlayerStatsPanel(ctx, currentUser.balance, baseHealth, baseMaxHealth, nativeHeight, nativeWidth, world.waves.currentWave, world.waves.maxWave);
 
     if (gameMode === "singleplayer") {
         const user = world.players.get(currentUserId);
