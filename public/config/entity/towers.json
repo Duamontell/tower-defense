@@ -59,7 +59,7 @@
         "name": "Freezing",
         "damage": 0,
         "slowness": 0.5,
-        "radius": 500,
+        "radius": 450,
         "price": 60,
         "width": 250,
         "height": 250,
@@ -96,7 +96,7 @@
     "magician" : {
         "name": "Magicians",
         "damage": 500,
-        "radius": 500,
+        "radius": 450,
         "price": 90,
         "width": 200,
         "height": 200,
@@ -122,7 +122,7 @@
     "exp" : {
         "name": "Mortar",
         "damage": 550,
-        "radius": 350,
+        "radius": 300,
         "price": 150,
         "width": 200,
         "height": 200,

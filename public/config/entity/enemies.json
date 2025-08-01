@@ -40,7 +40,7 @@
         "name": "Goblin",
         "width": 330,
         "height": 330,
-        "health": 6000,
+        "health": 7500,
         "damage": 15,
         "reward": 150,
         "speed": 40,

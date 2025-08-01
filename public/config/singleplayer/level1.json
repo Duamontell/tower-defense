@@ -84,9 +84,18 @@
             }
         }
     ],
-    "countWaves": 3,
+    "countWaves": 4,
     "wavesDuration": 15,
     "waves": [
+        {
+            "enemies": {
+                "orcs": 0,
+                "zombies": 0,
+                "goblins": 0
+            },
+            "duration": 10,
+            "reward": 0
+        },
         {
             "enemies": {
                 "orcs": 1,
