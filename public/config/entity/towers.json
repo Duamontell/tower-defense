@@ -42,7 +42,7 @@
                 "../../images/projectiles/poison/poison7.png",
                 "../../images/projectiles/poison/poison8.png"
             ],
-            "speed": 350,
+            "speed": 530,
             "animationSpeed": 15,
             "effect": {
                 "duration": 3.5,
@@ -80,7 +80,7 @@
                 "../../images/projectiles/freeze/freeze7.png",
                 "../../images/projectiles/freeze/freeze8.png"
             ],
-            "speed": 350,
+            "speed": 530,
             "animationSpeed": 15,
             "effect": {
                 "duration": 6,
@@ -114,7 +114,7 @@
                 "../../images/projectiles/fireball/FB4.png",
                 "../../images/projectiles/fireball/FB5.png"
             ],
-            "speed": 500,
+            "speed": 600,
             "animationSpeed": 15
         }
 
@@ -143,7 +143,7 @@
                 "../../images/projectiles/bomb/bomb7.png",
                 "../../images/projectiles/bomb/bomb8.png"
             ],
-            "speed": 350,
+            "speed": 390,
             "animationSpeed": 15,
             "effect": {
                 "duration": 5,

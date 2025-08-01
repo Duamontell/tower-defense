@@ -29,8 +29,9 @@ body {
 }
 
 .rooms-list-header {
-    display: flex;
+    /*display: flex;*/
     align-items: center;
+    text-align: center;
     width: 100%;
     margin-bottom: 32px;
     gap: 24px;
