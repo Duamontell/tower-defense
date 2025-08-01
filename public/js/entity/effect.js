@@ -24,8 +24,8 @@ export class Effect {
         const enemiesInRange = enemies.filter(enemy => {
             if (!enemy.isAlive()) return false;
 
-            const dx = enemy.position.x + (enemy.width / 2) - this.position.x;
-            const dy = enemy.position.y + (enemy.height / 2) - this.position.y;
+            const dx = enemy.position.x - this.position.x;
+            const dy = enemy.position.y - this.position.y;
             const distance = Math.hypot(dx, dy);
 
             return distance <= this.radius;
