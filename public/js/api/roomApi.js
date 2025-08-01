@@ -41,6 +41,6 @@ export function leaveRoom(roomId) {
         window.location.href = '/room-list';
     })
         .catch(error => {
-            console.error(error);
+            // console.error(error);
         });
 }

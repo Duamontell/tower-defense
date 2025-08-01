@@ -64,7 +64,6 @@ function getClickCoordinates(canvas, event) {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
-    console.log(x, y);
     return {x, y};
 }
 
@@ -99,9 +98,7 @@ async function loadUsersConfig() {
             if (userResponse.ok) {
                 const userCfg = await userResponse.json();
                 users.push({userId: player.userId, userCfg: userCfg});
-            } else {
-                console.warn(`Player ${player.config} not found`);
-            }
+            } 
         }
     }
     return users;
@@ -296,13 +293,11 @@ function initializeLevel(users, lvlCfg, enemiesCfg, towersCfg) {
     if (gameMode === "multiplayer") {
         world.effects.push(new PortalEffect(lvlCfg.portal));
         const gameEventHandler = new GameEventHandler(world);
-        // TODO: Сделать топик уникальным для каждой комнаты!
-        // const topic = 'http://localhost:8000/game'
         const mercureCallback = (data) => {
             try {
                 gameEventHandler.handleEvent(data);
             } catch (error) {
-                console.error('Ошибка парсинга события:', error);
+                // console.error('Ошибка парсинга события:', error);
             }
         };
         window.mercureEventSource = subscribeToMercure(topic, mercureCallback);

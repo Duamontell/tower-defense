@@ -42,7 +42,6 @@ export class ReadyManager {
     }
 
     async sendLocalReady() {
-        console.log("ОТПРАВКА ГОТОВНОСТИ");
         if (this.localReady) return;
         await fetch(`/game/room/${roomId}/ready`, {
             method: 'POST',
@@ -67,8 +66,6 @@ export class ReadyManager {
         await this.sendLocalReady();
 
         return new Promise(resolve => {
-            console.log("sdsd");
-            console.log(this);
             this.resolveWait = resolve;
             if (this.playersReady.size === this.totalPlayers) {
                 resolve();

@@ -46,7 +46,6 @@ export function onMouseMove(event, canvas, linkWidth, linkX, linkY) {
 }
 
 export function onClick(inLink) {
-    console.log(inLink);
     if (inLink) {
         window.location.href = '/menu';
     }

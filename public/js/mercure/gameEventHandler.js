@@ -41,7 +41,7 @@ export class GameEventHandler {
                 this.#handleSellTower(data);
                 break;
             default:
-                console.warn('Неизвестный тип события:', data.type);
+                // console.warn('Неизвестный тип события:', data.type);
         }
     }
 
@@ -91,11 +91,7 @@ export class GameEventHandler {
         const player = this.world.players.get(userId);
         if (player) {
             player.addTowerId(tower.id);
-        } else {
-            //console.warn(`Пользователь ${userId} не найден при добавлении башни.`);
-        }
-
-        //console.log(`Башня "${name}" добавлена для пользователя ${userId} в зоне ${zoneId} с позицией (${towerPos.x}, ${towerPos.y}).`);
+        } 
     }
 
     #handleTowerAttack(data) {
@@ -107,13 +103,11 @@ export class GameEventHandler {
 
         const tower = this.world.towers.find(t => t.id === towerId);
         if (!tower) {
-            //console.warn(`Башня с id ${towerId} не найдена.`);
             return;
         }
 
         const enemy = this.world.enemies.find(e => e.id === enemyId);
         if (!enemy) {
-            //console.warn(`Враг с id ${enemyId} не найден.`);
             return;
         }
 
@@ -139,7 +133,6 @@ export class GameEventHandler {
                 projectile = new FreezeProjectile(startPos, [targetPos], enemy, tower.damage, freezeSlowness, tower.attackCfg);
                 break;
             default:
-                //console.warn(`Неизвестный тип башни для атаки: ${tower.name}`);
                 return;
         }
 
