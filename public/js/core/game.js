@@ -161,7 +161,7 @@ function gameLoop(timestamp = 0) {
         gameMessage = "Вы победили!";
         closeAllPanels();
         world.gameOver = true;
-    } else if (gameMode === 'multiplayer' && world.waves.currentWave >= world.waves.maxWave) {
+    } else if (gameMode === 'multiplayer' && world.waves.currentWave >= world.waves.maxWave && waveDuration <= 0) {
         world.summonWaves(world.waves.currentWave);
         waveDuration = world.waves.waveDuration;
     }

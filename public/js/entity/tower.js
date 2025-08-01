@@ -116,7 +116,7 @@ export class Tower {
 
         const position = { x: this.position.x, y: this.position.y };
         const nearestEnemy = enemiesInRange[0];
-        const nearestEnemyPos = { x: enemiesInRange[0].position.x, y: enemiesInRange[0].position.y - 50 };
+        const nearestEnemyPos = { x: enemiesInRange[0].position.x, y: enemiesInRange[0].position.y - 45 };
 
         let projectile;
         switch (this.name) {

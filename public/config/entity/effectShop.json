@@ -87,7 +87,7 @@
                 "../../images/effects/explosion/exp11.png",
                 "../../images/effects/explosion/exp12.png"
             ],
-            "animationSpeed": 5
+            "animationSpeed": 10
 
         }
     },

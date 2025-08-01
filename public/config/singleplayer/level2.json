@@ -4,7 +4,7 @@
         "width": 1536,
         "height": 1024
     },
-    "startingBalance": 50,
+    "startingBalance": 300,
     "spawnrate": 2,
     "waypoints": [
         {
