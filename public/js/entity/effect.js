@@ -213,7 +213,6 @@ export class FreezeTowerEffect {
 
 export class PortalEffect extends Effect{
     constructor(cfg) {
-        (cfg) ? console.log(cfg, cfg.cooldown) : console.log('no cfg')
         super(cfg.position, cfg.radius, cfg.duration, cfg.animationSpeed, cfg.cooldown);
             cfg.imageSrcs.forEach(imageSrc => {
             let frame = new Image();

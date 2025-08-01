@@ -126,8 +126,6 @@ function upgradeSelectedTower(user, upgradeIndex, upgradePanel, world) {
             };
             publishToMercure(topic, eventData);
         }
-    } else {
-        console.log('Недостаточно средств для улучшения');
     }
 }
 
@@ -262,7 +260,6 @@ function handleMapClick(x, y, world, towerPanel, upgradePanel, effectPanel, rule
     const base = world.getBaseByCoordinates(x, y);
 
     if (zone && !world.players.get(currentUserId).towerZonesId.includes(zone.id)) {
-        console.log("Чужая зона!");
         return;
     }
 

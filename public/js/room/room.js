@@ -65,7 +65,6 @@ const es = new EventSource(url);
 
 es.onmessage = ({data}) => {
     const msg = JSON.parse(data);
-    console.log(data);
     switch (msg.action) {
         case 'playerJoin':
             handlePlayerJoin(msg);
@@ -86,7 +85,7 @@ es.onmessage = ({data}) => {
             cancelCountdown();
             break;
         default:
-            console.warn('Unknown Mercure action:', msg.action);
+            // console.warn('Unknown Mercure action:', msg.action);
             break;
     }
 };

@@ -5,7 +5,7 @@ export function subscribeToMercure(topic, onMessageCallback) {
     const eventSource = new EventSource(`${MERCURE_URL}?topic=${encodeURIComponent(topic)}`);
 
     eventSource.onopen = () => {
-        console.log('Подключение к Mercure успешно установлено');
+        // console.log('Подключение к Mercure успешно установлено');
     };
 
     eventSource.onmessage = (event) => {
@@ -14,12 +14,12 @@ export function subscribeToMercure(topic, onMessageCallback) {
             // console.log('Полученное сообщение:', data);
             onMessageCallback(data);
         } catch (error) {
-            console.error('Ошибка при разборе сообщения Mercure:', error);
+            // console.error('Ошибка при разборе сообщения Mercure:', error);
         }
     };
 
     eventSource.onerror = (error) => {
-        console.error('Ошибка подключения к Mercure:', error);
+        // console.error('Ошибка подключения к Mercure:', error);
     };
 
     window.addEventListener('beforeunload', function () {
@@ -36,7 +36,7 @@ export function unsubscribe(eventSource) {
 }
 
 export function publishToMercure(topic, data) {
-    console.log('Отправка сообщения в Mercure:', data);
+    // console.log('Отправка сообщения в Mercure:', data);
 
     fetch(MERCURE_URL, {
         method: 'POST',
@@ -56,18 +56,18 @@ export function publishToMercure(topic, data) {
             const contentType = response.headers.get('content-type');
             if (contentType && contentType.includes('application/json')) {
                 return response.json().then(data => {
-                    console.log('Сообщение успешно отправлено. Ответ:', data);
+                    // console.log('Сообщение успешно отправлено. Ответ:', data);
                 });
             } else {
                 return response.text().then(text => {
-                    console.log('Сообщение успешно отправлено. Ответ:', text);
+                    // console.log('Сообщение успешно отправлено. Ответ:', text);
                 });
             }
         })
         .catch(error => {
-            console.error('Ошибка отправки события:', error);
+            // console.error('Ошибка отправки события:', error);
             if (error instanceof SyntaxError) {
-                console.warn('Сервер вернул не JSON ответ');
+                // console.warn('Сервер вернул не JSON ответ');
             }
         });
 }
