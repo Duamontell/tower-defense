@@ -5,7 +5,7 @@
         "height": 1024
     },
     "startingBalance": 300,
-    "spawnrate": 2,
+    "spawnrate": 1.5,
     "waypoints": [
         {
             "x": 424,
@@ -344,9 +344,18 @@
             }
         }
     ],
-    "countWaves": 3,
-    "wavesDuration": 15,
+    "countWaves": 5,
+    "wavesDuration": 20,
     "waves": [
+        {
+            "enemies": {
+                "orcs": 0,
+                "zombies": 0,
+                "goblins": 0
+            },
+            "duration": 10,
+            "reward": 0
+        },
         {
             "enemies": {
                 "orcs": 1,
@@ -360,6 +369,15 @@
             "enemies": {
                 "orcs": 3,
                 "zombies": 2,
+                "goblins": 0
+            },
+            "duration": 20,
+            "reward": 300
+        },
+        {
+            "enemies": {
+                "orcs": 4,
+                "zombies": 4,
                 "goblins": 0
             },
             "duration": 20,

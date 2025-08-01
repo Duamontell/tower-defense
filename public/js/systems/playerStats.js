@@ -1,4 +1,4 @@
-export function drawPlayerStatsPanel(ctx, balance, currentHealth, maxHealth, mapWidth, mapHeight, currentWave, maxWave, gameMode) {
+export function drawPlayerStatsPanel(ctx, balance, currentHealth, maxHealth, mapWidth, mapHeight, currentWave, maxWave) {
     if (!drawPlayerStatsPanel.imgCoin) {
         drawPlayerStatsPanel.imgCoin = new Image();
         drawPlayerStatsPanel.imgCoin.src = '/images/assets/balance.svg';
@@ -75,8 +75,8 @@ export function drawPlayerStatsPanel(ctx, balance, currentHealth, maxHealth, map
     ctx.fillText(`${currentHealth} / ${maxHealth}`, healthBarX + healthBarWidth / 2, healthBarY + healthBarHeight / 2);
 
     if (gameMode === 'singleplayer') {
-        ctx.fillText(`Волна ${currentWave} из ${maxWave}`, panelX + 180, panelY + 40);
+        ctx.fillText(`Волна ${currentWave - 1} из ${maxWave - 1}`, panelX + 180, panelY + 40);
     } else if (gameMode === 'multiplayer') {
-        ctx.fillText(`Волна ${currentWave}`, panelX + 300, panelY + 90);
+        ctx.fillText(`Волна ${currentWave}`, panelX + 300, panelY + 73);
     }
 }

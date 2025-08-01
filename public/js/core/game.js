@@ -98,7 +98,7 @@ async function loadUsersConfig() {
             if (userResponse.ok) {
                 const userCfg = await userResponse.json();
                 users.push({userId: player.userId, userCfg: userCfg});
-            } 
+            }
         }
     }
     return users;
@@ -159,7 +159,8 @@ function gameLoop(timestamp = 0) {
         closeAllPanels();
         world.gameOver = true;
     } else if (gameMode === 'multiplayer' && world.waves.currentWave >= world.waves.maxWave && waveDuration <= 0) {
-        world.summonWaves(world.waves.currentWave);
+        world.waves.currentWave++;
+        world.summonWaves(world.waves.maxWave);
         waveDuration = world.waves.waveDuration;
     }
 

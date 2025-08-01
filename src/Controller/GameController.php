@@ -70,6 +70,10 @@ class GameController extends AbstractController
         $isPlayerRoom = false;
         foreach ($players as $player) {
             if ($player->getPlayer()->getId() === $user->getId()) {
+//                if ($player->isReadyInGame() === true) {
+//                    $this->addFlash('error', 'Игра уже началась, переподключение невозможно');
+//                    return $this->redirectToRoute('room_list');
+//                }
                 $isPlayerRoom = true;
             }
             $playerData[] = [
