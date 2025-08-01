@@ -54,22 +54,22 @@
             "id": 3,
             "topLeft": {
                 "x": 720,
-                "y": 650
+                "y": 620
             },
             "bottomRight": {
                 "x": 850,
-                "y": 780
+                "y": 720
             }
         },
         {
             "id": 4,
             "topLeft": {
-                "x": 300,
-                "y": 650
+                "x": 230,
+                "y": 620
             },
             "bottomRight": {
-                "x": 430,
-                "y": 780
+                "x": 330,
+                "y": 720
             }
         },
         {
@@ -98,9 +98,9 @@
         },
         {
             "enemies": {
-                "orcs": 1,
-                "zombies": 0,
-                "goblins": 1
+                "orcs": 0,
+                "zombies": 4,
+                "goblins": 0
             },
             "reward": 100
         },
