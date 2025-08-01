@@ -76,19 +76,6 @@ export class World {
             const { orcs, zombies, goblins } = currentWave.enemies;
             const waypoints = user.waypoints;
 
-            // Орки
-            for (let i = 0; i < orcs; i++) {
-                setTimeout(() => {
-                    const enemy = new OrcEnemy(
-                        { x: waypoints[0].x, y: waypoints[0].y },
-                        waypoints,
-                        this.enemiesCfg.orc
-                    );
-                    this.addEnemy(enemy, user.id);
-                }, delay * 1000);
-                delay += this.spawnrate;
-            }
-
             // Зомби
             for (let i = 0; i < zombies; i++) {
                 setTimeout(() => {
@@ -96,6 +83,19 @@ export class World {
                         { x: waypoints[0].x, y: waypoints[0].y },
                         waypoints,
                         this.enemiesCfg.zombie
+                    );
+                    this.addEnemy(enemy, user.id);
+                }, delay * 1000);
+                delay += this.spawnrate;
+            }
+
+            // Орки
+            for (let i = 0; i < orcs; i++) {
+                setTimeout(() => {
+                    const enemy = new OrcEnemy(
+                        { x: waypoints[0].x, y: waypoints[0].y },
+                        waypoints,
+                        this.enemiesCfg.orc
                     );
                     this.addEnemy(enemy, user.id);
                 }, delay * 1000);
@@ -124,24 +124,24 @@ export class World {
 
         let delay = 1;
 
-        for (let i = 0; i < orcs; i++) {
-            setTimeout(() => {
-                const enemy = new OrcEnemy(
-                    { x: waypoints[0].x, y: waypoints[0].y },
-                    waypoints,
-                    this.enemiesCfg.orc
-                );
-                this.addEnemy(enemy, user.id);
-            }, delay * 1000);
-            delay += this.spawnrate;
-        }
-
         for (let i = 0; i < zombies; i++) {
             setTimeout(() => {
                 const enemy = new ZombieEnemy(
                     { x: waypoints[0].x, y: waypoints[0].y },
                     waypoints,
                     this.enemiesCfg.zombie
+                );
+                this.addEnemy(enemy, user.id);
+            }, delay * 1000);
+            delay += this.spawnrate;
+        }
+
+        for (let i = 0; i < orcs; i++) {
+            setTimeout(() => {
+                const enemy = new OrcEnemy(
+                    { x: waypoints[0].x, y: waypoints[0].y },
+                    waypoints,
+                    this.enemiesCfg.orc
                 );
                 this.addEnemy(enemy, user.id);
             }, delay * 1000);

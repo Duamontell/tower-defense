@@ -37,7 +37,6 @@ export class Tower {
         this.soundPanel = soundPanel;
         this.isBeingSold = false;
         this.sellAnimationProgress = 0;
-        console.log(this.price)
     }
 
     applyUpgrade(index) {
